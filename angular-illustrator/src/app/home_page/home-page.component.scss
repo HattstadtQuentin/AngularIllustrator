@@ -1,0 +1,16 @@
+:host {
+    background: purple;
+    width: 80%;
+    .homePage {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    
+        .statusContainer {
+            height: 15%;
+            width: 100%;
+            background: blue
+        }
+    }
+}
