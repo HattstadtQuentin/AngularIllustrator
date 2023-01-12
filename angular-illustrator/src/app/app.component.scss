@@ -1,14 +1,18 @@
+@import '../styles/global.scss';
+
 .app {
     height: 100vh;
     width: 100vw;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
-    background: yellow;
+    @include themed() {
+        background: t($base-color);
+    }
     
 
     .navContainer {
         flex:1;
-        height: 100%;
+        height: 10%;
     }
 }

@@ -6,8 +6,9 @@ import { HomePageComponent } from './home_page/home-page.component';
 import { HomeZoneComponent } from './home_page/home-zone/home-zone.component';
 
 const routes: Routes = [
-  { path: '', component: HomePageComponent },
-  { path: 'draw', component: DrawingPageComponent },
+  { path: 'dashboard', component: HomePageComponent},
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'project', component: DrawingPageComponent, pathMatch: 'full' },
 ];
 
 @NgModule({

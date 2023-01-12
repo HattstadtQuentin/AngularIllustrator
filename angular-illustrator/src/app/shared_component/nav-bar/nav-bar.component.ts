@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faRightFromBracket, faMoon, faAngleDown } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-nav-bar',
@@ -8,4 +8,6 @@ import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 })
 export class NavBarComponent {
   faRightFromBracket = faRightFromBracket;
+  faMoon = faMoon;
+  faAngleDown = faAngleDown;
 }

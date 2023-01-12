@@ -1,6 +1,111 @@
+@import '../../../styles/global.scss';
+
 .navBar {
     height: 100%; 
     width: 100%;
-    background: red;
     display: flex;
+    flex-direction: row;
+    font-family: $globalFont;
+    @include themed() {
+        background: t($second-color);
+    }
+
+    .logoContainer {
+        width: 5%;
+        .logo {
+            padding: 5px;
+            height: 80%;
+        }
+    }
+
+    .itemContainer {
+        width: 80%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+
+        a {
+            @include themed() {
+                color: t($second-text-color);
+            }
+            text-decoration: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+        }
+
+        .active-link {
+            @include themed() {
+                background: t($contrast-color);
+            }
+            color: white;
+        }
+    }
+
+    .loginContainer {
+        width: 15%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-around;
+        padding: 0 1%;
+
+        .nightMode {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            width: 5vh;
+            height: 5vh;
+            border-radius: 50px;
+            @include themed() {
+                color: t($second-text-color);
+                border: 1px solid t($second-text-color);
+            }
+        }
+
+        .profil {
+            display: flex;
+            border-radius: 25px;
+            height: 100%;
+            align-items: center;
+            width: 75%;
+            justify-content: space-around;
+
+            .profilPic {
+                height: 70%;
+                border-radius: 50px;
+            }
+
+            .infos {
+                height: 50%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+
+                .name {
+                    font-size: 1.2rem;
+                    color: white;
+                }
+
+                .subscription {
+                    @include themed() {
+                        color: t($second-text-color);
+                    }
+                }
+            }
+
+            .downAngle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+                margin-top: 1vh;
+                color: white;
+                width: 10%
+            }
+
+
+        }
+    }
 }

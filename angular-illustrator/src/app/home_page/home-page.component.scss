@@ -1,16 +1,15 @@
+@import '../../styles/global.scss';
+
 :host {
-    background: purple;
-    width: 80%;
+    @include themed() {
+        background: t($base-color);
+    }
+    width: 100%;
+    height: 90%;
     .homePage {
         width: 100%;
         height: 100%;
         display: flex;
         flex-direction: column;
-    
-        .statusContainer {
-            height: 15%;
-            width: 100%;
-            background: blue
-        }
     }
 }

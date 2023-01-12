@@ -1,16 +1,22 @@
 <div class="navBar">
-    <div class="topContainer">
-
+    <div class="logoContainer">
+        <img class="logo" src='../../../assets/img/angular-logo.png'/>
     </div>
     <div class="itemContainer">
-        <i class="fa-sharp fa-solid fa-files"></i>
-        <i class="fa-sharp fa-solid fa-sliders-up"></i>
-        <i class="fa-sharp fa-solid fa-rectangle-vertical-history"></i>
-        <i class="fa-sharp fa-solid fa-gears"></i>
+        <a routerLink="/dashboard" routerLinkActive="active-link">Dashboard</a>
+        <a routerLink="/project" routerLinkActive="active-link">Projects</a>
+        <a routerLink="/teams" routerLinkActive="active-link">Teams</a>
+        <a routerLink="/settings" routerLinkActive="active-link">Settings</a>
     </div>
-    <div class="bottomContainer">
-        <img src="https://thispersondoesnotexist.com"/>
-        <i class="fa-sharp fa-solid fa-right-from-bracket"></i>
-        <fa-icon [icon]="faRightFromBracket"></fa-icon>
+    <div class="loginContainer">
+        <fa-icon class="nightMode" [icon]="faMoon"></fa-icon>
+        <div class="profil">
+            <img class="profilPic" src='../../../assets/img/profilPic.jpg'/>
+            <div class="infos">
+                <div class="name">Quentin Hattstadt</div>
+                <div class="subscription">Premium Tier</div>
+            </div>
+            <fa-icon class="downAngle" [icon]="faAngleDown"></fa-icon>
+        </div>
     </div>
 </div>
