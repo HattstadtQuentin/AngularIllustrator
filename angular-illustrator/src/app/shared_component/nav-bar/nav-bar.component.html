@@ -1,0 +1,22 @@
+<div class="navBar">
+    <div class="logoContainer">
+        <img class="logo" src='../../../assets/img/Angular_Illustrator_Logo.png'/>
+    </div>
+    <div class="itemContainer">
+        <a routerLink="/dashboard" routerLinkActive="active-link">Dashboard</a>
+        <a routerLink="/project" routerLinkActive="active-link">Projects</a>
+        <a routerLink="/teams" routerLinkActive="active-link">Teams</a>
+        <a routerLink="/settings" routerLinkActive="active-link">Settings</a>
+    </div>
+    <div class="loginContainer">
+        <fa-icon class="nightMode" [icon]="faIcon" (click)="toggleDarkMode()"></fa-icon>
+        <div class="profil">
+            <img class="profilPic" src='../../../assets/img/profilPic.jpg'/>
+            <div class="infos">
+                <div class="name">Quentin Hattstadt</div>
+                <div class="subscription">Premium Tier</div>
+            </div>
+            <fa-icon class="downAngle" [icon]="faAngleDown"></fa-icon>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,50 @@
+@import '../../../styles/global.scss';
+
+:host {
+    .optionBar {
+        height: 100%;
+        width: 100%;
+        padding: 10% 2%;
+        font-family: $poppins;
+
+        @include themed() {
+            background: t($second-color);
+        }
+
+        .selectOption {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            font-size: 0.9rem;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+
+    
+            @include themed() {
+                color: t($second-text-color);
+            }  
+            
+            div {
+                width: 40%;
+                padding-bottom: 4%;
+                @include themed() {
+                    border-bottom: 2px solid t($second-text-color);
+                } 
+            }  
+
+            .active {
+                @include themed() {
+                    border-bottom: 2px solid t($contrast-color);
+                    color: t($contrast-color);
+                } 
+            }
+    
+        }
+
+        .pageContainer {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}

@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@font-face {
+    font-family: 'greycliff';
+    src: url('fonts/greycliff.otf') format('opentype');
+}
+
+$titleFont: 'greycliff';
+$globalFont: 'inter';
+$montserrat:'Montserrat';
+$poppins: 'Poppins';
+
+$base-color--dark: #1A1F39;
+$second-color--dark: #202742;
+$third-color--dark: #252C48;
+$fourth-color--dark: #7F89AC;
+$contrast-color--dark: #4A85F3;
+
+$base-text-color--dark: #fff;
+$second-text-color--dark: #9BA3B7;
+
+$drawzone-color--dark: #fff;
+
+$base-color--light: purple;
+$second-color--light: #202742;
+$third-color--light: #252C48;
+$fourth-color--light: #557ECC;
+$contrast-color--light: #2269E3;
+
+$base-text-color--light: #fff;
+$second-text-color--light: #9BA3B7;
+
+$drawzone-color--light: #1A1F39;
+
+$base-color: 'base-color';
+$second-color: 'second-color';
+$third-color: 'third-color';
+$fourth-color: 'fourth-color';
+$contrast-color: 'contrast-color';
+$base-text-color: 'base-text-color';
+$second-text-color: 'second-text-color';
+$drawzone-color: 'drawzone-color';
+
+$themes: (
+        light: (
+                base-color: $base-color--light,
+                second-color: $second-color--light,
+                third-color: $third-color--light,
+                fourth-color: $fourth-color--light,
+                contrast-color: $contrast-color--light,
+                base-text-color: $base-text-color--light,
+                second-text-color: $second-text-color--light,
+                drawzone-color: $drawzone-color--light,
+        ),
+        dark: (
+            base-color: $base-color--dark,
+            second-color: $second-color--dark,
+            third-color: $third-color--dark,
+            fourth-color: $fourth-color--dark,
+            contrast-color: $contrast-color--dark,
+            base-text-color: $base-text-color--dark,
+            second-text-color: $second-text-color--dark,
+            drawzone-color: $drawzone-color--dark,
+        ),
+);
+
+@mixin themed() {
+  @each $theme, $map in $themes {
+    .theme--#{$theme} & {
+      $theme-map: () !global;
+      @each $key, $submap in $map {
+        $value: map-get(map-get($themes, $theme), '#{$key}');
+        $theme-map: map-merge($theme-map, ($key: $value)) !global;
+      }
+      @content;
+      $theme-map: null !global;
+    }
+  }
+}
+
+@function t($key) {
+  @return map-get($theme-map, $key);
+}

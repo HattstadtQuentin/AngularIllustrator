@@ -1,0 +1,8 @@
+<div [ngClass]="{
+  'theme--dark': isDark,
+  'theme--light': !isDark,
+  'app': true
+}">
+  <app-nav-bar class="navContainer" [isDark]="isDark" (update)="updateDarkMode($event)"></app-nav-bar>
+  <router-outlet></router-outlet>
+</div>
