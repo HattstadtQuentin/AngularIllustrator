@@ -49,6 +49,22 @@
                     background: t($third-color);
                 }
             }
+
+            .active {
+                @include themed() {
+                    color: t($third-color);
+                }
+
+                img {
+                    width: 60%;
+                    padding-bottom: 10%;
+                    filter: invert(11%) sepia(8%) saturate(4962%) hue-rotate(191deg) brightness(101%) contrast(84%);
+                }
+
+                @include themed() {
+                    background: t($fourth-color);
+                }
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Tools } from './tools.enum';
 
 @Component({
   selector: 'app-drawing-page',
@@ -6,5 +7,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./drawing-page.component.scss']
 })
 export class DrawingPageComponent {
+  activeTool = Tools.Line;
+
+  updateActiveTool(value: Tools) {
+    this.activeTool = value;
+  }
 
 }

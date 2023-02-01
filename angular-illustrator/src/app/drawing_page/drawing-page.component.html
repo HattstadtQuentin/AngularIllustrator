@@ -9,8 +9,8 @@
         </div>
     </div>
     <div class="drawContainer">
-        <app-tool-bar class="toolBarContainer"></app-tool-bar>
-        <app-drawing-zone class="drawZoneContainer"></app-drawing-zone>
+        <app-tool-bar class="toolBarContainer"  (update)="updateActiveTool($event)"></app-tool-bar>
+        <app-drawing-zone class="drawZoneContainer" [activeTool]="activeTool"></app-drawing-zone>
         <app-option-bar class="optionBarContainer"></app-option-bar>
     </div>
 </div>

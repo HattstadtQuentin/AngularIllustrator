@@ -19,6 +19,8 @@ $contrast-color--dark: #4A85F3;
 $base-text-color--dark: #fff;
 $second-text-color--dark: #9BA3B7;
 
+$drawzone-color--dark: #fff;
+
 $base-color--light: purple;
 $second-color--light: #202742;
 $third-color--light: #252C48;
@@ -28,6 +30,8 @@ $contrast-color--light: #2269E3;
 $base-text-color--light: #fff;
 $second-text-color--light: #9BA3B7;
 
+$drawzone-color--light: #1A1F39;
+
 $base-color: 'base-color';
 $second-color: 'second-color';
 $third-color: 'third-color';
@@ -35,6 +39,7 @@ $fourth-color: 'fourth-color';
 $contrast-color: 'contrast-color';
 $base-text-color: 'base-text-color';
 $second-text-color: 'second-text-color';
+$drawzone-color: 'drawzone-color';
 
 $themes: (
         light: (
@@ -45,6 +50,7 @@ $themes: (
                 contrast-color: $contrast-color--light,
                 base-text-color: $base-text-color--light,
                 second-text-color: $second-text-color--light,
+                drawzone-color: $drawzone-color--light,
         ),
         dark: (
             base-color: $base-color--dark,
@@ -54,6 +60,7 @@ $themes: (
             contrast-color: $contrast-color--dark,
             base-text-color: $base-text-color--dark,
             second-text-color: $second-text-color--dark,
+            drawzone-color: $drawzone-color--dark,
         ),
 );
 
