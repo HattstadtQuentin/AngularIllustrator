@@ -9,6 +9,12 @@ import { ActivatedRoute } from '@angular/router';
 export class AppComponent {
   title = 'angular-illustrator';
   activeRoute = '';
+  isDark = true;
+
+  updateDarkMode(value: boolean) {
+    this.isDark = value;
+  }
+
   constructor(
     private actRoute: ActivatedRoute // Activated route to get the current component's information
   ) {}

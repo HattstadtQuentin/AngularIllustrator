@@ -1,0 +1,17 @@
+<div class="optionBar">
+    <div class="selectOption">
+        <div [ngClass]="{'active': isPage}" (click)="setIsPage(true)">
+            Pages
+        </div>
+        <div [ngClass]="{'active': !isPage}" (click)="setIsPage(false)">
+            Styles
+        </div>
+    </div>
+    <div [ngClass]="{
+        'off': isPage,
+        'pageContainer': true
+    }"
+    >
+      
+    </div>
+</div>

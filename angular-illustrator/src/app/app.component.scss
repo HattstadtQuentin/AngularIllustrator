@@ -7,7 +7,7 @@
     flex-direction: column;
     justify-content: space-between;
     @include themed() {
-        background: t($base-color);
+        background: t($contrast-color);
     }
     
 

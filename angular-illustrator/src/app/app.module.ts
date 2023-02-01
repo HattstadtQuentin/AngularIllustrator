@@ -10,6 +10,7 @@ import { DrawingZoneComponent } from './drawing_page/drawing-zone/drawing-zone.c
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DrawingPageComponent } from './drawing_page/drawing-page.component';
 import { HomePageComponent } from './home_page/home-page.component';
+import { OptionBarComponent } from './drawing_page/option-bar/option-bar.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { HomePageComponent } from './home_page/home-page.component';
     HomeZoneComponent,
     DrawingZoneComponent,
     DrawingPageComponent,
-    HomePageComponent
+    HomePageComponent,
+    OptionBarComponent,
   ],
   imports: [
     BrowserModule,
