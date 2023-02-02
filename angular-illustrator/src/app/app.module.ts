@@ -11,6 +11,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { DrawingPageComponent } from './drawing_page/drawing-page.component';
 import { HomePageComponent } from './home_page/home-page.component';
 import { OptionBarComponent } from './drawing_page/option-bar/option-bar.component';
+import { ToolsSearchComponent } from './drawing_page/tool-bar/tools-search/tools-search.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatOptionModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -22,11 +29,19 @@ import { OptionBarComponent } from './drawing_page/option-bar/option-bar.compone
     DrawingPageComponent,
     HomePageComponent,
     OptionBarComponent,
+    ToolsSearchComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    ReactiveFormsModule,
+    BrowserAnimationsModule,
+    MatOptionModule
   ],
   providers: [],
   bootstrap: [AppComponent]
