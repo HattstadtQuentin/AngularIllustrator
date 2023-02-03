@@ -59,16 +59,13 @@
             justify-content: flex-end;
             width: 80%;
             height: 60%;
-            /*background: rgb(255, 255, 255);
-            position: relative;
-            overflow: hidden;*/
             
             #drawingContainer 
             {
                 @include themed() {
                     background: t($drawzone-color);
                 } 
-               /* position: absolute; 
+                position: absolute; 
                 top: 0px;
                 left: 0px;
                 z-index: 1; 
@@ -76,14 +73,17 @@
 
             #drawingContainer2 
             {
-                @include themed() {
-                    background: t($drawzone-color);
-                } 
+                // @include themed() {
+                //     background: t($drawzone-color);
+                // } 
+                background: transparent;
+                
+                pointer-events: none;
                 position: absolute;
 
                 top: 0px;
                 left: 0px;
-                z-index: 2; */
+                z-index: 2; 
             } 
         }
 

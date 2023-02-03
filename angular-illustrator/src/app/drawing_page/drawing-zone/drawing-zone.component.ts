@@ -12,6 +12,7 @@ import Gesto from "gesto";
 
 export class DrawingZoneComponent implements OnInit {
 	@ViewChild('canvas') canvasRef: ElementRef;
+	@ViewChild('canvasPrevi') canvasPreviRef: ElementRef;
 	@Input() activeTool = Tools.Line; 
 	@Input() backgroundColor = '#1A1F39';
 
@@ -59,7 +60,8 @@ export class DrawingZoneComponent implements OnInit {
 		this.y = 0;
 		this.cordList = [];
 		this.canvasRef = new ElementRef(null);
-		this.colorCanvas = "#c1bcbc";
+		this.canvasPreviRef = new ElementRef(null);
+		this.colorCanvas = "#fff";
 		this.colorFillShape = "#FFA500";
 		this.colorStrokeShape = "#000000";
 		this.fill = true;
@@ -135,16 +137,19 @@ export class DrawingZoneComponent implements OnInit {
 	//
 	//--------------------------------------------------------------------------------------
 	resizeCanvas(): void {
-		if (!this.canvasRef.nativeElement) {
-			console.log('no ref');
+		if (!this.canvasRef.nativeElement && !this.canvasPreviRef.nativeElement) {
 			return;
-		}
+		} 
 
 
 		const canvas = this.canvasRef.nativeElement as HTMLCanvasElement;
 		const parent = canvas.parentElement as HTMLElement;
 		canvas.width = parent.offsetWidth;
 		canvas.height = parent.offsetHeight;
+
+		const previCanvas = this.canvasPreviRef.nativeElement as HTMLCanvasElement;
+		previCanvas.width = parent.offsetWidth;
+		previCanvas.height = parent.offsetHeight;
 
 		const ctx = canvas.getContext('2d');
 		if (ctx) {
@@ -182,9 +187,9 @@ export class DrawingZoneComponent implements OnInit {
 				ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 			}
 
-			if (this.canvas) {
-				this.x = e.clientX - this.canvas.offsetLeft;
-				this.y = e.clientY - this.canvas.offsetTop;
+			if (this.canvas && this.canvas.parentElement && this.canvas.parentElement.parentElement) {
+				this.x = e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
+				this.y = e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
 			}
 
 			this.draw(this.x, this.y, true);
