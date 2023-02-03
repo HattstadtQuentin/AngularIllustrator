@@ -1,10 +1,7 @@
-<div class="zone">
-    <h1>{{ title }}</h1>
-
-    <div id="infoContainer">
-        <p>Position x : {{ x }}</p>
-        <p>Position y : {{ y }}</p>
-    </div>
+<div class="zone" [ngStyle]="{'background-color': backgroundColor}">
+    <div class="ruler horizontal"></div>
+    <div class="ruler vertical"></div>
+    <div class="carreRemplissage">&nbsp;</div>
 
     <div id="convasContainer">
         <canvas #canvas id="drawingContainer"></canvas>

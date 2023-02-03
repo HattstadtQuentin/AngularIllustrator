@@ -49,7 +49,7 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
     ColorPickerModule,
     ClipboardModule,
     ToastrModule.forRoot(),
-    NgxSliderModule
+    NgxSliderModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

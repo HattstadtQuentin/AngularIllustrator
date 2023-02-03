@@ -1,5 +1,7 @@
 import { Component, OnInit, ElementRef, ChangeDetectorRef, ViewChild, Input } from '@angular/core';
 import { Tools } from '../tools.enum';
+import Ruler from "@scena/ruler";
+import Gesto from "gesto";
 
 
 @Component({
@@ -8,10 +10,10 @@ import { Tools } from '../tools.enum';
 	styleUrls: ['./drawing-zone.component.scss']
 })
 
-
 export class DrawingZoneComponent implements OnInit {
 	@ViewChild('canvas') canvasRef: ElementRef;
-	@Input() activeTool = Tools.Line;
+	@Input() activeTool = Tools.Line; 
+	@Input() backgroundColor = '#1A1F39';
 
 	//--------------------------------------------------------------------------------------
 	// DECLARATION DES ATTRIBUTS
@@ -43,6 +45,8 @@ export class DrawingZoneComponent implements OnInit {
 		x4: number,					//Coordonnée x du quatrieme point de la forme s'il y en a un
 		y4: number					//Coordonnée y du quatrieme point de la forme s'il y en a un
 	}[];
+	public ruler1: Ruler | null = null;
+	public ruler2: Ruler | null = null;
 
 	//--------------------------------------------------------------------------------------
 	// CONSTRUCTEUR 
@@ -69,6 +73,38 @@ export class DrawingZoneComponent implements OnInit {
 		setTimeout(() => {
 			this.resizeCanvas();
 			window.addEventListener('resize', this.resizeCanvas.bind(this));
+			const ruler1Element: HTMLElement | null = document.querySelector(".ruler.horizontal");
+			if (ruler1Element) {
+				this.ruler1 = new Ruler(ruler1Element, {
+					type: "horizontal",
+					backgroundColor: "#252C48",
+				});
+			}
+			const ruler2Element: HTMLElement | null = document.querySelector(".ruler.vertical");
+			if (ruler2Element) {
+				this.ruler2 = new Ruler(ruler2Element, {
+					type: "vertical",
+					backgroundColor: "#252C48",
+				});
+			}
+		
+			window.addEventListener("resize", () => {
+				if(this.ruler1 !== null && this.ruler2){
+					this.ruler1.resize();
+					this.ruler2.resize();
+				}
+			});
+			let scrollX = 0;
+			let scrollY = 0;
+		
+			new Gesto(document.body).on("drag", e => {
+				scrollX -= e.deltaX;
+				scrollY -= e.deltaY;
+				if(this.ruler1 !== null && this.ruler2){
+					this.ruler1.scroll(scrollX);
+					this.ruler2.scroll(scrollY);
+				}
+			});
 		});
 	}
 
@@ -134,9 +170,9 @@ export class DrawingZoneComponent implements OnInit {
 	//--------------------------------------------------------------------------------------
 	public setMousePosition(e: MouseEvent): void {
 
-		if (this.canvas) {
-			this.x = e.clientX - this.canvas.offsetLeft;
-			this.y = e.clientY - this.canvas.offsetTop;
+		if (this.canvas && this.canvas.parentElement && this.canvas.parentElement.parentElement) {
+			this.x = e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
+			this.y = e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
 		}
 
 		this.draw(this.x, this.y);
@@ -181,7 +217,6 @@ export class DrawingZoneComponent implements OnInit {
 		if (!this.canvas) {
 			return;
 		} else {
-
 			let canvas: HTMLCanvasElement = document.getElementById('drawingContainer')! as HTMLCanvasElement;
 			const ctx = canvas.getContext('2d');
 
@@ -232,7 +267,6 @@ export class DrawingZoneComponent implements OnInit {
 		if (!this.canvas) {
 			return;
 		} else {
-
 			let canvas: HTMLCanvasElement = document.getElementById('drawingContainer')! as HTMLCanvasElement;
 			const ctx = canvas.getContext('2d');
 
@@ -303,7 +337,6 @@ export class DrawingZoneComponent implements OnInit {
 		if (!this.canvas) {
 			return;
 		} else {
-
 			let canvas: HTMLCanvasElement = document.getElementById('drawingContainer')! as HTMLCanvasElement;
 			const ctx = canvas.getContext('2d');
 
@@ -376,7 +409,6 @@ export class DrawingZoneComponent implements OnInit {
 		if (!this.canvas) {
 			return;
 		} else {
-
 			let canvas: HTMLCanvasElement = document.getElementById('drawingContainer')! as HTMLCanvasElement;
 			const ctx = canvas.getContext('2d');
 

@@ -26,6 +26,8 @@
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "@scena/ruler": "^0.15.2",
+    "gesto": "^1.15.1",
     "ngx-clipboard": "^15.1.0",
     "ngx-color-picker": "^13.0.0",
     "ngx-toastr": "^16.0.2",
