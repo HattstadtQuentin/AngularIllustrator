@@ -16,12 +16,15 @@ export class OptionBarComponent {
   regleCheckboxValue: boolean = false;
   grilleCheckboxValue: boolean = false;
   color: string = '#1A1F39'; 
-  color1: string = "#000000";
+  fillColor: string = "#000000";
+  strokeColor: string = "#000000";
   options = Object.values(PaperSizes).map(size => {
     return `${size.title}(${size.description})`;
   });
   selectedOption = PaperSizes.A4.title + "(" + PaperSizes.A4.description + ")";
   @Output() updateBackgroundColor = new EventEmitter<string>();
+  @Output() updateFillColor = new EventEmitter<string>();
+  @Output() updateStrokeColor = new EventEmitter<string>();
 
   constructor(
     public vcRef: ViewContainerRef, 
@@ -34,6 +37,18 @@ export class OptionBarComponent {
   public onEventLog(event: string, data: any): void {
     if(event == "colorPickerClose" && typeof data === 'string'){
       this.updateBackgroundColor.emit(data);
+    }
+  }
+
+  public onEventLogFill(event: string, data: any): void {
+    if(event == "colorPickerClose" && typeof data === 'string'){
+      this.updateFillColor.emit(data);
+    }
+  }
+
+  public onEventLogStroke(event: string, data: any): void {
+    if(event == "colorPickerClose" && typeof data === 'string'){
+      this.updateStrokeColor.emit(data);
     }
   }
 

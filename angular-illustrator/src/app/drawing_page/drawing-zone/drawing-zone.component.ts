@@ -25,17 +25,17 @@ export class DrawingZoneComponent implements OnInit {
 	public canvas?: HTMLCanvasElement;
 	public context!: CanvasRenderingContext2D;
 	public colorCanvas: string;							//Couleur de fond du canvas
-	public colorFillShape: string;						//Couleur de remplissage de la forme en cours de dessin
-	public colorStrokShape: string;						//Couleur des coutours de la forme en cours de desssin
+	@Input() public colorFillShape: string;						//Couleur de remplissage de la forme en cours de dessin
+	@Input() public colorStrokeShape: string;
 	public fill: boolean;								//Boolean : la forme en cours de dessin à un remplissage
-	public strok: boolean;								//Boolean : la forme en cours de dessin à des contours
+	public stroke: boolean;								//Boolean : la forme en cours de dessin à des contours
 	public shapeList: {									//Liste des formes du canvas de la session courrante
 
 		type: number,				//Type de forme (1=trait, 2=rect, etc.)
 		fill: boolean,				//La forme à un remplissage : true/false
-		strok: boolean,				//La forme à des contours : true/false
+		stroke: boolean,				//La forme à des contours : true/false
 		colorFillShape: string,		//Couleur de remplissage s'il y en a une
-		colorStrokShape: string,	//Couleur des contours s'il y en a une
+		colorStrokeShape: string,
 		x1: number,					//Coordonnée x du premier point de la forme
 		y1: number,					//Coordonnée y du premier point de la forme
 		x2: number,					//Coordonnée x du deuxieme point de la forme
@@ -59,9 +59,9 @@ export class DrawingZoneComponent implements OnInit {
 		this.canvasRef = new ElementRef(null);
 		this.colorCanvas = "#c1bcbc";
 		this.colorFillShape = "#FFA500";
-		this.colorStrokShape = "#c91414";
+		this.colorStrokeShape = "#000000";
 		this.fill = true;
-		this.strok = true
+		this.stroke = true;
 		this.shapeList = [];
 	}
 
@@ -235,9 +235,9 @@ export class DrawingZoneComponent implements OnInit {
 						{
 							type: 1,
 							fill: this.fill,
-							strok: this.strok,
+							stroke: this.stroke,
 							colorFillShape: this.colorFillShape,
-							colorStrokShape: this.colorStrokShape,
+							colorStrokeShape: this.colorStrokeShape,
 							x1: this.cordList[0].x,
 							y1: this.cordList[0].y,
 							x2: this.cordList[1].x,
@@ -282,9 +282,9 @@ export class DrawingZoneComponent implements OnInit {
 					largeur = this.cordList[1].x - this.cordList[0].x;
 					hauteur = this.cordList[1].y - this.cordList[0].y;
 
-					if (this.fill && this.strok) {
+					if (this.fill && this.stroke) {
 						ctx.fillStyle = this.colorFillShape;
-						ctx.strokeStyle = this.colorStrokShape;
+						ctx.strokeStyle = this.colorStrokeShape;
 						ctx.fillRect(this.cordList[0].x, this.cordList[0].y, largeur, hauteur);
 						ctx.strokeRect(this.cordList[0].x, this.cordList[0].y, largeur, hauteur)
 
@@ -292,8 +292,8 @@ export class DrawingZoneComponent implements OnInit {
 						ctx.fillStyle = this.colorFillShape;
 						ctx.fillRect(this.cordList[0].x, this.cordList[0].y, largeur, hauteur);
 
-					} else if (this.strok) {
-						ctx.strokeStyle = this.colorStrokShape;
+					} else if (this.stroke) {
+						ctx.strokeStyle = this.colorStrokeShape;
 						ctx.strokeRect(this.cordList[0].x, this.cordList[0].y, largeur, hauteur);
 
 					}
@@ -303,9 +303,9 @@ export class DrawingZoneComponent implements OnInit {
 							{
 								type: 2,
 								fill: this.fill,
-								strok: this.strok,
+								stroke: this.stroke,
 								colorFillShape: this.colorFillShape,
-								colorStrokShape: this.colorStrokShape,
+								colorStrokeShape: this.colorStrokeShape,
 								x1: this.cordList[0].x,
 								y1: this.cordList[0].y,
 								x2: this.cordList[1].x,
@@ -355,9 +355,9 @@ export class DrawingZoneComponent implements OnInit {
 
 					ctx.beginPath();
 
-					if (this.fill && this.strok) {
+					if (this.fill && this.stroke) {
 						ctx.fillStyle = this.colorFillShape;
-						ctx.strokeStyle = this.colorStrokShape;
+						ctx.strokeStyle = this.colorStrokeShape;
 						ctx.arc(this.cordList[0].x, this.cordList[0].y, rayon, 0, Math.PI * 2, true);
 						ctx.fill();
 						ctx.stroke();
@@ -367,8 +367,8 @@ export class DrawingZoneComponent implements OnInit {
 						ctx.arc(this.cordList[0].x, this.cordList[0].y, rayon, 0, Math.PI * 2, true);
 						ctx.fill();
 
-					} else if (this.strok) {
-						ctx.strokeStyle = this.colorStrokShape;
+					} else if (this.stroke) {
+						ctx.strokeStyle = this.colorStrokeShape;
 						ctx.arc(this.cordList[0].x, this.cordList[0].y, rayon, 0, Math.PI * 2, true);
 						ctx.stroke();
 					}
@@ -377,9 +377,9 @@ export class DrawingZoneComponent implements OnInit {
 						{
 							type: 3,
 							fill: this.fill,
-							strok: this.strok,
+							stroke: this.stroke,
 							colorFillShape: this.colorFillShape,
-							colorStrokShape: this.colorStrokShape,
+							colorStrokeShape: this.colorStrokeShape,
 							x1: this.cordList[0].x,
 							y1: this.cordList[0].y,
 							x2: this.cordList[1].x,
@@ -420,9 +420,9 @@ export class DrawingZoneComponent implements OnInit {
 				if (ctx) {
 					ctx.beginPath();
 
-					if (this.fill && this.strok) {
+					if (this.fill && this.stroke) {
 						ctx.fillStyle = this.colorFillShape;
-						ctx.strokeStyle = this.colorStrokShape;
+						ctx.strokeStyle = this.colorStrokeShape;
 						ctx.moveTo(this.cordList[0].x, this.cordList[0].y);
 						ctx.lineTo(this.cordList[1].x, this.cordList[1].y);
 						ctx.lineTo(this.cordList[2].x, this.cordList[2].y);
@@ -437,8 +437,8 @@ export class DrawingZoneComponent implements OnInit {
 						ctx.lineTo(this.cordList[2].x, this.cordList[2].y);
 						ctx.fill();
 
-					} else if (this.strok) {
-						ctx.strokeStyle = this.colorStrokShape;
+					} else if (this.stroke) {
+						ctx.strokeStyle = this.colorStrokeShape;
 						ctx.moveTo(this.cordList[0].x, this.cordList[0].y);
 						ctx.lineTo(this.cordList[1].x, this.cordList[1].y);
 						ctx.lineTo(this.cordList[2].x, this.cordList[2].y);
@@ -451,9 +451,9 @@ export class DrawingZoneComponent implements OnInit {
 						{
 							type: 4,
 							fill: this.fill,
-							strok: this.strok,
+							stroke: this.stroke,
 							colorFillShape: this.colorFillShape,
-							colorStrokShape: this.colorStrokShape,
+							colorStrokeShape: this.colorStrokeShape,
 							x1: this.cordList[0].x,
 							y1: this.cordList[0].y,
 							x2: this.cordList[1].x,
@@ -499,9 +499,9 @@ export class DrawingZoneComponent implements OnInit {
 		{
 			type: number,
 			fill: boolean,
-			strok: boolean,
+			stroke: boolean,
 			colorFillShape: string,
-			colorStrokShape: string,
+			colorStrokeShape: string,
 			x1: number,
 			y1: number,
 			x2: number,

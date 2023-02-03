@@ -10,7 +10,7 @@
     </div>
     <div class="drawContainer">
         <app-tool-bar class="toolBarContainer"  (update)="updateActiveTool($event)"></app-tool-bar>
-        <app-drawing-zone class="drawZoneContainer" [activeTool]="activeTool" [backgroundColor]="drawZoneBackgroundColor"></app-drawing-zone>
-        <app-option-bar class="optionBarContainer" (updateBackgroundColor)="updateDrawZoneBackgroundColor($event)"></app-option-bar>
+        <app-drawing-zone class="drawZoneContainer" [activeTool]="activeTool" [backgroundColor]="drawZoneBackgroundColor" [colorFillShape]="drawFillColor" [colorStrokeShape]="drawStrokeColor"></app-drawing-zone>
+        <app-option-bar class="optionBarContainer" (updateBackgroundColor)="updateDrawZoneBackgroundColor($event)" (updateFillColor)="updateFillColor($event)" (updateStrokeColor)="updateStrokeColor($event)"></app-option-bar>
     </div>
 </div>
