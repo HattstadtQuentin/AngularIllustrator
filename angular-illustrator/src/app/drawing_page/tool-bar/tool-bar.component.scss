@@ -4,6 +4,7 @@
     .toolBar {
         height: 100%;
         width: 100%;
+        overflow: hidden;
         font-family: $poppins;
 
         @include themed() {
@@ -17,12 +18,23 @@
             }
         }
 
+        hr {        
+            @include themed() {
+                border: 2px solid t($base-color);
+            }
+            width: 80%;
+            border-radius: 25px;
+        }
+
         .outilContainer {
             display: flex;
             width: 100%;
             flex-wrap: wrap;
             row-gap: 10px;
-            justify-content: space-evenly;
+            justify-content: left;
+            padding: 0 5%;
+            padding-top: 5%;
+            column-gap: 5%;
 
 
             .outilCard {
@@ -64,6 +76,10 @@
                 @include themed() {
                     background: t($fourth-color);
                 }
+            }
+
+            .hide {
+                display: none;
             }
         }
     }
