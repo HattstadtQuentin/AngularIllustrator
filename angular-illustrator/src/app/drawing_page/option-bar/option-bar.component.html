@@ -12,6 +12,53 @@
         'pageContainer': true
     }"
     >
-      
+        <div class="topContainer">
+            <div class="backgroundSelectorContainer">
+                <div class="title">
+                    Background Color
+                </div>
+                <div class="inputColor">
+                    <input [style.background]="color" [(colorPicker)]="color" (colorPickerOpen)="onEventLog('colorPickerOpen', $event)" 
+                    (colorPickerClose)="onEventLog('colorPickerClose', $event)" (cpInputChange)="onEventLog('cpInputChange', $event)" 
+                    (cpSliderDragStart)="onEventLog('cpSliderDragStart', $event)" (cpSliderDragEnd)="onEventLog('cpSliderDragEnd', $event)"/>
+                    <div ngxClipboard [cbContent]="color" (click)="showIsCopied()">{{ color }}</div>
+                </div>
+            </div>
+            <hr size="1"> 
+            <div class="optionContainer">
+                <div class="optionCard">
+                    <input type="checkbox" [(ngModel)]="grilleCheckboxValue" (change)="updateGrilleCheckboxValue($event)">
+                    <div>Grille</div>
+                </div>
+                <div class="optionCard">
+                    <input type="checkbox" [(ngModel)]="regleCheckboxValue" (change)="updateRegleCheckboxValue($event)">
+                    <div>Règle</div>
+                </div>
+            </div> 
+            <hr size="1">  
+            <div class="paperOption">
+                <div class="paperTitle">Taille de Papier</div>
+                <div class="paperSize">
+                    <select (change)="updatePaperSelection($event)">
+                        <option *ngFor="let option of options" [value]="option">{{ option }}</option>
+                    </select>
+                    <img src="../../../assets/arrow-down-1-svgrepo-com.svg" alt="Down Arrow"/>
+                </div>
+                <div class="paperOrientation">
+                    <div [ngClass]="{'portrait': isPortrait, 'landscape': !isPortrait}">&nbsp;</div>
+                    <div class="radioOption">
+                        <div *ngFor="let option of radioOptions">
+                            <input type="radio" name="orientation" [(ngModel)]="selectedOrientation" [value]="option.value" (change)="onOptionSelected(option.value)"> {{ option.label }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr size="1"> 
+        </div>
+
+        <div class="bottomContainer">
+            <div class="btn">Paramètre par défault</div>
+            <div class="btn">Exporter votre fichier</div>
+        </div>
     </div>
 </div>

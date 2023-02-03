@@ -18,6 +18,9 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatOptionModule } from '@angular/material/core';
+import { ColorPickerModule } from 'ngx-color-picker';
+import { ClipboardModule } from 'ngx-clipboard';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [
@@ -41,7 +44,10 @@ import { MatOptionModule } from '@angular/material/core';
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    MatOptionModule
+    MatOptionModule,
+    ColorPickerModule,
+    ClipboardModule,
+    ToastrModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]
