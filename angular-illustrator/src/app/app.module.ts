@@ -21,6 +21,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ClipboardModule } from 'ngx-clipboard';
 import { ToastrModule } from 'ngx-toastr';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { ToastrModule } from 'ngx-toastr';
     ColorPickerModule,
     ClipboardModule,
     ToastrModule.forRoot(),
+    NgxSliderModule
   ],
   providers: [],
   bootstrap: [AppComponent]

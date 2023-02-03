@@ -8,14 +8,14 @@
         </div>
     </div>
     <div [ngClass]="{
-        'off': isPage,
+        'off': !isPage,
         'pageContainer': true
     }"
     >
         <div class="topContainer">
             <div class="backgroundSelectorContainer">
                 <div class="title">
-                    Background Color
+                    Couleur d'arrière plan
                 </div>
                 <div class="inputColor">
                     <input [style.background]="color" [(colorPicker)]="color" (colorPickerOpen)="onEventLog('colorPickerOpen', $event)" 
@@ -59,6 +59,38 @@
         <div class="bottomContainer">
             <div class="btn">Paramètre par défault</div>
             <div class="btn">Exporter votre fichier</div>
+        </div>
+    </div>
+    <div [ngClass]="{
+        'off': isPage,
+        'styleContainer': true
+    }"
+    >
+        <div class="topContainer">
+            <div class="formSelectorContainer">
+                <div class="title">
+                    Couleur de dessin
+                </div>
+                <div class="inputColor">
+                    <input [style.background]="color1" [(colorPicker)]="color1" (colorPickerOpen)="onEventLog('colorPickerOpen', $event)" 
+                    (colorPickerClose)="onEventLog('colorPickerClose', $event)" (cpInputChange)="onEventLog('cpInputChange', $event)" 
+                    (cpSliderDragStart)="onEventLog('cpSliderDragStart', $event)" (cpSliderDragEnd)="onEventLog('cpSliderDragEnd', $event)"/>
+                    <div ngxClipboard [cbContent]="color1" (click)="showIsCopied()">{{ color1 }}</div>
+                </div>
+            </div>
+            <div class="thicknessContainer">
+                <div class="title">
+                    Epaisseur du trait
+                </div>
+                <div class="custom-slider">
+                    <ngx-slider [(value)]="thickness" [options]="optionsSlider"  (valueChange)="onValueChangeThickness($event)"></ngx-slider>
+                    <input type="number" [formControl]="formControlThickness" [ngClass]="{'invalid': !thicknessInputValid, 'inputThickness' : true}" [value]="thickness">
+                </div>
+            </div>
+            <hr size="1"> 
+            <div class="layerOption">
+                
+            </div>
         </div>
     </div>
 </div>
