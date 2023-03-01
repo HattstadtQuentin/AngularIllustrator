@@ -252,16 +252,44 @@ export class DrawingZoneComponent implements OnInit {
       case Tools.Draw:
         break;
       case Tools.Line:
-        this.lineDrawing(x, y, 0, prevision);
+        this.lineDrawing(
+          x,
+          y,
+          0,
+          prevision,
+          this.colorFillShape,
+          this.colorStrokeShape
+        );
         break;
       case Tools.Box:
-        this.RectDrawing(x, y, 0, prevision);
+        this.RectDrawing(
+          x,
+          y,
+          0,
+          prevision,
+          this.colorFillShape,
+          this.colorStrokeShape
+        );
         break;
       case Tools.Circle:
-        this.CircleDrawing(x, y, 0, prevision);
+        this.CircleDrawing(
+          x,
+          y,
+          0,
+          prevision,
+          this.colorFillShape,
+          this.colorStrokeShape
+        );
         break;
       case Tools.Triangle:
-        this.TriangleDrawing(x, y, 0, prevision);
+        this.TriangleDrawing(
+          x,
+          y,
+          0,
+          prevision,
+          this.colorFillShape,
+          this.colorStrokeShape
+        );
         break;
       case Tools.Eraser:
         break;
@@ -276,7 +304,9 @@ export class DrawingZoneComponent implements OnInit {
     x: number,
     y: number,
     type: number,
-    prevision: boolean
+    prevision: boolean,
+    colorFillShape: string,
+    colorStrokeShape: string
   ): void {
     if (!this.canvas) {
       return;
@@ -286,7 +316,7 @@ export class DrawingZoneComponent implements OnInit {
       )! as HTMLCanvasElement;
       if (prevision) {
         canvas = document.getElementById(
-          'drawingContainer2'
+          'previsualisationContainer'
         )! as HTMLCanvasElement;
       }
       const ctx = canvas.getContext('2d');
@@ -297,7 +327,7 @@ export class DrawingZoneComponent implements OnInit {
 
       if (this.cordList.length == 2 || type == 1) {
         if (ctx) {
-          ctx.strokeStyle = this.colorFillShape;
+          ctx.strokeStyle = colorFillShape;
           ctx.moveTo(this.cordList[0].x, this.cordList[0].y);
           ctx.lineTo(this.cordList[1].x, this.cordList[1].y);
           ctx.stroke();
@@ -307,8 +337,8 @@ export class DrawingZoneComponent implements OnInit {
               type: 1,
               fill: this.fill,
               stroke: this.stroke,
-              colorFillShape: this.colorFillShape,
-              colorStrokeShape: this.colorStrokeShape,
+              colorFillShape: colorFillShape,
+              colorStrokeShape: colorStrokeShape,
               x1: this.cordList[0].x,
               y1: this.cordList[0].y,
               x2: this.cordList[1].x,
@@ -341,7 +371,9 @@ export class DrawingZoneComponent implements OnInit {
     x: number,
     y: number,
     type: number,
-    prevision: boolean
+    prevision: boolean,
+    colorFillShape: string,
+    colorStrokeShape: string
   ): void {
     if (!this.canvas) {
       return;
@@ -351,7 +383,7 @@ export class DrawingZoneComponent implements OnInit {
       )! as HTMLCanvasElement;
       if (prevision) {
         canvas = document.getElementById(
-          'drawingContainer2'
+          'previsualisationContainer'
         )! as HTMLCanvasElement;
       }
       const ctx = canvas.getContext('2d');
@@ -366,8 +398,8 @@ export class DrawingZoneComponent implements OnInit {
           hauteur = this.cordList[1].y - this.cordList[0].y;
 
           if (this.fill && this.stroke) {
-            ctx.fillStyle = this.colorFillShape;
-            ctx.strokeStyle = this.colorStrokeShape;
+            ctx.fillStyle = colorFillShape;
+            ctx.strokeStyle = colorStrokeShape;
             ctx.fillRect(
               this.cordList[0].x,
               this.cordList[0].y,
@@ -437,7 +469,9 @@ export class DrawingZoneComponent implements OnInit {
     x: number,
     y: number,
     type: number,
-    prevision: boolean
+    prevision: boolean,
+    colorFillShape: string,
+    colorStrokeShape: string
   ): void {
     if (!this.canvas) {
       return;
@@ -447,7 +481,7 @@ export class DrawingZoneComponent implements OnInit {
       )! as HTMLCanvasElement;
       if (prevision) {
         canvas = document.getElementById(
-          'drawingContainer2'
+          'previsualisationContainer'
         )! as HTMLCanvasElement;
       }
       const ctx = canvas.getContext('2d');
@@ -466,8 +500,8 @@ export class DrawingZoneComponent implements OnInit {
           ctx.beginPath();
 
           if (this.fill && this.stroke) {
-            ctx.fillStyle = this.colorFillShape;
-            ctx.strokeStyle = this.colorStrokeShape;
+            ctx.fillStyle = colorFillShape;
+            ctx.strokeStyle = colorStrokeShape;
             ctx.arc(
               this.cordList[0].x,
               this.cordList[0].y,
@@ -541,7 +575,9 @@ export class DrawingZoneComponent implements OnInit {
     x: number,
     y: number,
     type: number,
-    prevision: boolean
+    prevision: boolean,
+    colorFillShape: string,
+    colorStrokeShape: string
   ): void {
     if (!this.canvas) {
       return;
@@ -551,7 +587,7 @@ export class DrawingZoneComponent implements OnInit {
       )! as HTMLCanvasElement;
       if (prevision) {
         canvas = document.getElementById(
-          'drawingContainer2'
+          'previsualisationContainer'
         )! as HTMLCanvasElement;
       }
       const ctx = canvas.getContext('2d');
@@ -563,8 +599,8 @@ export class DrawingZoneComponent implements OnInit {
           ctx.beginPath();
 
           if (this.fill && this.stroke) {
-            ctx.fillStyle = this.colorFillShape;
-            ctx.strokeStyle = this.colorStrokeShape;
+            ctx.fillStyle = colorFillShape;
+            ctx.strokeStyle = colorStrokeShape;
             ctx.moveTo(this.cordList[0].x, this.cordList[0].y);
             ctx.lineTo(this.cordList[1].x, this.cordList[1].y);
             ctx.lineTo(this.cordList[2].x, this.cordList[2].y);
@@ -664,23 +700,51 @@ export class DrawingZoneComponent implements OnInit {
         case 1:
           this.cordList.push({ x: list[i].x1, y: list[i].y1 });
           this.cordList.push({ x: list[i].x2, y: list[i].y2 });
-          this.lineDrawing(-1, -1, 1, false);
+          this.lineDrawing(
+            -1,
+            -1,
+            1,
+            false,
+            list[i].colorFillShape,
+            list[i].colorStrokeShape
+          );
           break;
         case 2:
           this.cordList.push({ x: list[i].x1, y: list[i].y1 });
           this.cordList.push({ x: list[i].x2, y: list[i].y2 });
-          this.RectDrawing(-1, -1, 1, false);
+          this.RectDrawing(
+            -1,
+            -1,
+            1,
+            false,
+            list[i].colorFillShape,
+            list[i].colorStrokeShape
+          );
           break;
         case 3:
           this.cordList.push({ x: list[i].x1, y: list[i].y1 });
           this.cordList.push({ x: list[i].x2, y: list[i].y2 });
-          this.CircleDrawing(-1, -1, 1, false);
+          this.CircleDrawing(
+            -1,
+            -1,
+            1,
+            false,
+            list[i].colorFillShape,
+            list[i].colorStrokeShape
+          );
           break;
         case 4:
           this.cordList.push({ x: list[i].x1, y: list[i].y1 });
           this.cordList.push({ x: list[i].x2, y: list[i].y2 });
           this.cordList.push({ x: list[i].x3, y: list[i].y3 });
-          this.TriangleDrawing(-1, -1, 1, false);
+          this.TriangleDrawing(
+            -1,
+            -1,
+            1,
+            false,
+            list[i].colorFillShape,
+            list[i].colorStrokeShape
+          );
           break;
       }
     }
