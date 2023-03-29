@@ -1,13 +1,8 @@
 <div class="zone">
-    <h1>{{ title }}</h1>
+  <div class="carreRemplissage">&nbsp;</div>
 
-    <div id="infoContainer">
-        <p>Nombre de click : {{ nbClick }}</p>
-        <p>Position x : {{ x }}</p>
-        <p>Position y : {{ y }}</p>
-    </div>
-
-    <div id="convasContainer">
-        <canvas #canvas id="drawingContainer"></canvas>
-    </div>
+  <div id="convasContainer">
+    <canvas #canvas id="drawingContainer"></canvas>
+    <canvas #canvasPrevi id="previsualisationContainer"></canvas>
+  </div>
 </div>

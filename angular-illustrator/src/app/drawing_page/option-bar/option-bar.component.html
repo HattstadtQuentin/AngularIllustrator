@@ -1,21 +1,21 @@
 <div class="optionBar">
     <div class="selectOption">
         <div [ngClass]="{'active': isPage}" (click)="setIsPage(true)">
-            Pages
+            Fichier
         </div>
         <div [ngClass]="{'active': !isPage}" (click)="setIsPage(false)">
-            Styles
+            Style
         </div>
     </div>
     <div [ngClass]="{
-        'off': isPage,
+        'off': !isPage,
         'pageContainer': true
     }"
     >
         <div class="topContainer">
             <div class="backgroundSelectorContainer">
                 <div class="title">
-                    Background Color
+                    Couleur d'arrière plan
                 </div>
                 <div class="inputColor">
                     <input [style.background]="color" [(colorPicker)]="color" (colorPickerOpen)="onEventLog('colorPickerOpen', $event)" 
@@ -59,6 +59,49 @@
         <div class="bottomContainer">
             <div class="btn">Paramètre par défault</div>
             <div class="btn">Exporter votre fichier</div>
+        </div>
+    </div>
+    <div [ngClass]="{
+        'off': isPage,
+        'styleContainer': true
+    }"
+    >
+        <div class="topContainer">
+            <div class="formSelectorContainer">
+                <div class="title">
+                    Couleur de remplissage
+                </div>
+                <div class="inputColor">
+                    <input [style.background]="fillColor" [(colorPicker)]="fillColor" (colorPickerOpen)="onEventLogFill('colorPickerOpen', $event)" 
+                    (colorPickerClose)="onEventLogFill('colorPickerClose', $event)" (cpInputChange)="onEventLogFill('cpInputChange', $event)" 
+                    (cpSliderDragStart)="onEventLogFill('cpSliderDragStart', $event)" (cpSliderDragEnd)="onEventLogFill('cpSliderDragEnd', $event)"/>
+                    <div ngxClipboard [cbContent]="fillColor" (click)="showIsCopied()">{{ fillColor }}</div>
+                </div>
+            </div>
+            <div class="formSelectorContainer">
+                <div class="title">
+                    Couleur de contour
+                </div>
+                <div class="inputColor">
+                    <input [style.background]="strokeColor" [(colorPicker)]="strokeColor" (colorPickerOpen)="onEventLogStroke('colorPickerOpen', $event)" 
+                    (colorPickerClose)="onEventLogStroke('colorPickerClose', $event)" (cpInputChange)="onEventLogStroke('cpInputChange', $event)" 
+                    (cpSliderDragStart)="onEventLogStroke('cpSliderDragStart', $event)" (cpSliderDragEnd)="onEventLogStroke('cpSliderDragEnd', $event)"/>
+                    <div ngxClipboard [cbContent]="strokeColor" (click)="showIsCopied()">{{ strokeColor }}</div>
+                </div>
+            </div>
+            <div class="thicknessContainer">
+                <div class="title">
+                    Epaisseur du trait
+                </div>
+                <div class="custom-slider">
+                    <ngx-slider [(value)]="thickness" [options]="optionsSlider"  (valueChange)="onValueChangeThickness($event)"></ngx-slider>
+                    <input type="number" [formControl]="formControlThickness" [ngClass]="{'invalid': !thicknessInputValid, 'inputThickness' : true}" [value]="thickness">
+                </div>
+            </div>
+            <hr size="1"> 
+            <div class="layerOption">
+                
+            </div>
         </div>
     </div>
 </div>

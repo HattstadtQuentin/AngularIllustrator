@@ -1,279 +1,299 @@
-import { Component, OnInit, ElementRef, ChangeDetectorRef, ViewChild, Input } from '@angular/core';
-import { timeouts } from 'retry';
-import { lookup } from 'dns/promises';
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ChangeDetectorRef,
+  ViewChild,
+  Input,
+} from '@angular/core';
 import { Tools } from '../tools.enum';
-
-//variable globale pour sortir de la boucle while du mouseDown event
-let press = 1;
+import Ruler from '@scena/ruler';
+import Gesto from 'gesto';
+import { Triangle } from '../shapes/Triangle';
+import { Circle } from '../shapes/Circle';
+import { Rect } from '../shapes/Rect';
+import { Line } from '../shapes/Line';
+import { Coordonnees, Shape } from '../shapes/Shape';
 
 @Component({
-	selector: 'app-drawing-zone',
-	templateUrl: './drawing-zone.component.html',
-	styleUrls: ['./drawing-zone.component.scss']
+  selector: 'app-drawing-zone',
+  templateUrl: './drawing-zone.component.html',
+  styleUrls: ['./drawing-zone.component.scss'],
 })
-
-
 export class DrawingZoneComponent implements OnInit {
-	@ViewChild('canvas') canvasRef: ElementRef;
-	@Input() activeTool = Tools.Line; 
+  @ViewChild('canvas') canvasRef: ElementRef;
+  @ViewChild('canvasPrevi') canvasPreviRef: ElementRef;
+  @Input() activeTool = Tools.Line;
+  @Input() backgroundColor = '#1A1F39';
 
-	//--------------------------------------------------------------------------------------
-	// DECLARATION DES ATTRIBUTS
-	//--------------------------------------------------------------------------------------
-	public title: string;
-	public nbClick: number;
-	public x: number;
-	public y: number;
-	public cordList: { x: number, y: number }[];
-	public canvas?: HTMLCanvasElement;
-	public context!: CanvasRenderingContext2D;
+  //--------------------------------------------------------------------------------------
+  // DECLARATION DES ATTRIBUTS
+  //--------------------------------------------------------------------------------------
+  public title: string; //Titre de la page
+  public x: number; //Position x de la souris
+  public y: number; //Position y de la souris
+  public cordList: { x: number; y: number }[]; //Liste des coordonnées de la forme en cours de dessin
+  public canvas?: HTMLCanvasElement;
+  public context!: CanvasRenderingContext2D;
+  public colorCanvas: string; //Couleur de fond du canvas
+  @Input() public colorFillShape: string; //Couleur de remplissage de la forme en cours de dessin
+  @Input() public colorStrokeShape: string;
+  public fill: boolean; //Boolean : la forme en cours de dessin à un remplissage
+  public stroke: boolean; //Boolean : la forme en cours de dessin à des contours
+  public shapeList: Shape[];
+  public currentShape: Shape | null;
+  public previsionMode: boolean; //Boolean : on est en mode prévision
+  public ruler1: Ruler | null = null;
+  public ruler2: Ruler | null = null;
 
-	//--------------------------------------------------------------------------------------
-	// CONSTRUCTEUR 
-	//--------------------------------------------------------------------------------------
-	constructor(private changeRef: ChangeDetectorRef, private elementRef: ElementRef) {
-		this.title = 'Espace de dessin';
-		this.nbClick = 0;
-		this.x = 0;
-		this.y = 0;
-		this.cordList = [];
-		this.canvasRef = new ElementRef(null);
-	}
+  //--------------------------------------------------------------------------------------
+  // CONSTRUCTEUR
+  //--------------------------------------------------------------------------------------
+  constructor(
+    private changeRef: ChangeDetectorRef,
+    private elementRef: ElementRef
+  ) {
+    this.title = 'Espace de dessin';
+    this.x = 0;
+    this.y = 0;
+    this.cordList = [];
+    this.canvasRef = new ElementRef(null);
+    this.canvasPreviRef = new ElementRef(null);
+    this.colorCanvas = '#fff';
+    this.colorFillShape = '#FFA500';
+    this.colorStrokeShape = '#000000';
+    this.fill = true;
+    this.stroke = true;
+    this.shapeList = [];
+    this.currentShape = null;
+    this.previsionMode = false;
+  }
 
+  //--------------------------------------------------------------------------------------
+  //
+  //--------------------------------------------------------------------------------------
+  ngOnInit() {
+    setTimeout(() => {
+      this.resizeCanvas();
+      window.addEventListener('resize', this.resizeCanvas.bind(this));
+    });
+  }
 
-	//--------------------------------------------------------------------------------------
-	//
-	//--------------------------------------------------------------------------------------
-	ngOnInit() {
-		setTimeout(() => {
-			this.resizeCanvas();
-			window.addEventListener('resize', this.resizeCanvas.bind(this));
-		});
-	}
+  //--------------------------------------------------------------------------------------
+  //
+  //--------------------------------------------------------------------------------------
+  ngAfterViewInit() {
+    this.canvas = this.canvasRef.nativeElement;
 
-	resizeCanvas(): void {
-		if (!this.canvasRef.nativeElement) {
-			console.log('no ref');
-			return;
-		}
+    this.elementRef.nativeElement
+      .querySelector('#drawingContainer')
+      .addEventListener('mousedown', this.prevision.bind(this));
 
-	
-		const canvas = this.canvasRef.nativeElement as HTMLCanvasElement;
-		const parent = canvas.parentElement as HTMLElement;
-		canvas.width = parent.offsetWidth;
-		canvas.height = parent.offsetHeight;
-	}
+    this.elementRef.nativeElement
+      .querySelector('#drawingContainer')
+      .addEventListener('mouseup', this.cancelPrevision.bind(this));
 
+    this.elementRef.nativeElement
+      .querySelector('#drawingContainer')
+      .addEventListener('mousemove', this.drawPrevision.bind(this));
+  }
 
-	//--------------------------------------------------------------------------------------
-	//
-	//--------------------------------------------------------------------------------------
-	ngAfterViewInit() {
-		this.canvas = this.canvasRef.nativeElement;
+  //--------------------------------------------------------------------------------------
+  //
+  //--------------------------------------------------------------------------------------
+  resizeCanvas(): void {
+    if (!this.canvasRef.nativeElement && !this.canvasPreviRef.nativeElement) {
+      return;
+    }
 
-		this.elementRef.nativeElement.querySelector('#drawingContainer')
-			.addEventListener('click', this.draw.bind(this));
+    const canvas = this.canvasRef.nativeElement as HTMLCanvasElement;
+    const parent = canvas.parentElement as HTMLElement;
+    canvas.width = parent.offsetWidth;
+    canvas.height = parent.offsetHeight;
 
-		this.elementRef.nativeElement.querySelector('#drawingContainer')
-			.addEventListener('mousedown', this.prevision.bind(this));
+    const previCanvas = this.canvasPreviRef.nativeElement as HTMLCanvasElement;
+    previCanvas.width = parent.offsetWidth;
+    previCanvas.height = parent.offsetHeight;
 
-		//this.elementRef.nativeElement.querySelector('#drawingContainer')
-		//	.addEventListener('mouseup', this.draw.bind(this));
-	}
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = this.colorCanvas;
+      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+    }
+  }
 
+  //--------------------------------------------------------------------------------------
+  // METHODE prevision : lié à l'event mouseDown
+  //--------------------------------------------------------------------------------------
+  public prevision(e: MouseEvent): void {
+    this.setMousePosition(e);
+    console.log(this.shapeList);
+    this.previsionMode = true;
+  }
 
-	//--------------------------------------------------------------------------------------
-	// METHODE prevision : lié à l'event mouseDown, va afficher les prévisions de la forme
-	//					   choisie en attendant que le bouton de souris soit relaché
-	//--------------------------------------------------------------------------------------
-	public prevision(e: MouseEvent): void {
+  //--------------------------------------------------------------------------------------
+  // METHODE drawPrevision : lié à l'event mouseMove, va dessiner la prévision de la forme
+  //					   choisie en attendant que le bouton de souris soit relaché
+  //--------------------------------------------------------------------------------------
+  public drawPrevision(e: MouseEvent): void {
+    if (this.previsionMode) {
+      const canvas = this.canvasPreviRef.nativeElement as HTMLCanvasElement;
+      const parent = canvas.parentElement as HTMLElement;
+      canvas.width = parent.offsetWidth;
+      canvas.height = parent.offsetHeight;
 
-		//TODO : arriver à detecter le mouseUp Event pour quitter le while
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0)';
+        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+      }
 
-		/*
-		while (press == 1) {
-		  console.log("mousedown");
-		}
-		*/
-	}
+      if (
+        this.canvas &&
+        this.canvas.parentElement &&
+        this.canvas.parentElement.parentElement
+      ) {
+        this.x =
+          e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
+        this.y =
+          e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
+      }
 
+      this.draw(this.x, this.y, true);
+    }
+  }
 
-	//--------------------------------------------------------------------------------------
-	// METHODE draw : lié à l'event mouseUP, va dessiner la forme choisie
-	//--------------------------------------------------------------------------------------
-	public draw(e: MouseEvent): void {
-		switch(this.activeTool){
-			case Tools.Select:
-				break;
-			case Tools.Selection:
-				break;
-			case Tools.Draw:
-				break;
-			case Tools.Line:
-				this.lineDrawing(e);
-				break;
-			case Tools.Box:
-				this.RectDrawing(e);
-				break;
-			case Tools.Circle:
-				this.CircleDrawing(e);
-				break;
-			case Tools.Triangle:
-				this.TriangleDrawing(e);
-				break;
-			case Tools.Eraser:
-				break;
-		}
-	}
+  //--------------------------------------------------------------------------------------
+  // METHODE cancelPrevision : lié à l'event mouseUp, va stopper les prévisions de la forme
+  //					   		  choisie et va dessiner la forme
+  //--------------------------------------------------------------------------------------
+  public cancelPrevision(e: MouseEvent): void {
+    this.previsionMode = false;
+    this.setMousePosition(e);
+    if (this.currentShape !== null) {
+      this.shapeList.push(this.currentShape);
+    }
+    this.currentShape = null;
+    this.drawAllShapes(this.shapeList);
 
+    if (this.activeTool == Tools.Select)
+      this.ChangeCanvasColor(this.colorCanvas);
+  }
 
-	//--------------------------------------------------------------------------------------
-	// METHODE lineDrawing : permet de dessiner une ligne sur le canvas avec deux clicks
-	//						 de souris simulant le debut et la fin de la ligne.
-	//--------------------------------------------------------------------------------------
-	public lineDrawing(e: MouseEvent): void {
-		if(!this.canvas){
-			return;
-		} else {
-			this.x = e.clientX - this.canvas.offsetLeft;
-			this.y = e.clientY - this.canvas.offsetTop;
-			this.nbClick++;
-			this.cordList.push({ "x": this.x, "y": this.y });
+  //--------------------------------------------------------------------------------------
+  // METHODE setMousePosition : recupère la position de la souris et lance le processus
+  //						   	  de dessin
+  //--------------------------------------------------------------------------------------
+  public setMousePosition(e: MouseEvent): void {
+    if (
+      this.canvas &&
+      this.canvas.parentElement &&
+      this.canvas.parentElement.parentElement
+    ) {
+      this.x =
+        e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
+      this.y =
+        e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
+    }
 
-			let canvas: HTMLCanvasElement = document.getElementById('drawingContainer')! as HTMLCanvasElement;
-			const ctx = canvas.getContext('2d');
+    this.draw(this.x, this.y, false);
+  }
 
+  //--------------------------------------------------------------------------------------
+  // METHODE draw : va dessiner la forme choisie
+  //--------------------------------------------------------------------------------------
+  public draw(x: number, y: number, prevision: boolean): void {
+    if (this.currentShape === null) {
+      console.log(this.activeTool);
+      switch (this.activeTool) {
+        case Tools.Select:
+          this.ChangeCanvasColor('green');
+          break;
+        case Tools.Selection:
+          break;
+        case Tools.Draw:
+          break;
+        case Tools.Line:
+          this.currentShape = new Line(
+            this.fill,
+            this.stroke,
+            this.colorFillShape,
+            this.colorStrokeShape,
+            [new Coordonnees(x, y)]
+          );
+          break;
+        case Tools.Box:
+          this.currentShape = new Rect(
+            this.fill,
+            this.stroke,
+            this.colorFillShape,
+            this.colorStrokeShape,
+            [new Coordonnees(x, y)]
+          );
+          break;
+        case Tools.Circle:
+          this.currentShape = new Circle(
+            this.fill,
+            this.stroke,
+            this.colorFillShape,
+            this.colorStrokeShape,
+            [new Coordonnees(x, y)]
+          );
+          break;
+        case Tools.Triangle:
+          this.currentShape = new Triangle(
+            this.fill,
+            this.stroke,
+            this.colorFillShape,
+            this.colorStrokeShape,
+            [new Coordonnees(x, y)]
+          );
+          break;
+        case Tools.Eraser:
+          break;
+      }
+      if (this.currentShape !== null) {
+        this.currentShape.draw(x, y, 0, prevision);
+      }
+    } else {
+      this.currentShape.draw(x, y, 0, prevision);
+    }
+  }
 
-			if (this.cordList.length == 2) {
+  //--------------------------------------------------------------------------------------
+  // METHODE ChangeCanvasColor : permet de changer la couleur de fond du canvas
+  //--------------------------------------------------------------------------------------
+  public ChangeCanvasColor(color: string) {
+    const canvas = this.canvasRef.nativeElement as HTMLCanvasElement;
+    const parent = canvas.parentElement as HTMLElement;
+    canvas.width = parent.offsetWidth;
+    canvas.height = parent.offsetHeight;
 
-				let index = 0;
-				if (ctx) {
-					ctx.moveTo(this.cordList[0].x, this.cordList[0].y);
-					ctx.lineTo(this.cordList[1].x, this.cordList[1].y);
-					ctx.stroke();
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.fillStyle = color;
+      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+    }
 
-					let size = this.cordList.length;
-					for (let i = 0; i < size; i++) {
-						this.cordList.pop();
-					}
-				}
-			}
-		}
-	}
+    this.colorCanvas = color;
 
+    this.drawAllShapes(this.shapeList);
+  }
 
-	//--------------------------------------------------------------------------------------
-	// METHODE RectDrawing : permet de dessiner un rectangle sur le canvas avec deux clicks
-	//						 de souris simulant le debut et la fin de la diagonale du rect.
-	//--------------------------------------------------------------------------------------
-	public RectDrawing(e: MouseEvent): void {
-		if(!this.canvas){
-			return;
-		} else {
-			this.x = e.clientX - this.canvas.offsetLeft;
-			this.y = e.clientY - this.canvas.offsetTop;
-			this.cordList.push({ "x": this.x, "y": this.y });
-			console.log({ "x": this.x, "y": this.y });
-
-			let canvas: HTMLCanvasElement = document.getElementById('drawingContainer')! as HTMLCanvasElement;
-			const ctx = canvas.getContext('2d');
-
-
-			if (this.cordList.length == 2) {
-
-				let largeur = 0;
-				let hauteur = 0;
-				if (ctx) {
-					largeur = this.cordList[1].x - this.cordList[0].x;
-					hauteur = this.cordList[1].y - this.cordList[0].y;
-
-					ctx.fillRect(this.cordList[0].x, this.cordList[0].y, largeur, hauteur);
-
-					let size = this.cordList.length;
-					for (let i = 0; i < size; i++) {
-						this.cordList.pop();
-					}
-				}
-			}
-		}
-	}
-
-
-	//--------------------------------------------------------------------------------------
-	// METHODE CircleDrawing : permet de dessiner un cercle sur le canvas avec deux clicks
-	//						 de souris simulant le debut et la fin du rayon du cercle.
-	//--------------------------------------------------------------------------------------
-	public CircleDrawing(e: MouseEvent): void {
-
-		if(!this.canvas){
-			return;
-		} else {
-			this.x = e.clientX - this.canvas.offsetLeft;
-			this.y = e.clientY - this.canvas.offsetTop;
-			this.cordList.push({ "x": this.x, "y": this.y });
-
-			let canvas: HTMLCanvasElement = document.getElementById('drawingContainer')! as HTMLCanvasElement;
-			const ctx = canvas.getContext('2d');
-
-
-			if (this.cordList.length == 2) {
-
-				let largeur = 0;
-				let hauteur = 0;
-				let rayon = 0;
-				if (ctx) {
-					largeur = Math.abs(this.cordList[1].x - this.cordList[0].x);
-					hauteur = Math.abs(this.cordList[1].y - this.cordList[0].y);
-					rayon = Math.sqrt(largeur * largeur + hauteur * hauteur);
-
-					ctx.beginPath();
-					ctx.arc(this.cordList[0].x, this.cordList[0].y, rayon, 0, Math.PI * 2, true);
-					ctx.stroke();
-					ctx.fill();
-
-					let size = this.cordList.length;
-					for (let i = 0; i < size; i++) {
-						this.cordList.pop();
-					}
-				}
-			}
-		}
-	}
-
-
-	//--------------------------------------------------------------------------------------
-	// METHODE TriangleDrawing : permet de dessiner un triangle sur le canvas avec trois clicks
-	//						 de souris simulant les 3 sommets du triangle.
-	//--------------------------------------------------------------------------------------
-	public TriangleDrawing(e: MouseEvent): void {
-		if(!this.canvas){
-			return;
-		} else {
-			this.x = e.clientX - this.canvas.offsetLeft;
-			this.y = e.clientY - this.canvas.offsetTop;
-			this.cordList.push({ "x": this.x, "y": this.y });
-
-			let canvas: HTMLCanvasElement = document.getElementById('drawingContainer')! as HTMLCanvasElement;
-			const ctx = canvas.getContext('2d');
-
-
-			if (this.cordList.length == 3) {
-
-				if (ctx) {
-					ctx.beginPath();
-					ctx.moveTo(this.cordList[0].x, this.cordList[0].y);
-					ctx.lineTo(this.cordList[1].x, this.cordList[1].y);
-					ctx.lineTo(this.cordList[2].x, this.cordList[2].y);
-					ctx.fill();
-
-					let size = this.cordList.length;
-					for (let i = 0; i < size; i++) {
-						this.cordList.pop();
-					}
-				}
-			}
-		}
-	}
+  //--------------------------------------------------------------------------------------
+  // METHODE drawAllShapes : permet de dessiner sur le canvas toutes les formes de la
+  //						   liste de formes
+  //--------------------------------------------------------------------------------------
+  public drawAllShapes(shapes: Shape[]) {
+    let size = shapes.length;
+    for (let i = 0; i < size; i++) {
+      new Shape(
+        shapes[i].stroke,
+        shapes[i].fill,
+        shapes[i].colorFillShape,
+        shapes[i].colorStrokeShape,
+        shapes[i].coordList
+      ).draw(-1, -1, 1, false);
+    }
+  }
 }
-
-
