@@ -1,72 +1,77 @@
-@import '../../styles/global.scss';
+@import "../../styles/global.scss";
 
 :host {
-    @include themed() {
-        background: t($base-color);
-    }
-    width: 100%;
-    height: 90%;
+  @include themed() {
+    background: t($base-color);
+  }
+  width: 100%;
+  height: 100%;
 
-    .drawPage {
-        width: 100%;
+  .drawPage {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .fileInfosContainer {
+      height: 15%;
+      padding: 0 2%;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .logo {
+        height: 70%;
+      }
+
+      .fileInfos {
         height: 100%;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        font-family: $poppins;
 
-        .fileInfosContainer {
-            height: 15%;
-            padding: 0 2%;
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-    
-            .fileInfos {
-                height: 50%;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                font-family: $poppins;
-    
-                .filePath {
-                    @include themed() {
-                        color: t($second-text-color);
-                    }
-    
-                    font-size: 1rem;
-                }
-    
-                .fileTitle {
-                    @include themed() {
-                        color: t($base-text-color);
-                    }
-                    font-size: 1.2rem;
-                }
-            }
+        .filePath {
+          @include themed() {
+            color: t($second-text-color);
+          }
+
+          font-size: 1rem;
+          line-height: 1;
         }
 
-
-        .drawContainer {
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            height: 100%;
-
-            .toolBarContainer {
-                height: 100%;
-                width: 15%;
-            }
-
-            .drawZoneContainer {
-                height: 100%;
-                width: 65%;
-            }
-
-            .optionBarContainer {
-                height: 100%;
-                width: 20%;
-            }
-
+        .fileTitle {
+          @include themed() {
+            color: t($base-text-color);
+          }
+          font-size: 1.2rem;
+          line-height: 1;
         }
+      }
     }
+
+    .drawContainer {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      height: 100%;
+
+      .toolBarContainer {
+        height: 100%;
+        width: 15%;
+      }
+
+      .drawZoneContainer {
+        height: 100%;
+        width: 65%;
+        background: red;
+      }
+
+      .optionBarContainer {
+        height: 100%;
+        width: 20%;
+      }
+    }
+  }
 }

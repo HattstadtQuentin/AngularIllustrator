@@ -8,33 +8,7 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-
-    .ruler {
-      position: absolute;
-      top: 0;
-      left: 0;
-    }
-    .ruler.horizontal {
-      left: 30px;
-      width: calc(100% - 30px);
-      height: 30px;
-    }
-    .ruler.vertical {
-      top: 30px;
-      width: 30px;
-      height: calc(100% - 30px);
-    }
-
-    .carreRemplissage {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 30px;
-      height: 30px;
-      @include themed() {
-        background: t($third-color);
-      }
-    }
+    background: $third-color--dark;
 
     h1 {
       display: flex;
