@@ -5,17 +5,20 @@ import { Options } from '@angular-slider/ngx-slider';
 import { PaperSizes } from '../paperSizes.enum';
 import { FormControl, Validators } from '@angular/forms';
 
+
+
 @Component({
   selector: 'app-option-bar',
   templateUrl: './option-bar.component.html',
   styleUrls: ['./option-bar.component.scss']
 })
+
 export class OptionBarComponent {
   isPage = true;
   isPortrait = true;
   regleCheckboxValue: boolean = false;
   grilleCheckboxValue: boolean = false;
-  color: string = '#1A1F39'; 
+  color: string = '#1A1F39';
   fillColor: string = "#000000";
   strokeColor: string = "#000000";
   options = Object.values(PaperSizes).map(size => {
@@ -26,28 +29,29 @@ export class OptionBarComponent {
   @Output() updateFillColor = new EventEmitter<string>();
   @Output() updateStrokeColor = new EventEmitter<string>();
 
+
   constructor(
-    public vcRef: ViewContainerRef, 
-    private cpService: ColorPickerService, 
-    private toastr: ToastrService, 
-    private renderer: Renderer2, 
-    private el: ElementRef
-  ) {}
+    public vcRef: ViewContainerRef,
+    private cpService: ColorPickerService,
+    private toastr: ToastrService,
+    private renderer: Renderer2,
+    private el: ElementRef,
+  ) { }
 
   public onEventLog(event: string, data: any): void {
-    if(event == "colorPickerClose" && typeof data === 'string'){
+    if (event == "colorPickerClose" && typeof data === 'string') {
       this.updateBackgroundColor.emit(data);
     }
   }
 
   public onEventLogFill(event: string, data: any): void {
-    if(event == "colorPickerClose" && typeof data === 'string'){
+    if (event == "colorPickerClose" && typeof data === 'string') {
       this.updateFillColor.emit(data);
     }
   }
 
   public onEventLogStroke(event: string, data: any): void {
-    if(event == "colorPickerClose" && typeof data === 'string'){
+    if (event == "colorPickerClose" && typeof data === 'string') {
       this.updateStrokeColor.emit(data);
     }
   }
@@ -88,7 +92,7 @@ export class OptionBarComponent {
 
   onOptionSelected(value: string) {
     this.selectedOrientation = value;
-    if(this.selectedOrientation == 'portrait'){
+    if (this.selectedOrientation == 'portrait') {
       this.isPortrait = true;
     } else {
       this.isPortrait = false;
@@ -105,7 +109,7 @@ export class OptionBarComponent {
   thicknessInputValid = true;
   ngOnInit() {
     this.formControlThickness.valueChanges.subscribe(x => {
-      if(x === null){
+      if (x === null) {
         this.thicknessInputValid = false;
       } else {
         this.thicknessInputValid = true;
@@ -119,3 +123,5 @@ export class OptionBarComponent {
     this.thicknessInputValid = true;
   }
 }
+
+

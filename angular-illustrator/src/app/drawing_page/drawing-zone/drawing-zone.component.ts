@@ -15,6 +15,8 @@ import { Rect } from '../shapes/Rect';
 import { Line } from '../shapes/Line';
 import { Coordonnees, Shape } from '../shapes/Shape';
 
+import { HttpClient } from '@angular/common/http';
+
 @Component({
   selector: 'app-drawing-zone',
   templateUrl: './drawing-zone.component.html',
@@ -51,7 +53,8 @@ export class DrawingZoneComponent implements OnInit {
   //--------------------------------------------------------------------------------------
   constructor(
     private changeRef: ChangeDetectorRef,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private http: HttpClient,
   ) {
     this.title = 'Espace de dessin';
     this.x = 0;
@@ -154,9 +157,9 @@ export class DrawingZoneComponent implements OnInit {
         this.canvas.parentElement.parentElement
       ) {
         this.x =
-          e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
+          e.clientX - this.canvas.parentElement ?.parentElement.offsetLeft - 50;
         this.y =
-          e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
+          e.clientY - this.canvas.parentElement ?.parentElement.offsetTop - 50;
       }
 
       this.draw(this.x, this.y, true);
@@ -191,9 +194,9 @@ export class DrawingZoneComponent implements OnInit {
       this.canvas.parentElement.parentElement
     ) {
       this.x =
-        e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
+        e.clientX - this.canvas.parentElement ?.parentElement.offsetLeft - 50;
       this.y =
-        e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
+        e.clientY - this.canvas.parentElement ?.parentElement.offsetTop - 50;
     }
 
     this.draw(this.x, this.y, false);
@@ -296,4 +299,47 @@ export class DrawingZoneComponent implements OnInit {
       ).draw(-1, -1, 1, false);
     }
   }
+
+
+  //-------------------------------------------------------------------------------------
+  public importJson(event: any): void {
+
+    const file: File = event.target.files[0];
+    const reader: FileReader = new FileReader();
+
+    reader.onload = (e: any) => {
+      const fileContent: string = e.target.result;
+      console.log(fileContent);
+    };
+
+    reader.readAsText(file);
+
+  }
+  //-------------------------------------------------------------------------------------
+
+
+
+  //-------------------------------------------------------------------------------------
+  public exportJson() {
+
+    const jsonData = JSON.stringify(this.shapeList);
+
+    console.log(jsonData);
+    let blob = new Blob(['\ufeff' + jsonData], { type: 'application/json;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    a.setAttribute('style', 'display:none');
+    a.href = url;
+    a.download = 'data.json';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove(); // remove the element from the DOM
+
+  }
+  //-------------------------------------------------------------------------------------
+
 }
+
+
+

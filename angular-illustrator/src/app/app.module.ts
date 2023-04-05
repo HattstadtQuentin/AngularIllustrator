@@ -20,6 +20,8 @@ import { ClipboardModule } from 'ngx-clipboard';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 
+import { HttpClientModule } from '@angular/common/http';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,8 +46,10 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
     ClipboardModule,
     ToastrModule.forRoot(),
     NgxSliderModule,
+    HttpClientModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

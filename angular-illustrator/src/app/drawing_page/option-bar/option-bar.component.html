@@ -10,71 +10,82 @@
     <div [ngClass]="{
         'off': !isPage,
         'pageContainer': true
-    }"
-    >
+    }">
         <div class="topContainer">
             <div class="backgroundSelectorContainer">
                 <div class="title">
                     Couleur d'arrière plan
                 </div>
                 <div class="inputColor">
-                    <input [style.background]="color" [(colorPicker)]="color" (colorPickerOpen)="onEventLog('colorPickerOpen', $event)" 
-                    (colorPickerClose)="onEventLog('colorPickerClose', $event)" (cpInputChange)="onEventLog('cpInputChange', $event)" 
-                    (cpSliderDragStart)="onEventLog('cpSliderDragStart', $event)" (cpSliderDragEnd)="onEventLog('cpSliderDragEnd', $event)"/>
+                    <input [style.background]="color" [(colorPicker)]="color"
+                        (colorPickerOpen)="onEventLog('colorPickerOpen', $event)"
+                        (colorPickerClose)="onEventLog('colorPickerClose', $event)"
+                        (cpInputChange)="onEventLog('cpInputChange', $event)"
+                        (cpSliderDragStart)="onEventLog('cpSliderDragStart', $event)"
+                        (cpSliderDragEnd)="onEventLog('cpSliderDragEnd', $event)" />
                     <div ngxClipboard [cbContent]="color" (click)="showIsCopied()">{{ color }}</div>
                 </div>
             </div>
-            <hr size="1"> 
+            <hr size="1">
             <div class="optionContainer">
                 <div class="optionCard">
-                    <input type="checkbox" [(ngModel)]="grilleCheckboxValue" (change)="updateGrilleCheckboxValue($event)">
+                    <input type="checkbox" [(ngModel)]="grilleCheckboxValue"
+                        (change)="updateGrilleCheckboxValue($event)">
                     <div>Grille</div>
                 </div>
                 <div class="optionCard">
                     <input type="checkbox" [(ngModel)]="regleCheckboxValue" (change)="updateRegleCheckboxValue($event)">
                     <div>Règle</div>
                 </div>
-            </div> 
-            <hr size="1">  
+            </div>
+            <hr size="1">
             <div class="paperOption">
                 <div class="paperTitle">Taille de Papier</div>
                 <div class="paperSize">
                     <select (change)="updatePaperSelection($event)">
                         <option *ngFor="let option of options" [value]="option">{{ option }}</option>
                     </select>
-                    <img src="../../../assets/arrow-down-1-svgrepo-com.svg" alt="Down Arrow"/>
+                    <img src="../../../assets/arrow-down-1-svgrepo-com.svg" alt="Down Arrow" />
                 </div>
                 <div class="paperOrientation">
                     <div [ngClass]="{'portrait': isPortrait, 'landscape': !isPortrait}">&nbsp;</div>
                     <div class="radioOption">
                         <div *ngFor="let option of radioOptions">
-                            <input type="radio" name="orientation" [(ngModel)]="selectedOrientation" [value]="option.value" (change)="onOptionSelected(option.value)"> {{ option.label }}
+                            <input type="radio" name="orientation" [(ngModel)]="selectedOrientation"
+                                [value]="option.value" (change)="onOptionSelected(option.value)"> {{ option.label }}
                         </div>
                     </div>
                 </div>
             </div>
-            <hr size="1"> 
+            <hr size="1">
         </div>
 
         <div class="bottomContainer">
-            <div class="btn">Paramètre par défault</div>
-            <div class="btn">Exporter votre fichier</div>
+            <div class="btn" id="import">
+                <button id="importButton">Importer vos fichiers</button>
+
+            </div>
+            <div class="btn" id="export">
+                <button id="exportButton">Exporter vos fichiers</button>
+            </div>
         </div>
     </div>
     <div [ngClass]="{
         'off': isPage,
         'styleContainer': true
-    }"
-    >
+    }">
         <div class="topContainer">
             <div class="formSelectorContainer">
                 <div class="title">
                     Couleur de remplissage
                 </div>
                 <div class="inputColor">
-                    <input [style.background]="fillColor" [(colorPicker)]="fillColor" (colorPickerOpen)="onEventLogFill('colorPickerOpen', $event)" 
-                    (colorPickerClose)="onEventLogFill('colorPickerClose', $event)" (cpInputChange)="onEventLogFill('cpInputChange', $event)" 
-                    (cpSliderDragStart)="onEventLogFill('cpSliderDragStart', $event)" (cpSliderDragEnd)="onEventLogFill('cpSliderDragEnd', $event)"/>
+                    <input [style.background]="fillColor" [(colorPicker)]="fillColor"
+                        (colorPickerOpen)="onEventLogFill('colorPickerOpen', $event)"
+                        (colorPickerClose)="onEventLogFill('colorPickerClose', $event)"
+                        (cpInputChange)="onEventLogFill('cpInputChange', $event)"
+                        (cpSliderDragStart)="onEventLogFill('cpSliderDragStart', $event)"
+                        (cpSliderDragEnd)="onEventLogFill('cpSliderDragEnd', $event)" />
                     <div ngxClipboard [cbContent]="fillColor" (click)="showIsCopied()">{{ fillColor }}</div>
                 </div>
             </div>
@@ -83,9 +94,12 @@
                     Couleur de contour
                 </div>
                 <div class="inputColor">
-                    <input [style.background]="strokeColor" [(colorPicker)]="strokeColor" (colorPickerOpen)="onEventLogStroke('colorPickerOpen', $event)" 
-                    (colorPickerClose)="onEventLogStroke('colorPickerClose', $event)" (cpInputChange)="onEventLogStroke('cpInputChange', $event)" 
-                    (cpSliderDragStart)="onEventLogStroke('cpSliderDragStart', $event)" (cpSliderDragEnd)="onEventLogStroke('cpSliderDragEnd', $event)"/>
+                    <input [style.background]="strokeColor" [(colorPicker)]="strokeColor"
+                        (colorPickerOpen)="onEventLogStroke('colorPickerOpen', $event)"
+                        (colorPickerClose)="onEventLogStroke('colorPickerClose', $event)"
+                        (cpInputChange)="onEventLogStroke('cpInputChange', $event)"
+                        (cpSliderDragStart)="onEventLogStroke('cpSliderDragStart', $event)"
+                        (cpSliderDragEnd)="onEventLogStroke('cpSliderDragEnd', $event)" />
                     <div ngxClipboard [cbContent]="strokeColor" (click)="showIsCopied()">{{ strokeColor }}</div>
                 </div>
             </div>
@@ -94,13 +108,15 @@
                     Epaisseur du trait
                 </div>
                 <div class="custom-slider">
-                    <ngx-slider [(value)]="thickness" [options]="optionsSlider"  (valueChange)="onValueChangeThickness($event)"></ngx-slider>
-                    <input type="number" [formControl]="formControlThickness" [ngClass]="{'invalid': !thicknessInputValid, 'inputThickness' : true}" [value]="thickness">
+                    <ngx-slider [(value)]="thickness" [options]="optionsSlider"
+                        (valueChange)="onValueChangeThickness($event)"></ngx-slider>
+                    <input type="number" [formControl]="formControlThickness"
+                        [ngClass]="{'invalid': !thicknessInputValid, 'inputThickness' : true}" [value]="thickness">
                 </div>
             </div>
-            <hr size="1"> 
+            <hr size="1">
             <div class="layerOption">
-                
+
             </div>
         </div>
     </div>
