@@ -301,30 +301,73 @@ export class DrawingZoneComponent implements OnInit {
   }
 
 
-  //-------------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------
+  // METHODE drawAllShapes : permet de dessiner sur le canvas toutes les formes de la
+  //						   liste de formes
+  //--------------------------------------------------------------------------------------
+  public drawAllShapesForImport(shapes: any): void {
+
+    let size = shapes.length;
+
+    for (let i = 0; i < size; i++) {
+
+      /*
+      TODO : rajouter un champ 'type' à l'objet shape
+        car la en faisant new SHAPE(...).draw ça dessin pas
+        vu qu'on connait pas le type de forme
+
+        IDEE : faire un switch(shapes[i]["type"])
+
+        et faire les cases avec new LINE(), new RECT(), etc.
+        (comme la function draw actuel un peu plus au dessus)
+      */
+
+
+      new Line(
+        shapes[i]["stroke"],
+        shapes[i]["fill"],
+        shapes[i]["colorFillShape"],
+        shapes[i]["colorStrokeShape"],
+        shapes[i]["coordList"]
+      ).draw(-1, -1, 1, false);
+
+    }
+
+    this.shapeList = shapes;
+  }
+
+
+  //--------------------------------------------------------------------------------------
+  // METHODE importJson : permet de selectionner un fichier json de l'utilisateur
+  //        afin d'importer un projet. Appeler lors du click sur le bouton 
+  //        chooseFile se trouvant en dessous de la zone de dessin.
+  //--------------------------------------------------------------------------------------
   public importJson(event: any): void {
 
     const file: File = event.target.files[0];
     const reader: FileReader = new FileReader();
 
     reader.onload = (e: any) => {
-      const fileContent: string = e.target.result;
+      const fileContent = JSON.parse(e.target.result);
       console.log(fileContent);
+      this.drawAllShapesForImport(fileContent);
     };
 
     reader.readAsText(file);
-
   }
-  //-------------------------------------------------------------------------------------
 
 
 
-  //-------------------------------------------------------------------------------------
+  //--------------------------------------------------------------------------------------
+  // METHODE importJson : permet d'exporter un projet en un fichier Json qui se 
+  //        trouvera dans les téléchargement de l'utilisateur . Appeler lors du click
+  //        sur le bouton Exporter se trouvant en dessous de la zone de dessin.
+  //--------------------------------------------------------------------------------------
   public exportJson() {
 
     const jsonData = JSON.stringify(this.shapeList);
-
     console.log(jsonData);
+
     let blob = new Blob(['\ufeff' + jsonData], { type: 'application/json;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -334,8 +377,7 @@ export class DrawingZoneComponent implements OnInit {
     a.download = 'data.json';
     a.click();
     window.URL.revokeObjectURL(url);
-    a.remove(); // remove the element from the DOM
-
+    a.remove();
   }
   //-------------------------------------------------------------------------------------
 
