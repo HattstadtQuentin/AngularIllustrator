@@ -7,13 +7,14 @@ import {
   Input,
 } from '@angular/core';
 import { Tools } from '../tools.enum';
-import Ruler from '@scena/ruler';
-import Gesto from 'gesto';
 import { Triangle } from '../shapes/Triangle';
 import { Circle } from '../shapes/Circle';
 import { Rect } from '../shapes/Rect';
 import { Line } from '../shapes/Line';
 import { Coordonnees, Shape } from '../shapes/Shape';
+import { ActionsList } from '../actions/ActionsList';
+import { Draw } from '../actions/Draw';
+import { Action } from '../actions/Action';
 
 @Component({
   selector: 'app-drawing-zone',
@@ -29,44 +30,51 @@ export class DrawingZoneComponent implements OnInit {
   //--------------------------------------------------------------------------------------
   // DECLARATION DES ATTRIBUTS
   //--------------------------------------------------------------------------------------
-  public title: string; //Titre de la page
+  //Attributs globaux
   public x: number; //Position x de la souris
   public y: number; //Position y de la souris
-  public cordList: { x: number; y: number }[]; //Liste des coordonnées de la forme en cours de dessin
   public canvas?: HTMLCanvasElement;
-  public context!: CanvasRenderingContext2D;
   public colorCanvas: string; //Couleur de fond du canvas
+
+  //Attributs de la shape en cours
+  public cordList: { x: number; y: number }[]; //Liste des coordonnées de la forme en cours de dessin
   @Input() public colorFillShape: string; //Couleur de remplissage de la forme en cours de dessin
   @Input() public colorStrokeShape: string;
   public fill: boolean; //Boolean : la forme en cours de dessin à un remplissage
   public stroke: boolean; //Boolean : la forme en cours de dessin à des contours
+
   public shapeList: Shape[];
-  public currentShape: Shape | null;
-  public previsionMode: boolean; //Boolean : on est en mode prévision
-  public ruler1: Ruler | null = null;
-  public ruler2: Ruler | null = null;
+  public actionList: ActionsList;
+  public currentAction: Action | null;
+
+  public isDrawing: boolean; //Boolean : dessin en cours
+  public controlKeyPressed: boolean; //Boolean : la touche control est appuyé ou non, utilisé lors du undo redo
+  public majKeyPressed: boolean; //Boolean : la touche maj est appuyé ou non, utilisé lors du redo
 
   //--------------------------------------------------------------------------------------
   // CONSTRUCTEUR
   //--------------------------------------------------------------------------------------
-  constructor(
-    private changeRef: ChangeDetectorRef,
-    private elementRef: ElementRef
-  ) {
-    this.title = 'Espace de dessin';
-    this.x = 0;
-    this.y = 0;
-    this.cordList = [];
+  constructor(private elementRef: ElementRef) {
     this.canvasRef = new ElementRef(null);
     this.canvasPreviRef = new ElementRef(null);
+
+    this.x = 0;
+    this.y = 0;
     this.colorCanvas = '#fff';
+
+    this.cordList = [];
     this.colorFillShape = '#FFA500';
     this.colorStrokeShape = '#000000';
     this.fill = true;
     this.stroke = true;
+
     this.shapeList = [];
-    this.currentShape = null;
-    this.previsionMode = false;
+    this.actionList = new ActionsList();
+    this.currentAction = null;
+
+    this.isDrawing = false;
+    this.controlKeyPressed = false;
+    this.majKeyPressed = false;
   }
 
   //--------------------------------------------------------------------------------------
@@ -85,17 +93,54 @@ export class DrawingZoneComponent implements OnInit {
   ngAfterViewInit() {
     this.canvas = this.canvasRef.nativeElement;
 
-    this.elementRef.nativeElement
-      .querySelector('#drawingContainer')
-      .addEventListener('mousedown', this.prevision.bind(this));
+    document.addEventListener('keydown', this.handleKeyDown.bind(this));
+    document.addEventListener('keyup', this.handleKeyUp.bind(this));
 
     this.elementRef.nativeElement
       .querySelector('#drawingContainer')
-      .addEventListener('mouseup', this.cancelPrevision.bind(this));
+      .addEventListener('mousedown', this.onMouseDown.bind(this));
 
     this.elementRef.nativeElement
       .querySelector('#drawingContainer')
-      .addEventListener('mousemove', this.drawPrevision.bind(this));
+      .addEventListener('mouseup', this.onMouseUp.bind(this));
+
+    this.elementRef.nativeElement
+      .querySelector('#drawingContainer')
+      .addEventListener('mousemove', this.onMouseMove.bind(this));
+  }
+
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'z' || event.key === 'Z') {
+      if (this.majKeyPressed && this.controlKeyPressed) {
+        console.log(this.shapeList);
+        this.shapeList = this.actionList.redo(this.shapeList);
+        console.log(this.shapeList);
+        this.drawAllShapes();
+      } else if (this.controlKeyPressed) {
+        console.log(this.shapeList);
+        this.shapeList = this.actionList.undo(this.shapeList);
+        console.log(this.shapeList);
+        this.drawAllShapes();
+      }
+    }
+
+    if (event.key === 'Control' || event.key === 'Meta') {
+      this.controlKeyPressed = true;
+    }
+
+    if (event.key === 'Shift') {
+      this.majKeyPressed = true;
+    }
+  }
+
+  handleKeyUp(event: KeyboardEvent) {
+    if (event.key === 'Control' || event.key === 'Meta') {
+      this.controlKeyPressed = false;
+    }
+
+    if (event.key === 'Shift') {
+      this.majKeyPressed = false;
+    }
   }
 
   //--------------------------------------------------------------------------------------
@@ -123,20 +168,20 @@ export class DrawingZoneComponent implements OnInit {
   }
 
   //--------------------------------------------------------------------------------------
-  // METHODE prevision : lié à l'event mouseDown
+  // METHODE onMouseDown : lié à l'event mouseDown
   //--------------------------------------------------------------------------------------
-  public prevision(e: MouseEvent): void {
+  public onMouseDown(e: MouseEvent): void {
     this.setMousePosition(e);
-    console.log(this.shapeList);
-    this.previsionMode = true;
+    this.actionHandler(new Coordonnees(this.x, this.y));
+    this.isDrawing = true;
   }
 
   //--------------------------------------------------------------------------------------
-  // METHODE drawPrevision : lié à l'event mouseMove, va dessiner la prévision de la forme
+  // METHODE onMouseMove : lié à l'event mouseMove, va dessiner la prévision de la forme
   //					   choisie en attendant que le bouton de souris soit relaché
   //--------------------------------------------------------------------------------------
-  public drawPrevision(e: MouseEvent): void {
-    if (this.previsionMode) {
+  public onMouseMove(e: MouseEvent): void {
+    if (this.isDrawing) {
       const canvas = this.canvasPreviRef.nativeElement as HTMLCanvasElement;
       const parent = canvas.parentElement as HTMLElement;
       canvas.width = parent.offsetWidth;
@@ -159,30 +204,31 @@ export class DrawingZoneComponent implements OnInit {
           e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
       }
 
-      this.draw(this.x, this.y, true);
+      if (this.currentAction !== null) {
+        this.currentAction.previsu(new Coordonnees(this.x, this.y));
+      }
     }
   }
 
   //--------------------------------------------------------------------------------------
-  // METHODE cancelPrevision : lié à l'event mouseUp, va stopper les prévisions de la forme
+  // METHODE onMouseUp : lié à l'event mouseUp, va stopper les prévisions de la forme
   //					   		  choisie et va dessiner la forme
   //--------------------------------------------------------------------------------------
-  public cancelPrevision(e: MouseEvent): void {
-    this.previsionMode = false;
-    this.setMousePosition(e);
-    if (this.currentShape !== null) {
-      this.shapeList.push(this.currentShape);
+  public onMouseUp(e: MouseEvent): void {
+    this.isDrawing = false;
+    if (this.currentAction !== null) {
+      this.shapeList = this.currentAction.do(this.shapeList);
+      this.actionList.undoList.push(this.currentAction);
+      this.currentAction = null;
     }
-    this.currentShape = null;
-    this.drawAllShapes(this.shapeList);
+    this.drawAllShapes();
 
     if (this.activeTool == Tools.Select)
       this.ChangeCanvasColor(this.colorCanvas);
   }
 
   //--------------------------------------------------------------------------------------
-  // METHODE setMousePosition : recupère la position de la souris et lance le processus
-  //						   	  de dessin
+  // METHODE setMousePosition : recupère la position de la souris et set les variables x et y
   //--------------------------------------------------------------------------------------
   public setMousePosition(e: MouseEvent): void {
     if (
@@ -195,68 +241,67 @@ export class DrawingZoneComponent implements OnInit {
       this.y =
         e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
     }
-
-    this.draw(this.x, this.y, false);
   }
 
-  //--------------------------------------------------------------------------------------
-  // METHODE draw : va dessiner la forme choisie
-  //--------------------------------------------------------------------------------------
-  public draw(x: number, y: number, prevision: boolean): void {
-    if (this.currentShape === null) {
-      console.log(this.activeTool);
-      switch (this.activeTool) {
-        case Tools.Select:
-          this.ChangeCanvasColor('green');
-          break;
-        case Tools.Selection:
-          break;
-        case Tools.Draw:
-          break;
-        case Tools.Line:
-          this.currentShape = new Line(
+  public actionHandler(coord: Coordonnees): void {
+    switch (this.activeTool) {
+      case Tools.Select:
+        this.ChangeCanvasColor('green');
+        break;
+      case Tools.Selection:
+        break;
+      case Tools.Draw:
+        break;
+      case Tools.Line:
+        this.currentAction = new Draw(
+          new Line(
             this.fill,
             this.stroke,
             this.colorFillShape,
             this.colorStrokeShape,
-            [new Coordonnees(x, y)]
-          );
-          break;
-        case Tools.Box:
-          this.currentShape = new Rect(
+            [coord]
+          )
+        );
+        break;
+      case Tools.Box:
+        this.currentAction = new Draw(
+          new Rect(
             this.fill,
             this.stroke,
             this.colorFillShape,
             this.colorStrokeShape,
-            [new Coordonnees(x, y)]
-          );
-          break;
-        case Tools.Circle:
-          this.currentShape = new Circle(
+            [coord]
+          )
+        );
+        break;
+      case Tools.Circle:
+        this.currentAction = new Draw(
+          new Circle(
             this.fill,
             this.stroke,
             this.colorFillShape,
             this.colorStrokeShape,
-            [new Coordonnees(x, y)]
-          );
-          break;
-        case Tools.Triangle:
-          this.currentShape = new Triangle(
+            [coord]
+          )
+        );
+        break;
+      case Tools.Triangle:
+        this.currentAction = new Draw(
+          new Triangle(
             this.fill,
             this.stroke,
             this.colorFillShape,
             this.colorStrokeShape,
-            [new Coordonnees(x, y)]
-          );
-          break;
-        case Tools.Eraser:
-          break;
-      }
-      if (this.currentShape !== null) {
-        this.currentShape.draw(x, y, 0, prevision);
-      }
-    } else {
-      this.currentShape.draw(x, y, 0, prevision);
+            [coord]
+          )
+        );
+        break;
+      case Tools.Eraser:
+        break;
+    }
+
+    if (this.currentAction !== null) {
+      this.currentAction.previsu(coord);
     }
   }
 
@@ -276,24 +321,28 @@ export class DrawingZoneComponent implements OnInit {
     }
 
     this.colorCanvas = color;
+  }
 
-    this.drawAllShapes(this.shapeList);
+  public clearCanvas(canvas: HTMLCanvasElement) {
+    const parent = canvas.parentElement as HTMLElement;
+    canvas.width = parent.offsetWidth;
+    canvas.height = parent.offsetHeight;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    }
   }
 
   //--------------------------------------------------------------------------------------
   // METHODE drawAllShapes : permet de dessiner sur le canvas toutes les formes de la
   //						   liste de formes
   //--------------------------------------------------------------------------------------
-  public drawAllShapes(shapes: Shape[]) {
-    let size = shapes.length;
-    for (let i = 0; i < size; i++) {
-      new Shape(
-        shapes[i].stroke,
-        shapes[i].fill,
-        shapes[i].colorFillShape,
-        shapes[i].colorStrokeShape,
-        shapes[i].coordList
-      ).draw(-1, -1, 1, false);
-    }
+  public drawAllShapes() {
+    this.clearCanvas(this.canvasRef.nativeElement as HTMLCanvasElement);
+    this.clearCanvas(this.canvasPreviRef.nativeElement as HTMLCanvasElement);
+    this.shapeList.forEach((shape) => {
+      shape.draw();
+    });
   }
 }

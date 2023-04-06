@@ -1,7 +1,15 @@
 import { Coordonnees, Shape } from './Shape';
 
 export class Triangle extends Shape {
-  override draw(x: number, y: number, type: number, prevision: boolean): void {
+  override previsu(coord: Coordonnees): void {
+    this.drawingMethod(coord, true);
+  }
+
+  override draw(): void {
+    this.drawingMethod(null, false);
+  }
+
+  private drawingMethod(coord: Coordonnees | null, prevision: boolean): void {
     let canvas: HTMLCanvasElement = document.getElementById(
       'drawingContainer'
     )! as HTMLCanvasElement;
@@ -12,11 +20,11 @@ export class Triangle extends Shape {
     }
     const ctx = canvas.getContext('2d');
 
-    if (type == 0) {
-      this.coordList.push(new Coordonnees(x, y));
+    if (prevision && coord !== null) {
+      this.coordList.push(coord);
     }
 
-    if (this.coordList.length == 3 || type == 1) {
+    if (this.coordList.length == 3 || !prevision) {
       if (ctx) {
         ctx.beginPath();
 

@@ -1,7 +1,15 @@
 import { Coordonnees, Shape } from './Shape';
 
 export class Line extends Shape {
-  override draw(x: number, y: number, type: number, prevision: boolean): void {
+  override previsu(coord: Coordonnees): void {
+    this.drawingMethod(coord, true);
+  }
+
+  override draw(): void {
+    this.drawingMethod(null, false);
+  }
+
+  private drawingMethod(coord: Coordonnees | null, prevision: boolean): void {
     let canvas: HTMLCanvasElement = document.getElementById(
       'drawingContainer'
     )! as HTMLCanvasElement;
@@ -12,14 +20,14 @@ export class Line extends Shape {
     }
     const ctx = canvas.getContext('2d');
 
-    if (type == 0) {
+    if (prevision && coord !== null) {
       if (this.coordList.length == 2) {
         this.coordList.pop();
       }
-      this.coordList.push(new Coordonnees(x, y));
+      this.coordList.push(coord);
     }
 
-    if (this.coordList.length == 2 || type == 1) {
+    if (this.coordList.length == 2 || !prevision) {
       if (ctx) {
         ctx.strokeStyle = this.colorFillShape;
         ctx.moveTo(this.coordList[0].x, this.coordList[0].y);
