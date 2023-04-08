@@ -12,6 +12,24 @@ export class Rect extends Shape {
     super(Tools.Box, fill, stroke, colorFillShape, colorStrokeShape, coordList);
   }
 
+  override intersect(coord: Coordonnees): boolean {
+    const largeur = this.coordList[1].x - this.coordList[0].x;
+    const hauteur = this.coordList[1].y - this.coordList[0].y;
+    if (
+      coord.x < this.coordList[0].x ||
+      coord.x > this.coordList[0].x + largeur
+    ) {
+      return false;
+    }
+    if (
+      coord.y < this.coordList[0].y ||
+      coord.y > this.coordList[0].y + hauteur
+    ) {
+      return false;
+    }
+    return true;
+  }
+
   override previsu(coord: Coordonnees): void {
     this.drawingMethod(coord, true);
   }

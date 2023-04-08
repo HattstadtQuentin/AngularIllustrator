@@ -16,9 +16,11 @@ import { Line } from '../shapes/Line';
 import { Coordonnees, Shape } from '../shapes/Shape';
 import { ActionsList } from '../actions/ActionsList';
 import { Draw } from '../actions/Draw';
+import { Move } from '../actions/Move';
 import { Action } from '../actions/Action';
 
 import { HttpClient } from '@angular/common/http';
+import { Pen } from '../shapes/Pen';
 
 @Component({
   selector: 'app-drawing-zone',
@@ -132,14 +134,10 @@ export class DrawingZoneComponent implements OnInit {
   handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'z' || event.key === 'Z') {
       if (this.majKeyPressed && this.controlKeyPressed) {
-        console.log(this._shapeList);
         this._shapeList = this.actionList.redo(this._shapeList);
-        console.log(this._shapeList);
         this.drawAllShapes();
       } else if (this.controlKeyPressed) {
-        console.log(this._shapeList);
         this._shapeList = this.actionList.undo(this._shapeList);
-        console.log(this._shapeList);
         this.drawAllShapes();
       }
     }
@@ -202,6 +200,9 @@ export class DrawingZoneComponent implements OnInit {
 
       if (this.currentAction !== null) {
         this.currentAction.previsu(new Coordonnees(this.x, this.y));
+        if (this.currentAction instanceof Move) {
+          this.drawAllShapes();
+        }
       }
     }
   }
@@ -218,9 +219,6 @@ export class DrawingZoneComponent implements OnInit {
       this.currentAction = null;
     }
     this.drawAllShapes();
-
-    if (this.activeTool == Tools.Select)
-      this.ChangeCanvasColor(this.colorCanvas);
   }
 
   //--------------------------------------------------------------------------------------
@@ -241,12 +239,35 @@ export class DrawingZoneComponent implements OnInit {
 
   public actionHandler(coord: Coordonnees): void {
     switch (this.activeTool) {
-      case Tools.Select:
-        this.ChangeCanvasColor('green');
+      case Tools.Move:
+        let _shape = null;
+        //On reverse le tableau pour le parcourir dans l'ordre inverse afin d'avoir les elemtents plus haut en premier
+        this._shapeList.reverse().forEach((shape) => {
+          if (shape.intersect(coord)) {
+            _shape = shape;
+            return;
+          }
+        });
+        if (_shape !== null) {
+          this.currentAction = new Move(
+            _shape,
+            new Coordonnees(this.x, this.y)
+          );
+        } else {
+        }
         break;
       case Tools.Selection:
         break;
-      case Tools.Draw:
+      case Tools.Pen:
+        this.currentAction = new Draw(
+          new Pen(
+            this.fill,
+            this.stroke,
+            this.colorFillShape,
+            this.colorStrokeShape,
+            [coord]
+          )
+        );
         break;
       case Tools.Line:
         this.currentAction = new Draw(
@@ -341,77 +362,4 @@ export class DrawingZoneComponent implements OnInit {
       shape.draw();
     });
   }
-
-  //--------------------------------------------------------------------------------------
-  // METHODE drawAllShapes : permet de dessiner sur le canvas toutes les formes de la
-  //						   liste de formes
-  //--------------------------------------------------------------------------------------
-  public drawAllShapesForImport(shapes: any): void {
-    let size = shapes.length;
-
-    for (let i = 0; i < size; i++) {
-      /*
-      TODO : rajouter un champ 'type' à l'objet shape
-        car la en faisant new SHAPE(...).draw ça dessin pas
-        vu qu'on connait pas le type de forme
-
-        IDEE : faire un switch(shapes[i]["type"])
-
-        et faire les cases avec new LINE(), new RECT(), etc.
-        (comme la function draw actuel un peu plus au dessus)
-      */
-
-      new Line(
-        shapes[i]['stroke'],
-        shapes[i]['fill'],
-        shapes[i]['colorFillShape'],
-        shapes[i]['colorStrokeShape'],
-        shapes[i]['coordList']
-      ).draw();
-    }
-
-    this._shapeList = shapes;
-  }
-
-  //--------------------------------------------------------------------------------------
-  // METHODE importJson : permet de selectionner un fichier json de l'utilisateur
-  //        afin d'importer un projet. Appeler lors du click sur le bouton
-  //        chooseFile se trouvant en dessous de la zone de dessin.
-  //--------------------------------------------------------------------------------------
-  public importJson(event: any): void {
-    const file: File = event.target.files[0];
-    const reader: FileReader = new FileReader();
-
-    reader.onload = (e: any) => {
-      const fileContent = JSON.parse(e.target.result);
-      console.log(fileContent);
-      this.drawAllShapesForImport(fileContent);
-    };
-
-    reader.readAsText(file);
-  }
-
-  //--------------------------------------------------------------------------------------
-  // METHODE importJson : permet d'exporter un projet en un fichier Json qui se
-  //        trouvera dans les téléchargement de l'utilisateur . Appeler lors du click
-  //        sur le bouton Exporter se trouvant en dessous de la zone de dessin.
-  //--------------------------------------------------------------------------------------
-  public exportJson() {
-    const jsonData = JSON.stringify(this._shapeList);
-    console.log(jsonData);
-
-    let blob = new Blob(['\ufeff' + jsonData], {
-      type: 'application/json;charset=utf-8;',
-    });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    document.body.appendChild(a);
-    a.setAttribute('style', 'display:none');
-    a.href = url;
-    a.download = 'data.json';
-    a.click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
-  }
-  //-------------------------------------------------------------------------------------
 }

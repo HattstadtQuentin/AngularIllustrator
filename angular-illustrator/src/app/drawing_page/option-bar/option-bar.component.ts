@@ -1,23 +1,15 @@
 import {
   Component,
   ViewContainerRef,
-  Renderer2,
-  ElementRef,
   EventEmitter,
   Output,
   Input,
 } from '@angular/core';
-import { ColorPickerService } from 'ngx-color-picker';
 import { ToastrService } from 'ngx-toastr';
 import { Options } from '@angular-slider/ngx-slider';
 import { PaperSizes } from '../paperSizes.enum';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { Shape } from '../shapes/Shape';
-import { Line } from '../shapes/Line';
-import { Tools } from '../tools.enum';
-import { Rect } from '../shapes/Rect';
-import { Circle } from '../shapes/Circle';
-import { Triangle } from '../shapes/Triangle';
 import { ShapeFactory } from '../shapes/ShapeFactory';
 
 @Component({
@@ -50,13 +42,7 @@ export class OptionBarComponent {
 
   @Input() public drawShapeList: Function;
 
-  constructor(
-    public vcRef: ViewContainerRef,
-    private cpService: ColorPickerService,
-    private toastr: ToastrService,
-    private renderer: Renderer2,
-    private el: ElementRef
-  ) {
+  constructor(public vcRef: ViewContainerRef, private toastr: ToastrService) {
     this.shapeList = [];
     this.drawShapeList = function (): void {};
   }
@@ -121,6 +107,7 @@ export class OptionBarComponent {
 
     // Split the file name at the last occurrence of the dot to get the file name without the extension
     this.fileName = file.name.split('.').slice(0, -1).join('.');
+    this.updateFileName.emit(this.fileName);
 
     reader.readAsText(file);
     this.toastr.success('Import de ' + this.fileName + ' réussi !');

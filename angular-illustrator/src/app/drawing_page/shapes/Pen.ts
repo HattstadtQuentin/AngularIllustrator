@@ -1,7 +1,7 @@
 import { Tools } from '../tools.enum';
 import { Coordonnees, Shape } from './Shape';
 
-export class Line extends Shape {
+export class Pen extends Shape {
   constructor(
     fill: boolean,
     stroke: boolean,
@@ -9,31 +9,11 @@ export class Line extends Shape {
     colorStrokeShape: string,
     coordList: Coordonnees[]
   ) {
-    super(
-      Tools.Line,
-      fill,
-      stroke,
-      colorFillShape,
-      colorStrokeShape,
-      coordList
-    );
+    super(Tools.Pen, fill, stroke, colorFillShape, colorStrokeShape, coordList);
   }
 
   override intersect(coord: Coordonnees): boolean {
-    if (this.coordList.length < 2) {
-      return false;
-    }
-
-    const slope =
-      (this.coordList[1].y - this.coordList[0].y) /
-      (this.coordList[1].x - this.coordList[0].x);
-    const yIntercept = this.coordList[0].y - slope * this.coordList[0].x;
-
-    // Calculate the y-coordinate of the point on the line
-    const y = slope * coord.x + yIntercept;
-
-    // Check if the y-coordinate of the point is equal to the y-coordinate of the point on the line
-    return Math.abs(y - coord.y) < 2;
+    return false;
   }
 
   override previsu(coord: Coordonnees): void {
@@ -56,17 +36,24 @@ export class Line extends Shape {
     const ctx = canvas.getContext('2d');
 
     if (prevision && coord !== null) {
-      if (this.coordList.length == 2) {
-        this.coordList.pop();
-      }
       this.coordList.push(coord);
     }
 
-    if (this.coordList.length == 2 || !prevision) {
+    if (this.coordList.length > 1 || !prevision) {
       if (ctx) {
         ctx.strokeStyle = this.colorFillShape;
-        ctx.moveTo(this.coordList[0].x, this.coordList[0].y);
-        ctx.lineTo(this.coordList[1].x, this.coordList[1].y);
+
+        this.coordList.forEach((coordElem, index) => {
+          if (index === 0) {
+            // if this is the first point, start a new path
+            ctx.beginPath();
+            ctx.moveTo(coordElem.x, coordElem.y);
+          } else {
+            // if this is not the first point, add it to the current path
+            ctx.lineTo(coordElem.x, coordElem.y);
+          }
+        });
+
         ctx.stroke();
       }
     }

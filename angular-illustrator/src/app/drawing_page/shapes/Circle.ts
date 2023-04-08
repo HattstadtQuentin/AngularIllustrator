@@ -19,6 +19,22 @@ export class Circle extends Shape {
     );
   }
 
+  override intersect(coord: Coordonnees): boolean {
+    if (this.coordList.length < 2) {
+      return false;
+    }
+
+    const largeur = Math.abs(this.coordList[1].x - this.coordList[0].x);
+    const hauteur = Math.abs(this.coordList[1].y - this.coordList[0].y);
+    const rayon = Math.sqrt(largeur * largeur + hauteur * hauteur);
+
+    const distance = Math.sqrt(
+      Math.pow(coord.x - this.coordList[0].x, 2) +
+        Math.pow(coord.y - this.coordList[0].y, 2)
+    );
+    return distance <= rayon;
+  }
+
   override previsu(coord: Coordonnees): void {
     this.drawingMethod(coord, true);
   }

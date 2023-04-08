@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   title = 'angular-illustrator';
@@ -21,6 +21,5 @@ export class AppComponent {
   ngOnInit() {
     const tmp = this.actRoute.snapshot.paramMap.get('path');
     this.activeRoute = tmp === null ? '' : tmp;
-    console.log(this.activeRoute);
   }
 }
