@@ -33,6 +33,20 @@
     </div>
     <div
       [ngClass]="{
+        hide: !filteredTools.includes(Tools.Fill),
+        active: activeTool === Tools.Fill,
+        outilCard: true
+      }"
+      (click)="setActiveTool(Tools.Fill)"
+    >
+      <img
+        src="../../../assets/tools/bucket-svgrepo-com.svg"
+        alt="Fill bucket"
+      />
+      <div class="outilTitle">Fill</div>
+    </div>
+    <div
+      [ngClass]="{
         hide: !filteredTools.includes(Tools.Pen),
         active: activeTool === Tools.Pen,
         outilCard: true
@@ -83,17 +97,14 @@
     </div>
     <div
       [ngClass]="{
-        hide: !filteredTools.includes(Tools.Triangle),
-        active: activeTool === Tools.Triangle,
+        hide: !filteredTools.includes(Tools.Polygon),
+        active: activeTool === Tools.Polygon,
         outilCard: true
       }"
-      (click)="setActiveTool(Tools.Triangle)"
+      (click)="setActiveTool(Tools.Polygon)"
     >
-      <img
-        src="../../../assets/tools/triangle-svgrepo-com.svg"
-        alt="Triangle"
-      />
-      <div class="outilTitle">Triangle</div>
+      <img src="../../../assets/tools/polygon-svgrepo-com.svg" alt="Polygon" />
+      <div class="outilTitle">Poylgon</div>
     </div>
     <div
       [ngClass]="{
@@ -105,6 +116,17 @@
     >
       <img src="../../../assets/tools/eraser-svgrepo-com.svg" alt="Eraser" />
       <div class="outilTitle">Erase</div>
+    </div>
+    <div
+      [ngClass]="{
+        hide: !filteredTools.includes(Tools.Delete),
+        active: activeTool === Tools.Delete,
+        outilCard: true
+      }"
+      (click)="setActiveTool(Tools.Delete)"
+    >
+      <img src="../../../assets/tools/delete-svgrepo-com.svg" alt="Delete" />
+      <div class="outilTitle">Delete</div>
     </div>
   </div>
 </div>

@@ -1,7 +1,7 @@
 import { Tools } from '../tools.enum';
 import { Coordonnees, Shape } from './Shape';
 
-export class Triangle extends Shape {
+export class Polygon extends Shape {
   constructor(
     fill: boolean,
     stroke: boolean,
@@ -10,7 +10,7 @@ export class Triangle extends Shape {
     coordList: Coordonnees[]
   ) {
     super(
-      Tools.Triangle,
+      Tools.Polygon,
       fill,
       stroke,
       colorFillShape,
