@@ -1,6 +1,7 @@
 import { Tools } from '../tools.enum';
 import { Circle } from './Circle';
 import { Line } from './Line';
+import { Pen } from './Pen';
 import { Rect } from './Rect';
 import { Coordonnees, Shape } from './Shape';
 import { Triangle } from './Triangle';
@@ -14,6 +15,8 @@ export function ShapeFactory(
   coordList: Coordonnees[]
 ): Shape | null {
   switch (type) {
+    case Tools.Pen:
+      return new Pen(fill, stroke, colorFillShape, colorStrokeShape, coordList);
     case Tools.Line:
       return new Line(
         fill,

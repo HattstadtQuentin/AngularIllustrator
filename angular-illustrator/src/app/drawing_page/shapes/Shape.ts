@@ -8,6 +8,7 @@ export class Shape {
   colorFillShape: string; //Couleur de remplissage s'il y en a une
   colorStrokeShape: string;
   coordList: Coordonnees[];
+  isSelected: boolean;
   uuid: string;
 
   constructor(
@@ -24,7 +25,19 @@ export class Shape {
     this.colorFillShape = colorFillShape;
     this.colorStrokeShape = colorStrokeShape;
     this.coordList = coordList;
+    this.isSelected = false;
     this.uuid = uuidv4();
+  }
+
+  move(xOffset: number, yOffset: number) {
+    this.coordList.forEach((coord) => {
+      coord.x = Math.floor(coord.x - xOffset);
+      coord.y = Math.floor(coord.y - yOffset);
+    });
+  }
+
+  intersect(coord: Coordonnees): boolean {
+    return false;
   }
 
   previsu(coord: Coordonnees): void {}
