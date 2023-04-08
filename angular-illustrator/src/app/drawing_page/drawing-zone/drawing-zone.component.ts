@@ -5,6 +5,8 @@ import {
   ChangeDetectorRef,
   ViewChild,
   Input,
+  EventEmitter,
+  Output,
 } from '@angular/core';
 import { Tools } from '../tools.enum';
 import { Triangle } from '../shapes/Triangle';
@@ -15,6 +17,8 @@ import { Coordonnees, Shape } from '../shapes/Shape';
 import { ActionsList } from '../actions/ActionsList';
 import { Draw } from '../actions/Draw';
 import { Action } from '../actions/Action';
+
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-drawing-zone',
@@ -43,7 +47,16 @@ export class DrawingZoneComponent implements OnInit {
   public fill: boolean; //Boolean : la forme en cours de dessin à un remplissage
   public stroke: boolean; //Boolean : la forme en cours de dessin à des contours
 
-  public shapeList: Shape[];
+  private _shapeList: Shape[];
+
+  @Input()
+  set shapeList(value: Shape[]) {
+    this._shapeList = value;
+    this.drawAllShapes();
+  }
+  @Output() shapeListChange: EventEmitter<Shape[]> = new EventEmitter<
+    Shape[]
+  >();
   public actionList: ActionsList;
   public currentAction: Action | null;
 
@@ -54,7 +67,14 @@ export class DrawingZoneComponent implements OnInit {
   //--------------------------------------------------------------------------------------
   // CONSTRUCTEUR
   //--------------------------------------------------------------------------------------
-  constructor(private elementRef: ElementRef) {
+  constructor(
+    private changeRef: ChangeDetectorRef,
+    private elementRef: ElementRef,
+    private http: HttpClient
+  ) {
+    this.x = 0;
+    this.y = 0;
+    this.cordList = [];
     this.canvasRef = new ElementRef(null);
     this.canvasPreviRef = new ElementRef(null);
 
@@ -68,7 +88,7 @@ export class DrawingZoneComponent implements OnInit {
     this.fill = true;
     this.stroke = true;
 
-    this.shapeList = [];
+    this._shapeList = [];
     this.actionList = new ActionsList();
     this.currentAction = null;
 
@@ -82,8 +102,8 @@ export class DrawingZoneComponent implements OnInit {
   //--------------------------------------------------------------------------------------
   ngOnInit() {
     setTimeout(() => {
-      this.resizeCanvas();
-      window.addEventListener('resize', this.resizeCanvas.bind(this));
+      this.drawAllShapes();
+      window.addEventListener('resize', this.drawAllShapes.bind(this));
     });
   }
 
@@ -112,14 +132,14 @@ export class DrawingZoneComponent implements OnInit {
   handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'z' || event.key === 'Z') {
       if (this.majKeyPressed && this.controlKeyPressed) {
-        console.log(this.shapeList);
-        this.shapeList = this.actionList.redo(this.shapeList);
-        console.log(this.shapeList);
+        console.log(this._shapeList);
+        this._shapeList = this.actionList.redo(this._shapeList);
+        console.log(this._shapeList);
         this.drawAllShapes();
       } else if (this.controlKeyPressed) {
-        console.log(this.shapeList);
-        this.shapeList = this.actionList.undo(this.shapeList);
-        console.log(this.shapeList);
+        console.log(this._shapeList);
+        this._shapeList = this.actionList.undo(this._shapeList);
+        console.log(this._shapeList);
         this.drawAllShapes();
       }
     }
@@ -140,30 +160,6 @@ export class DrawingZoneComponent implements OnInit {
 
     if (event.key === 'Shift') {
       this.majKeyPressed = false;
-    }
-  }
-
-  //--------------------------------------------------------------------------------------
-  //
-  //--------------------------------------------------------------------------------------
-  resizeCanvas(): void {
-    if (!this.canvasRef.nativeElement && !this.canvasPreviRef.nativeElement) {
-      return;
-    }
-
-    const canvas = this.canvasRef.nativeElement as HTMLCanvasElement;
-    const parent = canvas.parentElement as HTMLElement;
-    canvas.width = parent.offsetWidth;
-    canvas.height = parent.offsetHeight;
-
-    const previCanvas = this.canvasPreviRef.nativeElement as HTMLCanvasElement;
-    previCanvas.width = parent.offsetWidth;
-    previCanvas.height = parent.offsetHeight;
-
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = this.colorCanvas;
-      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
     }
   }
 
@@ -217,7 +213,7 @@ export class DrawingZoneComponent implements OnInit {
   public onMouseUp(e: MouseEvent): void {
     this.isDrawing = false;
     if (this.currentAction !== null) {
-      this.shapeList = this.currentAction.do(this.shapeList);
+      this._shapeList = this.currentAction.do(this._shapeList);
       this.actionList.undoList.push(this.currentAction);
       this.currentAction = null;
     }
@@ -341,8 +337,81 @@ export class DrawingZoneComponent implements OnInit {
   public drawAllShapes() {
     this.clearCanvas(this.canvasRef.nativeElement as HTMLCanvasElement);
     this.clearCanvas(this.canvasPreviRef.nativeElement as HTMLCanvasElement);
-    this.shapeList.forEach((shape) => {
+    this._shapeList.forEach((shape) => {
       shape.draw();
     });
   }
+
+  //--------------------------------------------------------------------------------------
+  // METHODE drawAllShapes : permet de dessiner sur le canvas toutes les formes de la
+  //						   liste de formes
+  //--------------------------------------------------------------------------------------
+  public drawAllShapesForImport(shapes: any): void {
+    let size = shapes.length;
+
+    for (let i = 0; i < size; i++) {
+      /*
+      TODO : rajouter un champ 'type' à l'objet shape
+        car la en faisant new SHAPE(...).draw ça dessin pas
+        vu qu'on connait pas le type de forme
+
+        IDEE : faire un switch(shapes[i]["type"])
+
+        et faire les cases avec new LINE(), new RECT(), etc.
+        (comme la function draw actuel un peu plus au dessus)
+      */
+
+      new Line(
+        shapes[i]['stroke'],
+        shapes[i]['fill'],
+        shapes[i]['colorFillShape'],
+        shapes[i]['colorStrokeShape'],
+        shapes[i]['coordList']
+      ).draw();
+    }
+
+    this._shapeList = shapes;
+  }
+
+  //--------------------------------------------------------------------------------------
+  // METHODE importJson : permet de selectionner un fichier json de l'utilisateur
+  //        afin d'importer un projet. Appeler lors du click sur le bouton
+  //        chooseFile se trouvant en dessous de la zone de dessin.
+  //--------------------------------------------------------------------------------------
+  public importJson(event: any): void {
+    const file: File = event.target.files[0];
+    const reader: FileReader = new FileReader();
+
+    reader.onload = (e: any) => {
+      const fileContent = JSON.parse(e.target.result);
+      console.log(fileContent);
+      this.drawAllShapesForImport(fileContent);
+    };
+
+    reader.readAsText(file);
+  }
+
+  //--------------------------------------------------------------------------------------
+  // METHODE importJson : permet d'exporter un projet en un fichier Json qui se
+  //        trouvera dans les téléchargement de l'utilisateur . Appeler lors du click
+  //        sur le bouton Exporter se trouvant en dessous de la zone de dessin.
+  //--------------------------------------------------------------------------------------
+  public exportJson() {
+    const jsonData = JSON.stringify(this._shapeList);
+    console.log(jsonData);
+
+    let blob = new Blob(['\ufeff' + jsonData], {
+      type: 'application/json;charset=utf-8;',
+    });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    document.body.appendChild(a);
+    a.setAttribute('style', 'display:none');
+    a.href = url;
+    a.download = 'data.json';
+    a.click();
+    window.URL.revokeObjectURL(url);
+    a.remove();
+  }
+  //-------------------------------------------------------------------------------------
 }

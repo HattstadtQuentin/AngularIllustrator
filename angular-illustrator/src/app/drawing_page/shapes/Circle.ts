@@ -1,6 +1,24 @@
+import { Tools } from '../tools.enum';
 import { Coordonnees, Shape } from './Shape';
 
 export class Circle extends Shape {
+  constructor(
+    fill: boolean,
+    stroke: boolean,
+    colorFillShape: string,
+    colorStrokeShape: string,
+    coordList: Coordonnees[]
+  ) {
+    super(
+      Tools.Circle,
+      fill,
+      stroke,
+      colorFillShape,
+      colorStrokeShape,
+      coordList
+    );
+  }
+
   override previsu(coord: Coordonnees): void {
     this.drawingMethod(coord, true);
   }

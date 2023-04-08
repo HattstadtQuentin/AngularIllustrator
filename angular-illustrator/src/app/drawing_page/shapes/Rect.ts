@@ -1,6 +1,17 @@
+import { Tools } from '../tools.enum';
 import { Coordonnees, Shape } from './Shape';
 
 export class Rect extends Shape {
+  constructor(
+    fill: boolean,
+    stroke: boolean,
+    colorFillShape: string,
+    colorStrokeShape: string,
+    coordList: Coordonnees[]
+  ) {
+    super(Tools.Box, fill, stroke, colorFillShape, colorStrokeShape, coordList);
+  }
+
   override previsu(coord: Coordonnees): void {
     this.drawingMethod(coord, true);
   }

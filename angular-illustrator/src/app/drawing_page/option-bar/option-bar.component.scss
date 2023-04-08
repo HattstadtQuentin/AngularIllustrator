@@ -1,390 +1,395 @@
-@import '../../../styles/global.scss';
+@import "../../../styles/global.scss";
 
 :host {
-    .optionBar {
-        height: 100%;
-        width: 100%;
-        padding: 10% 2%;
-        font-family: $poppins;
+  .optionBar {
+    height: 100%;
+    width: 100%;
+    padding: 10% 2%;
+    font-family: $poppins;
 
+    @include themed() {
+      background: t($second-color);
+    }
+
+    .selectOption {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      font-size: 1rem;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      height: 5%;
+
+      @include themed() {
+        color: t($second-text-color);
+      }
+
+      div {
+        width: 40%;
+        padding-bottom: 4%;
         @include themed() {
-            background: t($second-color);
+          border-bottom: 2px solid t($second-text-color);
+        }
+      }
+
+      .active {
+        @include themed() {
+          border-bottom: 2px solid t($contrast-color);
+          color: t($contrast-color);
+        }
+      }
+    }
+
+    .off {
+      display: none !important;
+    }
+
+    .pageContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      width: 90%;
+      height: 90%;
+      padding: 0% 2%;
+
+      hr {
+        @include themed() {
+          border: 2px solid t($base-color);
+        }
+        width: 80%;
+        border-radius: 25px;
+      }
+
+      @include themed() {
+        color: t($third-text-color);
+      }
+
+      .topContainer {
+        height: 80%;
+
+        .fileNameContainer {
+          padding: 2% 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 10%;
+
+          input {
+            border: none;
+            outline: none;
+            border-radius: 25px;
+            text-align: center;
+            width: 70%;
+            font-size: 0.9rem;
+            padding: 2% 5%;
+            user-select: none;
+            @include themed() {
+              border: 2px solid t($third-color);
+              color: t($third-text-color);
+
+              background: t($second-color);
+            }
+          }
         }
 
-        .selectOption {
+        .backgroundSelectorContainer {
+          padding: 5% 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          height: 15%;
+
+          .inputColor {
             display: flex;
             flex-direction: row;
-            justify-content: center;
-            font-size: 1rem;
-            text-align: center;
+            align-items: center;
+            height: 50%;
+            gap: 10px;
             cursor: pointer;
             user-select: none;
-            height: 5%;
 
-    
-            @include themed() {
-                color: t($second-text-color);
-            }  
-            
-            div {
-                width: 40%;
-                padding-bottom: 4%;
-                @include themed() {
-                    border-bottom: 2px solid t($second-text-color);
-                } 
-            }  
-
-            .active {
-                @include themed() {
-                    border-bottom: 2px solid t($contrast-color);
-                    color: t($contrast-color);
-                } 
+            input {
+              width: 30%;
+              border-radius: 10px;
+              border: none;
+              outline: none;
+              height: 100%;
+              cursor: pointer;
+              user-select: none;
             }
-    
+          }
         }
 
-        .off {
-            display:none !important;
-        }
-
-        .pageContainer {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            width: 90%;
-            height: 90%;
-            padding: 0% 2%;
-
-            hr {        
-                @include themed() {
-                    border: 2px solid t($base-color);
-                }
-                width: 80%;
-                border-radius: 25px;
+        .paperOption {
+          width: 100%;
+          height: 50%;
+          padding: 5% 0;
+          .paperSize {
+            position: relative;
+            img {
+              width: 10%;
+              top: 15%;
+              right: 2%;
+              position: absolute;
+              pointer-events: none;
+              cursor: pointer;
+              filter: invert(66%) sepia(4%) saturate(2432%) hue-rotate(189deg)
+                brightness(82%) contrast(86%);
             }
-
-            @include themed() {
+            select {
+              background-color: transparent;
+              -webkit-appearance: none;
+              width: 100%;
+              border-radius: 5px;
+              appearance: none;
+              padding: 3% 10% 3% 3%;
+              @include themed() {
                 color: t($third-text-color);
-            }  
-
-            .topContainer {
-                height: 80%;
-
-                .backgroundSelectorContainer {
-                    padding: 5% 0;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-around;
-                    height: 15%;
-
-                    .inputColor {
-                        display: flex;
-                        flex-direction: row;
-                        align-items: center;
-                        height: 50%;
-                        gap:10px;
-                        cursor: pointer;
-                        user-select: none;
-
-                        input {
-                            width: 30%;
-                            border-radius: 10px;
-                            border: none;
-                            outline: none;
-                            height: 100%;
-                            cursor: pointer;
-                            user-select: none;
-                        }
-                    }
-                }
-
-                .optionContainer {
-                    padding: 5% 0;
-                    .optionCard {
-                        display: flex;
-                        flex-direction: row;
-                        gap: 2%;
-                        
-
-                        input[type='checkbox']:checked {
-                            @include themed() {
-                                background: t($contrast-color);
-                            }  
-                            background: red !important;
-                        }
-                    }
-                }
-
-                .paperOption {
-                    width: 100%;
-                    height: 50%;
-                    padding: 5% 0;
-                    .paperSize {
-                        position: relative;
-                        img {
-                            width: 10%;
-                            top: 15%;
-                            right: 2%;
-                            position: absolute;
-                            pointer-events: none;
-                            cursor: pointer;
-                            filter: invert(66%) sepia(4%) saturate(2432%) hue-rotate(189deg) brightness(82%) contrast(86%);
-                        }
-                        select {
-                            background-color: transparent;
-                            -webkit-appearance: none;
-                            width: 100%;
-                            border-radius: 5px;
-                            appearance: none;
-                            padding: 3% 10% 3% 3%;
-                            @include themed() {
-                                color: t($third-text-color);
-                                border: 2px solid t($third-color);
-                            }  
-                        }
-    
-                        select:focus,
-                        select:active,
-                        select:checked {
-                            outline: none;
-                        }
-    
-                        select:hover {
-                            cursor: pointer;
-                            user-select: none;
-                            @include themed() {
-                                background: t($base-color);
-                                color: t($fourth-color);
-                            }  
-                        }
-                    }
-
-                    .paperOrientation {
-                        margin-top: 5%;
-                        display: flex;
-                        flex-direction: row;
-                        align-items: center;
-                        justify-content: space-between;
-                        height: 62%;
-                        border-radius: 10px;
-                        padding: 5%;
-                        @include themed() {
-                            background: t($third-color);
-                        } 
-
-                        .portrait {
-                            width: 40%;
-                            height: 90%;
-                            border-radius: 10px;
-                            @include themed() {
-                                background: t($base-text-color);
-                            } 
-                        }
-
-                        .landscape {
-                            width: 55%;
-                            height: 50%;
-                            border-radius: 10px;
-                            @include themed() {
-                                background: t($base-text-color);
-                            } 
-                        }
-                        
-
-                        .radioOption {
-                            width: 40%;
-                            display: flex;
-                            flex-direction: column;
-                        }
-                    }
-                    
-                      
-                }
+                border: 2px solid t($third-color);
+              }
             }
 
-            .bottomContainer {
-                height: 15%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: space-around;
-
-                .btn {
-                    border-radius: 25px;
-                    text-align: center;
-                    width: 70%;
-                    font-size: 0.9rem;
-                    padding: 2% 5%;
-                    cursor: pointer;
-                    user-select: none;
-                    @include themed() {
-                        border: 2px solid t($third-color);
-                        color: t($third-text-color);
-                    }  
-                }
-
-                .btn:hover {
-                    @include themed() {
-                        background: t($base-color);
-                        color: t($fourth-color);
-                    }  
-                }
+            select:focus,
+            select:active,
+            select:checked {
+              outline: none;
             }
-        }
 
-        .styleContainer {
+            select:hover {
+              cursor: pointer;
+              user-select: none;
+              @include themed() {
+                background: t($base-color);
+                color: t($fourth-color);
+              }
+            }
+          }
+
+          .paperOrientation {
+            margin-top: 5%;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            align-items: center;
             justify-content: space-between;
-            font-size: 0.9rem;
-            width: 90%;
-            height: 90%;
-            padding: 0% 2%;
-
-            hr {        
-                @include themed() {
-                    border: 2px solid t($base-color);
-                }
-                width: 80%;
-                border-radius: 25px;
-            }
-
+            height: 62%;
+            border-radius: 10px;
+            padding: 5%;
             @include themed() {
-                color: t($third-text-color);
-            }  
-
-            .topContainer {
-                height: 80%;
-
-                .formSelectorContainer {
-                    padding: 5% 0;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-around;
-                    height: 15%;
-
-                    .inputColor {
-                        display: flex;
-                        flex-direction: row;
-                        align-items: center;
-                        height: 50%;
-                        gap:10px;
-                        cursor: pointer;
-                        user-select: none;
-
-                        input {
-                            width: 30%;
-                            border-radius: 10px;
-                            border: none;
-                            outline: none;
-                            height: 100%;
-                            cursor: pointer;
-                            user-select: none;
-                        }
-                    }
-                }
-
-                .thicknessContainer {
-                    padding: 5% 0;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: space-around;
-                    height: 20%;
-
-                    .custom-slider {
-                        display: flex;
-                        flex-direction: row;
-                        width: 100%;
-                        align-items: center;
-
-                        input::-webkit-outer-spin-button,
-                        input::-webkit-inner-spin-button {
-                        -webkit-appearance: none;
-                        margin: 0;
-                        }
-
-                        /* Firefox */
-                        input[type=number] {
-                        -moz-appearance: textfield;
-                        }
-
-                        .inputThickness {
-                            margin-left: 5%;
-                            width: 20%;
-                            height: 50%;
-                            text-align: center;
-                            padding: 2% 2% 2% 2%;
-                            @include themed() {
-                                background: t($third-color);
-                                color: t($base-text-color);
-                            }
-                            font-size: 0.9rem;;
-                            border: none;
-                            outline: none;
-                            border-radius: 10px;
-                        }
-
-                        .invalid {
-                            background-color: $false-red !important;
-                        }
-                    }
-                }
+              background: t($third-color);
             }
+
+            .portrait {
+              width: 40%;
+              height: 90%;
+              border-radius: 10px;
+              @include themed() {
+                background: t($base-text-color);
+              }
+            }
+
+            .landscape {
+              width: 55%;
+              height: 50%;
+              border-radius: 10px;
+              @include themed() {
+                background: t($base-text-color);
+              }
+            }
+
+            .radioOption {
+              width: 40%;
+              display: flex;
+              flex-direction: column;
+            }
+          }
         }
+      }
+
+      .bottomContainer {
+        height: 15%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+
+        .btn {
+          border-radius: 25px;
+          text-align: center;
+          width: 70%;
+          font-size: 0.9rem;
+          padding: 2% 5%;
+          cursor: pointer;
+          user-select: none;
+          @include themed() {
+            border: 2px solid t($third-color);
+            color: t($third-text-color);
+          }
+        }
+
+        .btn:hover {
+          @include themed() {
+            background: t($base-color);
+            color: t($fourth-color);
+          }
+        }
+      }
     }
+
+    .styleContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      width: 90%;
+      height: 90%;
+      padding: 0% 2%;
+
+      hr {
+        @include themed() {
+          border: 2px solid t($base-color);
+        }
+        width: 80%;
+        border-radius: 25px;
+      }
+
+      @include themed() {
+        color: t($third-text-color);
+      }
+
+      .topContainer {
+        height: 80%;
+
+        .formSelectorContainer {
+          padding: 5% 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          height: 15%;
+
+          .inputColor {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 50%;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+
+            input {
+              width: 30%;
+              border-radius: 10px;
+              border: none;
+              outline: none;
+              height: 100%;
+              cursor: pointer;
+              user-select: none;
+            }
+          }
+        }
+
+        .thicknessContainer {
+          padding: 5% 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          height: 20%;
+
+          .custom-slider {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            align-items: center;
+
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
+
+            /* Firefox */
+            input[type="number"] {
+              -moz-appearance: textfield;
+            }
+
+            .inputThickness {
+              margin-left: 5%;
+              width: 20%;
+              height: 50%;
+              text-align: center;
+              padding: 2% 2% 2% 2%;
+              @include themed() {
+                background: t($third-color);
+                color: t($base-text-color);
+              }
+              font-size: 0.9rem;
+              border: none;
+              outline: none;
+              border-radius: 10px;
+            }
+
+            .invalid {
+              background-color: $false-red !important;
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 ::ng-deep {
-    .custom-slider .ngx-slider {
-        width: 70%;
-    }
+  .custom-slider .ngx-slider {
+    width: 70%;
+  }
 
-    .custom-slider .ngx-slider .ngx-slider-bar {
-        @include themed() {
-            border: 2px solid t($base-text-color);
-        }
-      height: 2px;
+  .custom-slider .ngx-slider .ngx-slider-bar {
+    @include themed() {
+      border: 2px solid t($base-text-color);
     }
-    .custom-slider .ngx-slider .ngx-slider-selection {
-        @include themed() {
-            border: 2px solid t($base-text-color);
-        }
-    }
-  
-    .custom-slider .ngx-slider .ngx-slider-pointer {
-      width: 8px;
-      height: 16px;
-      top: auto; /* to remove the default positioning */
-      bottom: 0;
-      background-color: #333;
-      border-top-left-radius: 3px;
-      border-top-right-radius: 3px;
-    }
-  
-    .custom-slider .ngx-slider .ngx-slider-pointer:after {
-      display: none;
-    }
-  
-    .custom-slider .ngx-slider .ngx-slider-bubble {
-      bottom: 14px;
-    }
-  
-    .custom-slider .ngx-slider .ngx-slider-limit {
-      font-weight: bold;
-      color: orange;
-    }
-  
-    .custom-slider .ngx-slider .ngx-slider-tick {
-      width: 1px;
-      height: 10px;
-      margin-left: 4px;
-      border-radius: 0;
-      background: #ffe4d1;
-      top: -1px;
-    }
-  
-    .custom-slider .ngx-slider .ngx-slider-tick.ngx-slider-selected {
-      background: orange;
+    height: 2px;
+  }
+  .custom-slider .ngx-slider .ngx-slider-selection {
+    @include themed() {
+      border: 2px solid t($base-text-color);
     }
   }
+
+  .custom-slider .ngx-slider .ngx-slider-pointer {
+    width: 8px;
+    height: 16px;
+    top: auto; /* to remove the default positioning */
+    bottom: 0;
+    background-color: #333;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-pointer:after {
+    display: none;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-bubble {
+    bottom: 14px;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-limit {
+    font-weight: bold;
+    color: orange;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-tick {
+    width: 1px;
+    height: 10px;
+    margin-left: 4px;
+    border-radius: 0;
+    background: #ffe4d1;
+    top: -1px;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-tick.ngx-slider-selected {
+    background: orange;
+  }
+}
