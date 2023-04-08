@@ -1,18 +1,6 @@
 <div class="zone">
-  <div class="carreRemplissage">&nbsp;</div>
-
   <div id="convasContainer">
     <canvas #canvas id="drawingContainer"></canvas>
     <canvas #canvasPrevi id="previsualisationContainer"></canvas>
-  </div>
-
-  <div class="bottomContainer">
-    <div class="btn" id="import">
-      <input id="importButton" type="file" (change)="importJson($event)" />
-    </div>
-
-    <div class="btn" id="export">
-      <button id="exportButton" (click)="exportJson()">Exporter vos fichiers</button>
-    </div>
   </div>
 </div>

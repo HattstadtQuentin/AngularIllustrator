@@ -1,7 +1,26 @@
+import { Tools } from '../tools.enum';
 import { Coordonnees, Shape } from './Shape';
 
 export class Rect extends Shape {
-  override draw(x: number, y: number, type: number, prevision: boolean): void {
+  constructor(
+    fill: boolean,
+    stroke: boolean,
+    colorFillShape: string,
+    colorStrokeShape: string,
+    coordList: Coordonnees[]
+  ) {
+    super(Tools.Box, fill, stroke, colorFillShape, colorStrokeShape, coordList);
+  }
+
+  override previsu(coord: Coordonnees): void {
+    this.drawingMethod(coord, true);
+  }
+
+  override draw(): void {
+    this.drawingMethod(null, false);
+  }
+
+  private drawingMethod(coord: Coordonnees | null, prevision: boolean): void {
     let canvas: HTMLCanvasElement = document.getElementById(
       'drawingContainer'
     )! as HTMLCanvasElement;
@@ -12,14 +31,14 @@ export class Rect extends Shape {
     }
     const ctx = canvas.getContext('2d');
 
-    if (type == 0) {
+    if (prevision && coord !== null) {
       if (this.coordList.length == 2) {
         this.coordList.pop();
       }
-      this.coordList.push(new Coordonnees(x, y));
+      this.coordList.push(coord);
     }
 
-    if (this.coordList.length == 2 || type == 1) {
+    if (this.coordList.length == 2 || !prevision) {
       let largeur = 0;
       let hauteur = 0;
       if (ctx) {
