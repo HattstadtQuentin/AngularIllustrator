@@ -2,14 +2,13 @@ import {
   Component,
   OnInit,
   ElementRef,
-  ChangeDetectorRef,
   ViewChild,
   Input,
   EventEmitter,
   Output,
 } from '@angular/core';
 import { Tools } from '../tools.enum';
-import { Triangle } from '../shapes/Triangle';
+import { Polygon } from '../shapes/Polygon';
 import { Circle } from '../shapes/Circle';
 import { Rect } from '../shapes/Rect';
 import { Line } from '../shapes/Line';
@@ -18,9 +17,9 @@ import { ActionsList } from '../actions/ActionsList';
 import { Draw } from '../actions/Draw';
 import { Move } from '../actions/Move';
 import { Action } from '../actions/Action';
-
-import { HttpClient } from '@angular/common/http';
 import { Pen } from '../shapes/Pen';
+import { Fill } from '../actions/Fill';
+import { Delete } from '../actions/Delete';
 
 @Component({
   selector: 'app-drawing-zone',
@@ -69,11 +68,7 @@ export class DrawingZoneComponent implements OnInit {
   //--------------------------------------------------------------------------------------
   // CONSTRUCTEUR
   //--------------------------------------------------------------------------------------
-  constructor(
-    private changeRef: ChangeDetectorRef,
-    private elementRef: ElementRef,
-    private http: HttpClient
-  ) {
+  constructor(private elementRef: ElementRef) {
     this.x = 0;
     this.y = 0;
     this.cordList = [];
@@ -238,25 +233,24 @@ export class DrawingZoneComponent implements OnInit {
   }
 
   public actionHandler(coord: Coordonnees): void {
+    let _shape = null;
     switch (this.activeTool) {
+      case Tools.Selection:
+        break;
       case Tools.Move:
-        let _shape = null;
-        //On reverse le tableau pour le parcourir dans l'ordre inverse afin d'avoir les elemtents plus haut en premier
-        this._shapeList.reverse().forEach((shape) => {
-          if (shape.intersect(coord)) {
-            _shape = shape;
-            return;
-          }
-        });
+        _shape = this.getShapeIntersected(coord);
         if (_shape !== null) {
           this.currentAction = new Move(
             _shape,
             new Coordonnees(this.x, this.y)
           );
-        } else {
         }
         break;
-      case Tools.Selection:
+      case Tools.Fill:
+        _shape = this.getShapeIntersected(coord);
+        if (_shape !== null) {
+          this.currentAction = new Fill(_shape, this.colorFillShape);
+        }
         break;
       case Tools.Pen:
         this.currentAction = new Draw(
@@ -302,9 +296,9 @@ export class DrawingZoneComponent implements OnInit {
           )
         );
         break;
-      case Tools.Triangle:
+      case Tools.Polygon:
         this.currentAction = new Draw(
-          new Triangle(
+          new Polygon(
             this.fill,
             this.stroke,
             this.colorFillShape,
@@ -315,11 +309,29 @@ export class DrawingZoneComponent implements OnInit {
         break;
       case Tools.Eraser:
         break;
+      case Tools.Delete:
+        _shape = this.getShapeIntersected(coord);
+        if (_shape !== null) {
+          this.currentAction = new Delete(_shape);
+        }
     }
 
     if (this.currentAction !== null) {
       this.currentAction.previsu(coord);
     }
+  }
+
+  private getShapeIntersected(coord: Coordonnees): Shape | null {
+    let _shape = null;
+    //On reverse le tableau pour le parcourir dans l'ordre inverse afin d'avoir les elemtents plus haut en premier
+    this._shapeList.reverse().forEach((shape) => {
+      if (shape.intersect(coord)) {
+        _shape = shape;
+        return;
+      }
+    });
+
+    return _shape;
   }
 
   //--------------------------------------------------------------------------------------

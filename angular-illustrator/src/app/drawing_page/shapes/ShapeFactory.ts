@@ -4,7 +4,7 @@ import { Line } from './Line';
 import { Pen } from './Pen';
 import { Rect } from './Rect';
 import { Coordonnees, Shape } from './Shape';
-import { Triangle } from './Triangle';
+import { Polygon } from './Polygon';
 
 export function ShapeFactory(
   type: Tools,
@@ -43,8 +43,8 @@ export function ShapeFactory(
         colorStrokeShape,
         coordList
       );
-    case Tools.Triangle:
-      return new Triangle(
+    case Tools.Polygon:
+      return new Polygon(
         fill,
         stroke,
         colorFillShape,

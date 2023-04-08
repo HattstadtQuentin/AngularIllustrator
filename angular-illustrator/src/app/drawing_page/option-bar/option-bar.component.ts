@@ -135,7 +135,6 @@ export class OptionBarComponent {
     if (this.shapeList.length === 0) {
       this.toastr.error("Il n'y a rien a exporter");
     } else {
-      console.log(this.shapeList);
       const jsonData = JSON.stringify(this.shapeList);
 
       let blob = new Blob(['\ufeff' + jsonData], {
