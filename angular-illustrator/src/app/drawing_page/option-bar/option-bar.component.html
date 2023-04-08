@@ -1,14 +1,8 @@
 <div class="optionBar">
   <div class="selectOption">
-    <div [ngClass]="{ active: isPage }" (click)="setIsPage(true)">Fichier</div>
-    <div [ngClass]="{ active: !isPage }" (click)="setIsPage(false)">Style</div>
+    <div class="active">Fichier</div>
   </div>
-  <div
-    [ngClass]="{
-      off: !isPage,
-      pageContainer: true
-    }"
-  >
+  <div class="active pageContainer">
     <div class="topContainer">
       <div class="fileNameContainer">
         <input
@@ -38,62 +32,6 @@
         </div>
       </div>
       <hr size="1" />
-      <div class="paperOption">
-        <div class="paperTitle">Taille de Papier</div>
-        <div class="paperSize">
-          <select (change)="updatePaperSelection($event)">
-            <option *ngFor="let option of options" [value]="option">
-              {{ option }}
-            </option>
-          </select>
-          <img
-            src="../../../assets/arrow-down-1-svgrepo-com.svg"
-            alt="Down Arrow"
-          />
-        </div>
-        <div class="paperOrientation">
-          <div [ngClass]="{ portrait: isPortrait, landscape: !isPortrait }">
-            &nbsp;
-          </div>
-          <div class="radioOption">
-            <div *ngFor="let option of radioOptions">
-              <input
-                type="radio"
-                name="orientation"
-                [(ngModel)]="selectedOrientation"
-                [value]="option.value"
-                (change)="onOptionSelected(option.value)"
-              />
-              {{ option.label }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr size="1" />
-    </div>
-
-    <div class="bottomContainer">
-      <input
-        class="btn"
-        id="files"
-        type="file"
-        (change)="import($event)"
-        style="display: none"
-      />
-      <label class="btn" for="files">Importer un dessin</label>
-
-      <div class="btn" id="export" (click)="export()">
-        Exporter votre dessin
-      </div>
-    </div>
-  </div>
-  <div
-    [ngClass]="{
-      off: isPage,
-      styleContainer: true
-    }"
-  >
-    <div class="topContainer">
       <div class="formSelectorContainer">
         <div class="title">Couleur de remplissage</div>
         <div class="inputColor">
@@ -145,7 +83,21 @@
         </div>
       </div>
       <hr size="1" />
-      <div class="layerOption"></div>
+    </div>
+
+    <div class="bottomContainer">
+      <input
+        class="btn"
+        id="files"
+        type="file"
+        (change)="import($event)"
+        style="display: none"
+      />
+      <label class="btn" for="files">Importer un dessin</label>
+
+      <div class="btn" id="export" (click)="export()">
+        Exporter votre dessin
+      </div>
     </div>
   </div>
 </div>

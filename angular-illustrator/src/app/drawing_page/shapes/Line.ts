@@ -1,33 +1,21 @@
 import { Tools } from '../tools.enum';
-import { Coordonnees, Shape } from './Shape';
+import { Coordonnees, Shape, ShapeParameters } from './Shape';
 
 export class Line extends Shape {
-  constructor(
-    fill: boolean,
-    stroke: boolean,
-    colorFillShape: string,
-    colorStrokeShape: string,
-    coordList: Coordonnees[]
-  ) {
-    super(
-      Tools.Line,
-      fill,
-      stroke,
-      colorFillShape,
-      colorStrokeShape,
-      coordList
-    );
+  constructor(parameters: ShapeParameters) {
+    super(Tools.Polygon, parameters);
   }
 
   override intersect(coord: Coordonnees): boolean {
-    if (this.coordList.length < 2) {
+    if (this.parameters.coordList.length < 2) {
       return false;
     }
 
     const slope =
-      (this.coordList[1].y - this.coordList[0].y) /
-      (this.coordList[1].x - this.coordList[0].x);
-    const yIntercept = this.coordList[0].y - slope * this.coordList[0].x;
+      (this.parameters.coordList[1].y - this.parameters.coordList[0].y) /
+      (this.parameters.coordList[1].x - this.parameters.coordList[0].x);
+    const yIntercept =
+      this.parameters.coordList[0].y - slope * this.parameters.coordList[0].x;
 
     // Calculate the y-coordinate of the point on the line
     const y = slope * coord.x + yIntercept;
@@ -56,17 +44,23 @@ export class Line extends Shape {
     const ctx = canvas.getContext('2d');
 
     if (prevision && coord !== null) {
-      if (this.coordList.length == 2) {
-        this.coordList.pop();
+      if (this.parameters.coordList.length == 2) {
+        this.parameters.coordList.pop();
       }
-      this.coordList.push(coord);
+      this.parameters.coordList.push(coord);
     }
 
-    if (this.coordList.length == 2 || !prevision) {
+    if (this.parameters.coordList.length == 2 || !prevision) {
       if (ctx) {
-        ctx.strokeStyle = this.colorFillShape;
-        ctx.moveTo(this.coordList[0].x, this.coordList[0].y);
-        ctx.lineTo(this.coordList[1].x, this.coordList[1].y);
+        ctx.strokeStyle = this.parameters.colorFillShape;
+        ctx.moveTo(
+          this.parameters.coordList[0].x,
+          this.parameters.coordList[0].y
+        );
+        ctx.lineTo(
+          this.parameters.coordList[1].x,
+          this.parameters.coordList[1].y
+        );
         ctx.stroke();
       }
     }

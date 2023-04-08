@@ -1,22 +1,9 @@
 import { Tools } from '../tools.enum';
-import { Coordonnees, Shape } from './Shape';
+import { Coordonnees, Shape, ShapeParameters } from './Shape';
 
 export class Polygon extends Shape {
-  constructor(
-    fill: boolean,
-    stroke: boolean,
-    colorFillShape: string,
-    colorStrokeShape: string,
-    coordList: Coordonnees[]
-  ) {
-    super(
-      Tools.Polygon,
-      fill,
-      stroke,
-      colorFillShape,
-      colorStrokeShape,
-      coordList
-    );
+  constructor(parameters: ShapeParameters) {
+    super(Tools.Polygon, parameters);
   }
 
   override previsu(coord: Coordonnees): void {
@@ -39,34 +26,67 @@ export class Polygon extends Shape {
     const ctx = canvas.getContext('2d');
 
     if (prevision && coord !== null) {
-      this.coordList.push(coord);
+      this.parameters.coordList.push(coord);
     }
 
-    if (this.coordList.length == 3 || !prevision) {
+    if (this.parameters.coordList.length == 3 || !prevision) {
       if (ctx) {
         ctx.beginPath();
 
-        if (this.fill && this.stroke) {
-          ctx.fillStyle = this.colorFillShape;
-          ctx.strokeStyle = this.colorStrokeShape;
-          ctx.moveTo(this.coordList[0].x, this.coordList[0].y);
-          ctx.lineTo(this.coordList[1].x, this.coordList[1].y);
-          ctx.lineTo(this.coordList[2].x, this.coordList[2].y);
-          ctx.lineTo(this.coordList[0].x, this.coordList[0].y);
+        if (this.parameters.fill && this.parameters.stroke) {
+          ctx.fillStyle = this.parameters.colorFillShape;
+          ctx.strokeStyle = this.parameters.colorStrokeShape;
+          ctx.moveTo(
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y
+          );
+          ctx.lineTo(
+            this.parameters.coordList[1].x,
+            this.parameters.coordList[1].y
+          );
+          ctx.lineTo(
+            this.parameters.coordList[2].x,
+            this.parameters.coordList[2].y
+          );
+          ctx.lineTo(
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y
+          );
           ctx.fill();
           ctx.stroke();
-        } else if (this.fill) {
-          ctx.fillStyle = this.colorFillShape;
-          ctx.moveTo(this.coordList[0].x, this.coordList[0].y);
-          ctx.lineTo(this.coordList[1].x, this.coordList[1].y);
-          ctx.lineTo(this.coordList[2].x, this.coordList[2].y);
+        } else if (this.parameters.fill) {
+          ctx.fillStyle = this.parameters.colorFillShape;
+          ctx.moveTo(
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y
+          );
+          ctx.lineTo(
+            this.parameters.coordList[1].x,
+            this.parameters.coordList[1].y
+          );
+          ctx.lineTo(
+            this.parameters.coordList[2].x,
+            this.parameters.coordList[2].y
+          );
           ctx.fill();
-        } else if (this.stroke) {
-          ctx.strokeStyle = this.colorStrokeShape;
-          ctx.moveTo(this.coordList[0].x, this.coordList[0].y);
-          ctx.lineTo(this.coordList[1].x, this.coordList[1].y);
-          ctx.lineTo(this.coordList[2].x, this.coordList[2].y);
-          ctx.lineTo(this.coordList[0].x, this.coordList[0].y);
+        } else if (this.parameters.stroke) {
+          ctx.strokeStyle = this.parameters.colorStrokeShape;
+          ctx.moveTo(
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y
+          );
+          ctx.lineTo(
+            this.parameters.coordList[1].x,
+            this.parameters.coordList[1].y
+          );
+          ctx.lineTo(
+            this.parameters.coordList[2].x,
+            this.parameters.coordList[2].y
+          );
+          ctx.lineTo(
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y
+          );
           ctx.stroke();
         }
       }

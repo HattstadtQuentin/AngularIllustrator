@@ -12,7 +12,7 @@ import { Polygon } from '../shapes/Polygon';
 import { Circle } from '../shapes/Circle';
 import { Rect } from '../shapes/Rect';
 import { Line } from '../shapes/Line';
-import { Coordonnees, Shape } from '../shapes/Shape';
+import { Coordonnees, Shape, ShapeParameters } from '../shapes/Shape';
 import { ActionsList } from '../actions/ActionsList';
 import { Draw } from '../actions/Draw';
 import { Move } from '../actions/Move';
@@ -20,6 +20,7 @@ import { Action } from '../actions/Action';
 import { Pen } from '../shapes/Pen';
 import { Fill } from '../actions/Fill';
 import { Delete } from '../actions/Delete';
+import { Eraser } from '../shapes/Eraser';
 
 @Component({
   selector: 'app-drawing-zone',
@@ -47,6 +48,7 @@ export class DrawingZoneComponent implements OnInit {
   @Input() public colorStrokeShape: string;
   public fill: boolean; //Boolean : la forme en cours de dessin à un remplissage
   public stroke: boolean; //Boolean : la forme en cours de dessin à des contours
+  @Input() public lineWidth: number; //Number : epaisseur du trait
 
   private _shapeList: Shape[];
 
@@ -84,6 +86,7 @@ export class DrawingZoneComponent implements OnInit {
     this.colorStrokeShape = '#000000';
     this.fill = true;
     this.stroke = true;
+    this.lineWidth = 1;
 
     this._shapeList = [];
     this.actionList = new ActionsList();
@@ -188,14 +191,23 @@ export class DrawingZoneComponent implements OnInit {
         this.canvas.parentElement.parentElement
       ) {
         this.x =
-          e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
-        this.y =
-          e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
+          e.clientX - this.canvas.parentElement?.parentElement.offsetLeft;
+        this.y = e.clientY - this.canvas.parentElement?.parentElement.offsetTop;
       }
 
       if (this.currentAction !== null) {
         this.currentAction.previsu(new Coordonnees(this.x, this.y));
         if (this.currentAction instanceof Move) {
+          this.drawAllShapes();
+        }
+        //Il est nécéssaire de redessiner toutes les formes lors de l'action gomme pour voir les modifications en temps réel.
+        if (
+          this.currentAction instanceof Draw &&
+          this.currentAction.shape instanceof Eraser
+        ) {
+          if (!this._shapeList.includes(this.currentAction.shape)) {
+            this._shapeList.push(this.currentAction.shape);
+          }
           this.drawAllShapes();
         }
       }
@@ -225,14 +237,20 @@ export class DrawingZoneComponent implements OnInit {
       this.canvas.parentElement &&
       this.canvas.parentElement.parentElement
     ) {
-      this.x =
-        e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
-      this.y =
-        e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
+      this.x = e.clientX - this.canvas.parentElement?.parentElement.offsetLeft;
+      this.y = e.clientY - this.canvas.parentElement?.parentElement.offsetTop;
     }
   }
 
   public actionHandler(coord: Coordonnees): void {
+    console.log(this.lineWidth);
+    const shapeParameters = new ShapeParameters(
+      this.fill,
+      this.stroke,
+      this.colorFillShape,
+      this.colorStrokeShape,
+      [coord]
+    );
     let _shape = null;
     switch (this.activeTool) {
       case Tools.Selection:
@@ -253,61 +271,22 @@ export class DrawingZoneComponent implements OnInit {
         }
         break;
       case Tools.Pen:
-        this.currentAction = new Draw(
-          new Pen(
-            this.fill,
-            this.stroke,
-            this.colorFillShape,
-            this.colorStrokeShape,
-            [coord]
-          )
-        );
+        this.currentAction = new Draw(new Pen(shapeParameters));
         break;
       case Tools.Line:
-        this.currentAction = new Draw(
-          new Line(
-            this.fill,
-            this.stroke,
-            this.colorFillShape,
-            this.colorStrokeShape,
-            [coord]
-          )
-        );
+        this.currentAction = new Draw(new Line(shapeParameters));
         break;
       case Tools.Box:
-        this.currentAction = new Draw(
-          new Rect(
-            this.fill,
-            this.stroke,
-            this.colorFillShape,
-            this.colorStrokeShape,
-            [coord]
-          )
-        );
+        this.currentAction = new Draw(new Rect(shapeParameters));
         break;
       case Tools.Circle:
-        this.currentAction = new Draw(
-          new Circle(
-            this.fill,
-            this.stroke,
-            this.colorFillShape,
-            this.colorStrokeShape,
-            [coord]
-          )
-        );
+        this.currentAction = new Draw(new Circle(shapeParameters));
         break;
       case Tools.Polygon:
-        this.currentAction = new Draw(
-          new Polygon(
-            this.fill,
-            this.stroke,
-            this.colorFillShape,
-            this.colorStrokeShape,
-            [coord]
-          )
-        );
+        this.currentAction = new Draw(new Polygon(shapeParameters));
         break;
       case Tools.Eraser:
+        this.currentAction = new Draw(new Eraser(shapeParameters));
         break;
       case Tools.Delete:
         _shape = this.getShapeIntersected(coord);

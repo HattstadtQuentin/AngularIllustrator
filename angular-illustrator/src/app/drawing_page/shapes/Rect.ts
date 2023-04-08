@@ -1,29 +1,25 @@
 import { Tools } from '../tools.enum';
-import { Coordonnees, Shape } from './Shape';
+import { Coordonnees, Shape, ShapeParameters } from './Shape';
 
 export class Rect extends Shape {
-  constructor(
-    fill: boolean,
-    stroke: boolean,
-    colorFillShape: string,
-    colorStrokeShape: string,
-    coordList: Coordonnees[]
-  ) {
-    super(Tools.Box, fill, stroke, colorFillShape, colorStrokeShape, coordList);
+  constructor(parameters: ShapeParameters) {
+    super(Tools.Polygon, parameters);
   }
 
   override intersect(coord: Coordonnees): boolean {
-    const largeur = this.coordList[1].x - this.coordList[0].x;
-    const hauteur = this.coordList[1].y - this.coordList[0].y;
+    const largeur =
+      this.parameters.coordList[1].x - this.parameters.coordList[0].x;
+    const hauteur =
+      this.parameters.coordList[1].y - this.parameters.coordList[0].y;
     if (
-      coord.x < this.coordList[0].x ||
-      coord.x > this.coordList[0].x + largeur
+      coord.x < this.parameters.coordList[0].x ||
+      coord.x > this.parameters.coordList[0].x + largeur
     ) {
       return false;
     }
     if (
-      coord.y < this.coordList[0].y ||
-      coord.y > this.coordList[0].y + hauteur
+      coord.y < this.parameters.coordList[0].y ||
+      coord.y > this.parameters.coordList[0].y + hauteur
     ) {
       return false;
     }
@@ -50,47 +46,49 @@ export class Rect extends Shape {
     const ctx = canvas.getContext('2d');
 
     if (prevision && coord !== null) {
-      if (this.coordList.length == 2) {
-        this.coordList.pop();
+      if (this.parameters.coordList.length == 2) {
+        this.parameters.coordList.pop();
       }
-      this.coordList.push(coord);
+      this.parameters.coordList.push(coord);
     }
 
-    if (this.coordList.length == 2 || !prevision) {
+    if (this.parameters.coordList.length == 2 || !prevision) {
       let largeur = 0;
       let hauteur = 0;
       if (ctx) {
-        largeur = this.coordList[1].x - this.coordList[0].x;
-        hauteur = this.coordList[1].y - this.coordList[0].y;
+        largeur =
+          this.parameters.coordList[1].x - this.parameters.coordList[0].x;
+        hauteur =
+          this.parameters.coordList[1].y - this.parameters.coordList[0].y;
 
-        if (this.fill && this.stroke) {
-          ctx.fillStyle = this.colorFillShape;
-          ctx.strokeStyle = this.colorStrokeShape;
+        if (this.parameters.fill && this.parameters.stroke) {
+          ctx.fillStyle = this.parameters.colorFillShape;
+          ctx.strokeStyle = this.parameters.colorStrokeShape;
           ctx.fillRect(
-            this.coordList[0].x,
-            this.coordList[0].y,
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y,
             largeur,
             hauteur
           );
           ctx.strokeRect(
-            this.coordList[0].x,
-            this.coordList[0].y,
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y,
             largeur,
             hauteur
           );
-        } else if (this.fill) {
-          ctx.fillStyle = this.colorFillShape;
+        } else if (this.parameters.fill) {
+          ctx.fillStyle = this.parameters.colorFillShape;
           ctx.fillRect(
-            this.coordList[0].x,
-            this.coordList[0].y,
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y,
             largeur,
             hauteur
           );
-        } else if (this.stroke) {
-          ctx.strokeStyle = this.colorStrokeShape;
+        } else if (this.parameters.stroke) {
+          ctx.strokeStyle = this.parameters.colorStrokeShape;
           ctx.strokeRect(
-            this.coordList[0].x,
-            this.coordList[0].y,
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y,
             largeur,
             hauteur
           );

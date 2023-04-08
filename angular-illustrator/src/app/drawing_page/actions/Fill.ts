@@ -14,13 +14,13 @@ export class Fill extends Action {
   }
 
   override do(shapeList: Shape[]): Shape[] {
-    this.beforeColor = this.shape.colorFillShape;
-    this.shape.colorFillShape = this.afterColor;
+    this.beforeColor = this.shape.parameters.colorFillShape;
+    this.shape.parameters.colorFillShape = this.afterColor;
     return shapeList;
   }
 
   override undo(shapeList: Shape[]): Shape[] {
-    this.shape.colorFillShape = this.beforeColor;
+    this.shape.parameters.colorFillShape = this.beforeColor;
     return shapeList;
   }
 }

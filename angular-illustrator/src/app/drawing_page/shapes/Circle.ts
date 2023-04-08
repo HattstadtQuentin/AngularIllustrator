@@ -1,36 +1,27 @@
 import { Tools } from '../tools.enum';
-import { Coordonnees, Shape } from './Shape';
+import { Coordonnees, Shape, ShapeParameters } from './Shape';
 
 export class Circle extends Shape {
-  constructor(
-    fill: boolean,
-    stroke: boolean,
-    colorFillShape: string,
-    colorStrokeShape: string,
-    coordList: Coordonnees[]
-  ) {
-    super(
-      Tools.Circle,
-      fill,
-      stroke,
-      colorFillShape,
-      colorStrokeShape,
-      coordList
-    );
+  constructor(parameters: ShapeParameters) {
+    super(Tools.Polygon, parameters);
   }
 
   override intersect(coord: Coordonnees): boolean {
-    if (this.coordList.length < 2) {
+    if (this.parameters.coordList.length < 2) {
       return false;
     }
 
-    const largeur = Math.abs(this.coordList[1].x - this.coordList[0].x);
-    const hauteur = Math.abs(this.coordList[1].y - this.coordList[0].y);
+    const largeur = Math.abs(
+      this.parameters.coordList[1].x - this.parameters.coordList[0].x
+    );
+    const hauteur = Math.abs(
+      this.parameters.coordList[1].y - this.parameters.coordList[0].y
+    );
     const rayon = Math.sqrt(largeur * largeur + hauteur * hauteur);
 
     const distance = Math.sqrt(
-      Math.pow(coord.x - this.coordList[0].x, 2) +
-        Math.pow(coord.y - this.coordList[0].y, 2)
+      Math.pow(coord.x - this.parameters.coordList[0].x, 2) +
+        Math.pow(coord.y - this.parameters.coordList[0].y, 2)
     );
     return distance <= rayon;
   }
@@ -55,29 +46,33 @@ export class Circle extends Shape {
     const ctx = canvas.getContext('2d');
 
     if (prevision && coord !== null) {
-      if (this.coordList.length == 2) {
-        this.coordList.pop();
+      if (this.parameters.coordList.length == 2) {
+        this.parameters.coordList.pop();
       }
-      this.coordList.push(coord);
+      this.parameters.coordList.push(coord);
     }
 
-    if (this.coordList.length == 2 || !prevision) {
+    if (this.parameters.coordList.length == 2 || !prevision) {
       let largeur = 0;
       let hauteur = 0;
       let rayon = 0;
       if (ctx) {
-        largeur = Math.abs(this.coordList[1].x - this.coordList[0].x);
-        hauteur = Math.abs(this.coordList[1].y - this.coordList[0].y);
+        largeur = Math.abs(
+          this.parameters.coordList[1].x - this.parameters.coordList[0].x
+        );
+        hauteur = Math.abs(
+          this.parameters.coordList[1].y - this.parameters.coordList[0].y
+        );
         rayon = Math.sqrt(largeur * largeur + hauteur * hauteur);
 
         ctx.beginPath();
 
-        if (this.fill && this.stroke) {
-          ctx.fillStyle = this.colorFillShape;
-          ctx.strokeStyle = this.colorStrokeShape;
+        if (this.parameters.fill && this.parameters.stroke) {
+          ctx.fillStyle = this.parameters.colorFillShape;
+          ctx.strokeStyle = this.parameters.colorStrokeShape;
           ctx.arc(
-            this.coordList[0].x,
-            this.coordList[0].y,
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y,
             rayon,
             0,
             Math.PI * 2,
@@ -85,22 +80,22 @@ export class Circle extends Shape {
           );
           ctx.fill();
           ctx.stroke();
-        } else if (this.fill) {
-          ctx.fillStyle = this.colorFillShape;
+        } else if (this.parameters.fill) {
+          ctx.fillStyle = this.parameters.colorFillShape;
           ctx.arc(
-            this.coordList[0].x,
-            this.coordList[0].y,
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y,
             rayon,
             0,
             Math.PI * 2,
             true
           );
           ctx.fill();
-        } else if (this.stroke) {
-          ctx.strokeStyle = this.colorStrokeShape;
+        } else if (this.parameters.stroke) {
+          ctx.strokeStyle = this.parameters.colorStrokeShape;
           ctx.arc(
-            this.coordList[0].x,
-            this.coordList[0].y,
+            this.parameters.coordList[0].x,
+            this.parameters.coordList[0].y,
             rayon,
             0,
             Math.PI * 2,

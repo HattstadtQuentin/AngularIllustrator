@@ -19,10 +19,6 @@ import { ShapeFactory } from '../shapes/ShapeFactory';
 })
 export class OptionBarComponent {
   @Output() fileName = '';
-  isPage = true;
-  isPortrait = true;
-  regleCheckboxValue: boolean = false;
-  grilleCheckboxValue: boolean = false;
   color: string = '#1A1F39';
   fillColor: string = '#000000';
   strokeColor: string = '#000000';
@@ -75,22 +71,6 @@ export class OptionBarComponent {
     }
   }
 
-  updateRegleCheckboxValue(event: Event) {
-    if (event.target instanceof HTMLInputElement) {
-      this.regleCheckboxValue = event.target.checked;
-    }
-  }
-
-  updateGrilleCheckboxValue(event: Event) {
-    if (event.target instanceof HTMLInputElement) {
-      this.grilleCheckboxValue = event.target.checked;
-    }
-  }
-
-  setIsPage(isPage: boolean) {
-    this.isPage = isPage;
-  }
-
   showIsCopied() {
     this.toastr.success('Copié dans le presse-papier');
   }
@@ -118,11 +98,11 @@ export class OptionBarComponent {
     fileContent.forEach((element) => {
       let shape: Shape | null = ShapeFactory(
         element.type,
-        element.fill,
-        element.stroke,
-        element.colorFillShape,
-        element.colorStrokeShape,
-        element.coordList
+        element.parameters.fill,
+        element.parameters.stroke,
+        element.parameters.colorFillShape,
+        element.parameters.colorStrokeShape,
+        element.parameters.coordList
       );
       if (shape !== null) {
         list.push(shape);
@@ -155,21 +135,6 @@ export class OptionBarComponent {
       window.URL.revokeObjectURL(url);
       a.remove();
       this.toastr.success('Export Réussi !');
-    }
-  }
-
-  selectedOrientation: string = 'portrait';
-  radioOptions = [
-    { value: 'portrait', label: 'Portrait' },
-    { value: 'paysage', label: 'Paysage' },
-  ];
-
-  onOptionSelected(value: string) {
-    this.selectedOrientation = value;
-    if (this.selectedOrientation == 'portrait') {
-      this.isPortrait = true;
-    } else {
-      this.isPortrait = false;
     }
   }
 
