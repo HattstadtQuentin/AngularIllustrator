@@ -11,7 +11,7 @@ export class Delete extends Action {
 
   override do(shapeList: Shape[]): Shape[] {
     const filteredArr = shapeList.filter(
-      (item) => item.uuid !== this.shape.uuid
+      (item) => item.parameters.uuid !== this.shape.parameters.uuid
     );
     return filteredArr;
   }

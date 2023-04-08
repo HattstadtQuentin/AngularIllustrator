@@ -41,10 +41,6 @@
       }
     }
 
-    .off {
-      display: none !important;
-    }
-
     .pageContainer {
       display: flex;
       flex-direction: column;
@@ -123,145 +119,6 @@
           }
         }
 
-        .paperOption {
-          width: 100%;
-          height: 50%;
-          padding: 5% 0;
-          .paperSize {
-            position: relative;
-            img {
-              width: 10%;
-              top: 15%;
-              right: 2%;
-              position: absolute;
-              pointer-events: none;
-              cursor: pointer;
-              filter: invert(66%) sepia(4%) saturate(2432%) hue-rotate(189deg)
-                brightness(82%) contrast(86%);
-            }
-            select {
-              background-color: transparent;
-              -webkit-appearance: none;
-              width: 100%;
-              border-radius: 5px;
-              appearance: none;
-              padding: 3% 10% 3% 3%;
-              @include themed() {
-                color: t($third-text-color);
-                border: 2px solid t($third-color);
-              }
-            }
-
-            select:focus,
-            select:active,
-            select:checked {
-              outline: none;
-            }
-
-            select:hover {
-              cursor: pointer;
-              user-select: none;
-              @include themed() {
-                background: t($base-color);
-                color: t($fourth-color);
-              }
-            }
-          }
-
-          .paperOrientation {
-            margin-top: 5%;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            height: 62%;
-            border-radius: 10px;
-            padding: 5%;
-            @include themed() {
-              background: t($third-color);
-            }
-
-            .portrait {
-              width: 40%;
-              height: 90%;
-              border-radius: 10px;
-              @include themed() {
-                background: t($base-text-color);
-              }
-            }
-
-            .landscape {
-              width: 55%;
-              height: 50%;
-              border-radius: 10px;
-              @include themed() {
-                background: t($base-text-color);
-              }
-            }
-
-            .radioOption {
-              width: 40%;
-              display: flex;
-              flex-direction: column;
-            }
-          }
-        }
-      }
-
-      .bottomContainer {
-        height: 15%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-around;
-
-        .btn {
-          border-radius: 25px;
-          text-align: center;
-          width: 70%;
-          font-size: 0.9rem;
-          padding: 2% 5%;
-          cursor: pointer;
-          user-select: none;
-          @include themed() {
-            border: 2px solid t($third-color);
-            color: t($third-text-color);
-          }
-        }
-
-        .btn:hover {
-          @include themed() {
-            background: t($base-color);
-            color: t($fourth-color);
-          }
-        }
-      }
-    }
-
-    .styleContainer {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      font-size: 0.9rem;
-      width: 90%;
-      height: 90%;
-      padding: 0% 2%;
-
-      hr {
-        @include themed() {
-          border: 2px solid t($base-color);
-        }
-        width: 80%;
-        border-radius: 25px;
-      }
-
-      @include themed() {
-        color: t($third-text-color);
-      }
-
-      .topContainer {
-        height: 80%;
-
         .formSelectorContainer {
           padding: 5% 0;
           display: flex;
@@ -333,6 +190,35 @@
             .invalid {
               background-color: $false-red !important;
             }
+          }
+        }
+      }
+
+      .bottomContainer {
+        height: 15%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+
+        .btn {
+          border-radius: 25px;
+          text-align: center;
+          width: 70%;
+          font-size: 0.9rem;
+          padding: 2% 5%;
+          cursor: pointer;
+          user-select: none;
+          @include themed() {
+            border: 2px solid t($third-color);
+            color: t($third-text-color);
+          }
+        }
+
+        .btn:hover {
+          @include themed() {
+            background: t($base-color);
+            color: t($fourth-color);
           }
         }
       }

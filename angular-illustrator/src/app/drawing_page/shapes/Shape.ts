@@ -3,34 +3,15 @@ import { Tools } from '../tools.enum';
 
 export class Shape {
   type: Tools;
-  fill: boolean; //La forme à un remplissage : true/false
-  stroke: boolean; //La forme à des contours : true/false
-  colorFillShape: string; //Couleur de remplissage s'il y en a une
-  colorStrokeShape: string;
-  coordList: Coordonnees[];
-  isSelected: boolean;
-  uuid: string;
+  parameters: ShapeParameters;
 
-  constructor(
-    type: Tools,
-    fill: boolean,
-    stroke: boolean,
-    colorFillShape: string,
-    colorStrokeShape: string,
-    coordList: Coordonnees[]
-  ) {
+  constructor(type: Tools, parameters: ShapeParameters) {
     this.type = type;
-    this.fill = fill;
-    this.stroke = stroke;
-    this.colorFillShape = colorFillShape;
-    this.colorStrokeShape = colorStrokeShape;
-    this.coordList = coordList;
-    this.isSelected = false;
-    this.uuid = uuidv4();
+    this.parameters = parameters;
   }
 
   move(xOffset: number, yOffset: number) {
-    this.coordList.forEach((coord) => {
+    this.parameters.coordList.forEach((coord) => {
       coord.x = Math.floor(coord.x - xOffset);
       coord.y = Math.floor(coord.y - yOffset);
     });
@@ -43,6 +24,33 @@ export class Shape {
   previsu(coord: Coordonnees): void {}
 
   draw(): void {}
+}
+
+//Class permettant de remplir plus facilement les parametres d'une forme
+export class ShapeParameters {
+  fill: boolean; //La forme à un remplissage : true/false
+  stroke: boolean; //La forme à des contours : true/false
+  colorFillShape: string; //Couleur de remplissage s'il y en a une
+  colorStrokeShape: string;
+  coordList: Coordonnees[];
+  isSelected: boolean;
+  uuid: string;
+
+  constructor(
+    fill: boolean,
+    stroke: boolean,
+    colorFillShape: string,
+    colorStrokeShape: string,
+    coordList: Coordonnees[]
+  ) {
+    this.fill = fill;
+    this.stroke = stroke;
+    this.colorFillShape = colorFillShape;
+    this.colorStrokeShape = colorStrokeShape;
+    this.coordList = coordList;
+    this.isSelected = false;
+    this.uuid = uuidv4();
+  }
 }
 
 export class Coordonnees {

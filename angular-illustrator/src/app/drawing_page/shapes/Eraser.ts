@@ -1,9 +1,9 @@
 import { Tools } from '../tools.enum';
 import { Coordonnees, Shape, ShapeParameters } from './Shape';
 
-export class Pen extends Shape {
+export class Eraser extends Shape {
   constructor(parameters: ShapeParameters) {
-    super(Tools.Polygon, parameters);
+    super(Tools.Eraser, parameters);
   }
 
   override intersect(coord: Coordonnees): boolean {
@@ -36,6 +36,7 @@ export class Pen extends Shape {
     if (this.parameters.coordList.length > 1 || !prevision) {
       if (ctx) {
         ctx.strokeStyle = this.parameters.colorFillShape;
+        ctx.globalCompositeOperation = 'destination-out';
 
         this.parameters.coordList.forEach((coordElem, index) => {
           if (index === 0) {
@@ -49,6 +50,7 @@ export class Pen extends Shape {
         });
 
         ctx.stroke();
+        ctx.globalCompositeOperation = 'source-over';
       }
     }
   }

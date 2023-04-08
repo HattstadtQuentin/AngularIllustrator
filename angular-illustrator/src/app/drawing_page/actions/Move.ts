@@ -18,8 +18,8 @@ export class Move extends Action {
   override previsu(coord: Coordonnees): void {
     if (this.beforeCoord === null) {
       this.beforeCoord = new Coordonnees(
-        this.shape.coordList[0].x,
-        this.shape.coordList[0].y
+        this.shape.parameters.coordList[0].x,
+        this.shape.parameters.coordList[0].y
       );
     }
     const offsetX = this.coordSelected.x - coord.x;
@@ -31,15 +31,15 @@ export class Move extends Action {
 
   override do(ShapeList: Shape[]): Shape[] {
     const arrivalCoord = this.coordSelected;
-    this.coordSelected = this.shape.coordList[0];
+    this.coordSelected = this.shape.parameters.coordList[0];
     this.previsu(arrivalCoord);
     return ShapeList;
   }
 
   override undo(shapeList: Shape[]): Shape[] {
     if (this.beforeCoord !== null) {
-      const offsetX = this.shape.coordList[0].x - this.beforeCoord.x;
-      const offsetY = this.shape.coordList[0].y - this.beforeCoord.y;
+      const offsetX = this.shape.parameters.coordList[0].x - this.beforeCoord.x;
+      const offsetY = this.shape.parameters.coordList[0].y - this.beforeCoord.y;
       this.shape.move(offsetX, offsetY);
       this.shape.draw();
     }
