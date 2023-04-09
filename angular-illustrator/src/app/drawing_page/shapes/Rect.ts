@@ -37,7 +37,6 @@ export class Rect extends Shape {
     const cosAngle = Math.cos(angle);
     const sinAngle = Math.sin(angle);
 
-    // calculate the coordinates of the four corners of the rectangle
     const topLeftX = centerX - scaledWidth / 2;
     const topLeftY = centerY - scaledHeight / 2;
     const topRightX = centerX + scaledWidth / 2;
@@ -47,7 +46,6 @@ export class Rect extends Shape {
     const bottomRightX = centerX + scaledWidth / 2;
     const bottomRightY = centerY + scaledHeight / 2;
 
-    // rotate the coordinates around the center of the rectangle
     const rotatedTopLeftX =
       centerX +
       cosAngle * (topLeftX - centerX) -
@@ -81,7 +79,6 @@ export class Rect extends Shape {
       sinAngle * (bottomRightX - centerX) +
       cosAngle * (bottomRightY - centerY);
 
-    // calculate the minimum and maximum X and Y coordinates of the rotated rectangle
     const minX = Math.min(
       rotatedTopLeftX,
       rotatedTopRightX,

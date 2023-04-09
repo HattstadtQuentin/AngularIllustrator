@@ -1,10 +1,6 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ActionsList } from './actions/ActionsList';
-import { Layer } from './layers/Layer';
-import { LayerList } from './layers/LayerList';
 import { DrawService } from './services/DrawService';
-import { Tools } from './tools.enum';
 
 @Component({
   selector: 'app-drawing-page',

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ActionsList } from '../actions/ActionsList';
-import { Layer } from '../layers/Layer';
 import { LayerList } from '../layers/LayerList';
 import { Tools } from '../tools.enum';
 

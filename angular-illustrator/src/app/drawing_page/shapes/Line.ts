@@ -21,17 +21,17 @@ export class Line extends Shape {
     const thickness = this.parameters.thickness;
     const coordList = this.parameters.coordList;
 
-    // Calculate the midpoint of the line
+    // Calcul du point central de la ligne
     const midX = (coordList[0].x + coordList[1].x) / 2;
     const midY = (coordList[0].y + coordList[1].y) / 2;
 
-    // Calculate the angle of the line with respect to the x-axis
+    // Calcul de l'angle de la ligne en respectant l'axe x
     const angle = Math.atan2(
       coordList[1].y - coordList[0].y,
       coordList[1].x - coordList[0].x
     );
 
-    // Rotate the point and the line about their center point
+    // Rotation du point et de la ligne autour du centre
     const cosAngle = Math.cos(angle);
     const sinAngle = Math.sin(angle);
 
@@ -45,7 +45,7 @@ export class Line extends Shape {
       y: (coord.x - midX) * sinAngle + (coord.y - midY) * cosAngle + midY,
     }));
 
-    // Calculate the distance between the point and the line
+    // Calcul de la distance entre le point et la ligne
     const distance =
       Math.abs(
         (rotatedCoordList[1].y - rotatedCoordList[0].y) * rotatedCoord.x -
@@ -58,19 +58,16 @@ export class Line extends Shape {
           Math.pow(rotatedCoordList[1].x - rotatedCoordList[0].x, 2)
       );
 
-    // Calculate the scaled thickness of the line
+    // Calcul de l'epaisseur en rajoutant le scale
     const scaleFactor = this.parameters.scaleFactor;
     const scaledThickness = thickness * scaleFactor;
 
-    // Calculate the distance from the point to the midpoint of the line
     const distFromMid = Math.sqrt(
       Math.pow(coord.x - midX, 2) + Math.pow(coord.y - midY, 2)
     );
 
-    // Calculate the scaled and rotated thickness of the line
     const scaledRotatedThickness = scaledThickness * Math.abs(Math.cos(angle));
 
-    // Check if the point intersects with the line
     return (
       distance <= scaledRotatedThickness / 2 &&
       distFromMid <=

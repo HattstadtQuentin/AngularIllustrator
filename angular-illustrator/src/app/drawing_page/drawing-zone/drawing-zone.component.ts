@@ -1,13 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  ViewChild,
-  Input,
-  EventEmitter,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { Tools } from '../tools.enum';
 import { Polygon } from '../shapes/Polygon';
 import { Circle } from '../shapes/Circle';
@@ -233,7 +224,6 @@ export class DrawingZoneComponent implements OnInit {
         this.currentAction.shape instanceof Polygon &&
         !this.currentAction.shape.isClosed
       ) {
-        console.log('draw');
       } else {
         this.isDrawing = false;
         this.actionList.undoList.push(this.currentAction);

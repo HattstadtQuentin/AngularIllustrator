@@ -140,7 +140,7 @@ export class OptionBarComponent {
       this.drawService.setLayerList(this.layerList);
     };
 
-    // Split the file name at the last occurrence of the dot to get the file name without the extension
+    // Decoupage du nom a la dernière occurrence du mot afin d'avoir le nom du fichier sans l'extension
     this.drawService.setFileName(file.name.split('.').slice(0, -1).join('.'));
 
     reader.readAsText(file);

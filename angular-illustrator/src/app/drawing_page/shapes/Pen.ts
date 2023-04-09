@@ -72,11 +72,9 @@ export class Pen extends Shape {
 
         this.parameters.coordList.forEach((coordElem, index) => {
           if (index === 0) {
-            // if this is the first point, start a new path
             ctx.beginPath();
             ctx.moveTo(coordElem.x, coordElem.y);
           } else {
-            // if this is not the first point, add it to the current path
             ctx.lineTo(coordElem.x, coordElem.y);
           }
         });

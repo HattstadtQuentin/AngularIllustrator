@@ -15,9 +15,7 @@ export class AppComponent {
     this.isDark = value;
   }
 
-  constructor(
-    private actRoute: ActivatedRoute // Activated route to get the current component's information
-  ) {}
+  constructor(private actRoute: ActivatedRoute) {}
   ngOnInit() {
     const tmp = this.actRoute.snapshot.paramMap.get('path');
     this.activeRoute = tmp === null ? '' : tmp;
