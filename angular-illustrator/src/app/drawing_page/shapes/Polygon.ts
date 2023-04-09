@@ -11,18 +11,64 @@ export class Polygon extends Shape {
   }
 
   override center(): Coordonnees {
-    let sumX = 0;
-    let sumY = 0;
+    const center = { x: 0, y: 0 };
+    for (let i = 0; i < this.parameters.coordList.length; i++) {
+      center.x += this.parameters.coordList[i].x;
+      center.y += this.parameters.coordList[i].y;
+    }
+    center.x /= this.parameters.coordList.length;
+    center.y /= this.parameters.coordList.length;
+    return new Coordonnees(center.x, center.y);
+  }
 
-    this.parameters.coordList.forEach((coord) => {
-      sumX += coord.x;
-      sumY += coord.y;
+  override intersect(coord: Coordonnees): boolean {
+    let isInside = false;
+
+    // Calculate the center point of the polygon
+    const center = this.center();
+
+    // Translate the polygon so that its center is at the origin
+    const translatedPolygon = this.parameters.coordList.map((p) => {
+      return { x: p.x - center.x, y: p.y - center.y };
     });
 
-    return new Coordonnees(
-      sumX / this.parameters.coordList.length,
-      sumY / this.parameters.coordList.length
-    );
+    // Rotate the polygon
+    const rotatedPolygon = translatedPolygon.map((p) => {
+      const x =
+        p.x * Math.cos(this.parameters.rotateAngle) -
+        p.y * Math.sin(this.parameters.rotateAngle);
+      const y =
+        p.x * Math.sin(this.parameters.rotateAngle) +
+        p.y * Math.cos(this.parameters.rotateAngle);
+      return { x, y };
+    });
+
+    // Scale the polygon
+    const scaledPolygon = rotatedPolygon.map((p) => {
+      const x = p.x * this.parameters.scaleFactor;
+      const y = p.y * this.parameters.scaleFactor;
+      return { x, y };
+    });
+
+    // Translate the polygon back to its original position
+    const coordListTmp = scaledPolygon.map((p) => {
+      return { x: p.x + center.x, y: p.y + center.y };
+    });
+
+    const n = coordListTmp.length;
+    for (let i = 0, j = n - 1; i < n; j = i++) {
+      const xi = coordListTmp[i].x;
+      const yi = coordListTmp[i].y;
+      const xj = coordListTmp[j].x;
+      const yj = coordListTmp[j].y;
+      const intersect =
+        yi > coord.y !== yj > coord.y &&
+        coord.x < ((xj - xi) * (coord.y - yi)) / (yj - yi) + xi;
+      if (intersect) {
+        isInside = !isInside;
+      }
+    }
+    return isInside;
   }
 
   override previsu(coord: Coordonnees): void {
@@ -78,6 +124,7 @@ export class Polygon extends Shape {
         ctx.scale(this.parameters.scaleFactor, this.parameters.scaleFactor);
         ctx.rotate((this.parameters.rotateAngle * Math.PI) / 180);
         ctx.translate(-center.x, -center.y);
+        ctx.fillStyle = this.parameters.colorFillShape;
         ctx.strokeStyle = this.parameters.colorFillShape;
         ctx.lineWidth = this.parameters.thickness;
         this.parameters.coordList.forEach((coordElem, index) => {
@@ -92,8 +139,9 @@ export class Polygon extends Shape {
         });
         if (this.isClosed) {
           ctx.closePath();
+
+          ctx.fill();
         }
-        ctx.fill();
         ctx.stroke();
 
         ctx.restore();
