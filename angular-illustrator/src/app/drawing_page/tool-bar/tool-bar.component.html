@@ -44,6 +44,17 @@
     </div>
     <div
       [ngClass]="{
+        hide: !filteredTools.includes(Tools.Rotate),
+        active: activeTool === Tools.Rotate,
+        outilCard: true
+      }"
+      (click)="setActiveTool(Tools.Rotate)"
+    >
+      <img src="../../../assets/tools/rotate-svgrepo-com.svg" alt="Rotating" />
+      <div class="outilTitle">Rotate</div>
+    </div>
+    <div
+      [ngClass]="{
         hide: !filteredTools.includes(Tools.Fill),
         active: activeTool === Tools.Fill,
         outilCard: true

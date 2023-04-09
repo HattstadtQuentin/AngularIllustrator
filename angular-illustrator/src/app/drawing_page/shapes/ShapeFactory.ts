@@ -12,13 +12,17 @@ export function ShapeFactory(
   thickness: number,
   colorFillShape: string,
   colorStrokeShape: string,
-  coordList: Coordonnees[]
+  coordList: Coordonnees[],
+  scaleFactor: number,
+  rotateAngle: number
 ): Shape | null {
   const parameters = new ShapeParameters(
     thickness,
     colorFillShape,
     colorStrokeShape,
-    coordList
+    coordList,
+    scaleFactor,
+    rotateAngle
   );
   switch (type) {
     case Tools.Pen:

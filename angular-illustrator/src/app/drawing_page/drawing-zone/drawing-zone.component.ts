@@ -22,6 +22,7 @@ import { Fill } from '../actions/Fill';
 import { Delete } from '../actions/Delete';
 import { Eraser } from '../shapes/Eraser';
 import { Scale } from '../actions/Scale';
+import { Rotate } from '../actions/Rotate';
 
 @Component({
   selector: 'app-drawing-zone',
@@ -199,7 +200,8 @@ export class DrawingZoneComponent implements OnInit {
         this.currentAction.previsu(new Coordonnees(this.x, this.y));
         if (
           this.currentAction instanceof Move ||
-          this.currentAction instanceof Scale
+          this.currentAction instanceof Scale ||
+          this.currentAction instanceof Rotate
         ) {
           this.drawAllShapes();
         }
@@ -252,13 +254,13 @@ export class DrawingZoneComponent implements OnInit {
       this.colorStrokeShape,
       [coord]
     );
-    let _shape = null;
+    const _shape = this.getShapeIntersected(coord);
     switch (this.activeTool) {
       case Tools.Selection:
         break;
       case Tools.Move:
-        _shape = this.getShapeIntersected(coord);
         if (_shape !== null) {
+          console.log(_shape);
           this.currentAction = new Move(
             _shape,
             new Coordonnees(this.x, this.y)
@@ -266,7 +268,6 @@ export class DrawingZoneComponent implements OnInit {
         }
         break;
       case Tools.Scale:
-        _shape = this.getShapeIntersected(coord);
         if (_shape !== null) {
           this.currentAction = new Scale(
             _shape,
@@ -274,8 +275,15 @@ export class DrawingZoneComponent implements OnInit {
           );
         }
         break;
+      case Tools.Rotate:
+        if (_shape !== null) {
+          this.currentAction = new Rotate(
+            _shape,
+            new Coordonnees(this.x, this.y)
+          );
+        }
+        break;
       case Tools.Fill:
-        _shape = this.getShapeIntersected(coord);
         if (_shape !== null) {
           this.currentAction = new Fill(_shape, this.colorFillShape);
         } else {
@@ -301,7 +309,6 @@ export class DrawingZoneComponent implements OnInit {
         this.currentAction = new Draw(new Eraser(shapeParameters));
         break;
       case Tools.Delete:
-        _shape = this.getShapeIntersected(coord);
         if (_shape !== null) {
           this.currentAction = new Delete(_shape);
         }
@@ -318,6 +325,7 @@ export class DrawingZoneComponent implements OnInit {
     this._shapeList.reverse().forEach((shape) => {
       if (shape.intersect(coord)) {
         _shape = shape;
+        console.log('intersection trouvée');
         return;
       }
     });

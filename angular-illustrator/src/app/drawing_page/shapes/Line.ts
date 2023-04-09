@@ -17,33 +17,69 @@ export class Line extends Shape {
     if (this.parameters.coordList.length < 2) {
       return false;
     }
+
+    const thickness = this.parameters.thickness;
+    const coordList = this.parameters.coordList;
+
+    // Calculate the midpoint of the line
+    const midX = (coordList[0].x + coordList[1].x) / 2;
+    const midY = (coordList[0].y + coordList[1].y) / 2;
+
+    // Calculate the angle of the line with respect to the x-axis
+    const angle = Math.atan2(
+      coordList[1].y - coordList[0].y,
+      coordList[1].x - coordList[0].x
+    );
+
+    // Rotate the point and the line about their center point
+    const cosAngle = Math.cos(angle);
+    const sinAngle = Math.sin(angle);
+
+    const rotatedCoord = {
+      x: (coord.x - midX) * cosAngle - (coord.y - midY) * sinAngle + midX,
+      y: (coord.x - midX) * sinAngle + (coord.y - midY) * cosAngle + midY,
+    };
+
+    const rotatedCoordList = coordList.map((coord) => ({
+      x: (coord.x - midX) * cosAngle - (coord.y - midY) * sinAngle + midX,
+      y: (coord.x - midX) * sinAngle + (coord.y - midY) * cosAngle + midY,
+    }));
+
     // Calculate the distance between the point and the line
     const distance =
       Math.abs(
-        (this.parameters.coordList[1].y - this.parameters.coordList[0].y) *
-          coord.x -
-          (this.parameters.coordList[1].x - this.parameters.coordList[0].x) *
-            coord.y +
-          this.parameters.coordList[1].x * this.parameters.coordList[0].y -
-          this.parameters.coordList[1].y * this.parameters.coordList[0].x
+        (rotatedCoordList[1].y - rotatedCoordList[0].y) * rotatedCoord.x -
+          (rotatedCoordList[1].x - rotatedCoordList[0].x) * rotatedCoord.y +
+          rotatedCoordList[1].x * rotatedCoordList[0].y -
+          rotatedCoordList[1].y * rotatedCoordList[0].x
       ) /
       Math.sqrt(
-        Math.pow(
-          this.parameters.coordList[1].y - this.parameters.coordList[0].y,
-          2
-        ) +
-          Math.pow(
-            this.parameters.coordList[1].x - this.parameters.coordList[0].x,
-            2
-          )
+        Math.pow(rotatedCoordList[1].y - rotatedCoordList[0].y, 2) +
+          Math.pow(rotatedCoordList[1].x - rotatedCoordList[0].x, 2)
       );
 
-    // Compare the distance to half the thickness of the line
-    if (distance <= this.parameters.thickness / 2) {
-      return true;
-    }
+    // Calculate the scaled thickness of the line
+    const scaleFactor = this.parameters.scaleFactor;
+    const scaledThickness = thickness * scaleFactor;
 
-    return false;
+    // Calculate the distance from the point to the midpoint of the line
+    const distFromMid = Math.sqrt(
+      Math.pow(coord.x - midX, 2) + Math.pow(coord.y - midY, 2)
+    );
+
+    // Calculate the scaled and rotated thickness of the line
+    const scaledRotatedThickness = scaledThickness * Math.abs(Math.cos(angle));
+
+    // Check if the point intersects with the line
+    return (
+      distance <= scaledRotatedThickness / 2 &&
+      distFromMid <=
+        Math.sqrt(
+          Math.pow(coordList[1].x - coordList[0].x, 2) +
+            Math.pow(coordList[1].y - coordList[0].y, 2)
+        ) /
+          2
+    );
   }
 
   override previsu(coord: Coordonnees): void {
@@ -78,6 +114,7 @@ export class Line extends Shape {
         const center = this.center();
         ctx.translate(center.x, center.y);
         ctx.scale(this.parameters.scaleFactor, this.parameters.scaleFactor);
+        ctx.rotate((this.parameters.rotateAngle * Math.PI) / 180);
         ctx.translate(-center.x, -center.y);
         ctx.strokeStyle = this.parameters.colorFillShape;
         ctx.lineWidth = this.parameters.thickness;

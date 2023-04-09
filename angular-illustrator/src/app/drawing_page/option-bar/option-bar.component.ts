@@ -79,7 +79,9 @@ export class OptionBarComponent {
         element.parameters.thickness,
         element.parameters.colorFillShape,
         element.parameters.colorStrokeShape,
-        element.parameters.coordList
+        element.parameters.coordList,
+        element.parameters.scaleFactor,
+        element.parameters.rotateAngle
       );
       if (shape !== null) {
         list.push(shape);
