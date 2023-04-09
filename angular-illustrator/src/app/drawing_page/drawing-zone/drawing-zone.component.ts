@@ -226,13 +226,21 @@ export class DrawingZoneComponent implements OnInit {
   //					   		  choisie et va dessiner la forme
   //--------------------------------------------------------------------------------------
   public onMouseUp(e: MouseEvent): void {
-    this.isDrawing = false;
     if (this.currentAction !== null) {
       this.layerList = this.currentAction.do(this.layerList);
-      this.actionList.undoList.push(this.currentAction);
-      this.currentAction = null;
-      this.drawService.setActionList(this.actionList);
-      this.drawService.setLayerList(this.layerList);
+      if (
+        this.currentAction instanceof Draw &&
+        this.currentAction.shape instanceof Polygon &&
+        !this.currentAction.shape.isClosed
+      ) {
+        console.log('draw');
+      } else {
+        this.isDrawing = false;
+        this.actionList.undoList.push(this.currentAction);
+        this.drawService.setActionList(this.actionList);
+        this.drawService.setLayerList(this.layerList);
+        this.currentAction = null;
+      }
     }
     this.drawLayers();
   }
@@ -310,7 +318,9 @@ export class DrawingZoneComponent implements OnInit {
         this.currentAction = new Draw(new Circle(shapeParameters));
         break;
       case Tools.Polygon:
-        this.currentAction = new Draw(new Polygon(shapeParameters));
+        if (this.currentAction === null) {
+          this.currentAction = new Draw(new Polygon(shapeParameters));
+        }
         break;
       case Tools.Eraser:
         this.currentAction = new Draw(new Eraser(shapeParameters));
@@ -361,22 +371,31 @@ export class DrawingZoneComponent implements OnInit {
   //						   liste de formes
   //--------------------------------------------------------------------------------------
   public drawLayers() {
-    this.clearCanvas(this.canvasRef.nativeElement as HTMLCanvasElement, false);
-    this.clearCanvas(
-      this.canvasPreviRef.nativeElement as HTMLCanvasElement,
-      true
-    );
-    //On trie la liste par id afin d'etre sur d'avoir l'ordre chronologique
-    this.layerList.layerList.sort((layer1, layer2) => {
-      return layer1.uuid - layer2.uuid;
-    });
-    this.layerList.layerList.forEach((layer) => {
-      if (layer.isVisible) {
-        layer.shapeList.sort((shape1, shape2) => {
-          return shape1.parameters.uuid - shape2.parameters.uuid;
-        });
-        layer.shapeList.forEach((shape) => shape.draw());
-      }
-    });
+    if (
+      this.currentAction instanceof Draw &&
+      this.currentAction.shape instanceof Polygon
+    ) {
+    } else {
+      this.clearCanvas(
+        this.canvasRef.nativeElement as HTMLCanvasElement,
+        false
+      );
+      this.clearCanvas(
+        this.canvasPreviRef.nativeElement as HTMLCanvasElement,
+        true
+      );
+      //On trie la liste par id afin d'etre sur d'avoir l'ordre chronologique
+      this.layerList.layerList.sort((layer1, layer2) => {
+        return layer1.uuid - layer2.uuid;
+      });
+      this.layerList.layerList.forEach((layer) => {
+        if (layer.isVisible) {
+          layer.shapeList.sort((shape1, shape2) => {
+            return shape1.parameters.uuid - shape2.parameters.uuid;
+          });
+          layer.shapeList.forEach((shape) => shape.draw());
+        }
+      });
+    }
   }
 }

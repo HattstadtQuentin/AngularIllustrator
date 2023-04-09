@@ -8,20 +8,6 @@
   <div class="outilContainer">
     <div
       [ngClass]="{
-        hide: !filteredTools.includes(Tools.Selection),
-        active: activeTool === Tools.Selection,
-        outilCard: true
-      }"
-      (click)="setActiveTool(Tools.Selection)"
-    >
-      <img
-        src="../../../assets/tools/selection-plus-duotone-svgrepo-com.svg"
-        alt="Square Select"
-      />
-      <div class="outilTitle">Selection</div>
-    </div>
-    <div
-      [ngClass]="{
         hide: !filteredTools.includes(Tools.Move),
         active: activeTool === Tools.Move,
         outilCard: true

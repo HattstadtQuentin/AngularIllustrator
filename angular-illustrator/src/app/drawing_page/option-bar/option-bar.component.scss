@@ -44,7 +44,6 @@
     .pageContainer {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       font-size: 0.9rem;
       width: 90%;
       height: 90%;
@@ -63,7 +62,7 @@
       }
 
       .topContainer {
-        height: 80%;
+        height: 70%;
 
         .fileNameContainer {
           padding: 2% 0;
@@ -152,7 +151,7 @@
           display: flex;
           flex-direction: column;
           justify-content: space-around;
-          height: 20%;
+          height: 10%;
 
           .custom-slider {
             display: flex;
@@ -201,6 +200,7 @@
           overflow-y: scroll;
 
           .layerCard {
+            height: 15%;
             border-radius: 25px;
             width: 85%;
             margin-bottom: 5px;
@@ -221,7 +221,7 @@
             }
 
             img {
-              width: 12%;
+              height: 100%;
               filter: invert(180%) sepia(43%) saturate(2200%) hue-rotate(19deg)
                 brightness(82%) contrast(86%);
             }
@@ -232,7 +232,7 @@
             }
 
             .deleteContainer {
-              width: 13%;
+              height: 100%;
               display: flex;
               align-items: center;
               justify-content: center;
@@ -256,12 +256,13 @@
         }
         .plusBtn {
           margin-top: 5px;
+          height: 5%;
           display: flex;
           flex-direction: column;
           align-self: flex-end;
           align-items: center;
           .plusZone {
-            width: 20%;
+            height: 100%;
             filter: invert(66%) sepia(4%) saturate(2432%) hue-rotate(189deg)
               brightness(82%) contrast(86%);
 
@@ -274,10 +275,12 @@
       }
 
       .bottomContainer {
-        height: 15%;
+        margin-top: 10px;
+        height: 10%;
         display: flex;
         flex-direction: column;
         align-items: center;
+
         gap: 5px;
 
         .btn {
