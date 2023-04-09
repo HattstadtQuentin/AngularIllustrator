@@ -1,6 +1,7 @@
 export enum Tools {
   Selection = 'Selection',
   Move = 'Move',
+  Scale = 'Scale',
   Fill = 'Fill',
   Pen = 'Pen',
   Line = 'Line',
@@ -18,6 +19,7 @@ interface ToolsMap {
 export const toolsMap: { [key: string]: Tools } = {
   Selection: Tools.Selection,
   Move: Tools.Move,
+  Scale: Tools.Scale,
   Fill: Tools.Fill,
   Pen: Tools.Pen,
   Line: Tools.Line,

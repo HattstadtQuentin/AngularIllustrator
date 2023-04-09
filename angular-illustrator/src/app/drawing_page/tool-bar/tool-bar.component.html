@@ -33,6 +33,17 @@
     </div>
     <div
       [ngClass]="{
+        hide: !filteredTools.includes(Tools.Scale),
+        active: activeTool === Tools.Scale,
+        outilCard: true
+      }"
+      (click)="setActiveTool(Tools.Scale)"
+    >
+      <img src="../../../assets/tools/scale-svgrepo-com.svg" alt="Scaling" />
+      <div class="outilTitle">Scale</div>
+    </div>
+    <div
+      [ngClass]="{
         hide: !filteredTools.includes(Tools.Fill),
         active: activeTool === Tools.Fill,
         outilCard: true

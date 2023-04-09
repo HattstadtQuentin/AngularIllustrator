@@ -6,6 +6,10 @@ export class Circle extends Shape {
     super(Tools.Polygon, parameters);
   }
 
+  override center(): Coordonnees {
+    return this.parameters.coordList[0];
+  }
+
   override intersect(coord: Coordonnees): boolean {
     if (this.parameters.coordList.length < 2) {
       return false;
@@ -55,19 +59,21 @@ export class Circle extends Shape {
     }
 
     if (this.parameters.coordList.length == 2 || !prevision) {
-      let largeur = 0;
-      let hauteur = 0;
-      let rayon = 0;
       if (ctx) {
+        ctx.save();
+        const center = this.center();
+        ctx.translate(center.x, center.y);
+        ctx.scale(this.parameters.scaleFactor, this.parameters.scaleFactor);
+        ctx.translate(-center.x, -center.y);
         ctx.lineWidth = this.parameters.thickness;
 
-        largeur = Math.abs(
+        const largeur = Math.abs(
           this.parameters.coordList[1].x - this.parameters.coordList[0].x
         );
-        hauteur = Math.abs(
+        const hauteur = Math.abs(
           this.parameters.coordList[1].y - this.parameters.coordList[0].y
         );
-        rayon = Math.sqrt(largeur * largeur + hauteur * hauteur);
+        const rayon = Math.sqrt(largeur * largeur + hauteur * hauteur);
 
         ctx.beginPath();
 
@@ -83,6 +89,7 @@ export class Circle extends Shape {
         );
         ctx.fill();
         ctx.stroke();
+        ctx.restore();
       }
     }
   }

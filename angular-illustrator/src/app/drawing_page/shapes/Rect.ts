@@ -6,7 +6,18 @@ export class Rect extends Shape {
     super(Tools.Polygon, parameters);
   }
 
+  override center(): Coordonnees {
+    const centerX =
+      (this.parameters.coordList[0].x + this.parameters.coordList[1].x) / 2;
+    const centerY =
+      (this.parameters.coordList[0].y + this.parameters.coordList[1].y) / 2;
+    return new Coordonnees(centerX, centerY);
+  }
+
   override intersect(coord: Coordonnees): boolean {
+    if (this.parameters.coordList.length < 2) {
+      return false;
+    }
     const largeur =
       this.parameters.coordList[1].x -
       this.parameters.coordList[0].x +
@@ -62,6 +73,11 @@ export class Rect extends Shape {
       let largeur = 0;
       let hauteur = 0;
       if (ctx) {
+        ctx.save();
+        const center = this.center();
+        ctx.translate(center.x, center.y);
+        ctx.scale(this.parameters.scaleFactor, this.parameters.scaleFactor);
+        ctx.translate(-center.x, -center.y);
         largeur =
           this.parameters.coordList[1].x - this.parameters.coordList[0].x;
         hauteur =
@@ -82,6 +98,8 @@ export class Rect extends Shape {
           largeur,
           hauteur
         );
+
+        ctx.restore();
       }
     }
   }

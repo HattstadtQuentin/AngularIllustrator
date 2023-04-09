@@ -6,6 +6,13 @@ export class Line extends Shape {
     super(Tools.Line, parameters);
   }
 
+  override center(): Coordonnees {
+    return new Coordonnees(
+      (this.parameters.coordList[0].x + this.parameters.coordList[1].x) / 2,
+      (this.parameters.coordList[0].y + this.parameters.coordList[1].y) / 2
+    );
+  }
+
   override intersect(coord: Coordonnees): boolean {
     if (this.parameters.coordList.length < 2) {
       return false;
@@ -67,6 +74,11 @@ export class Line extends Shape {
 
     if (this.parameters.coordList.length == 2 || !prevision) {
       if (ctx) {
+        ctx.save();
+        const center = this.center();
+        ctx.translate(center.x, center.y);
+        ctx.scale(this.parameters.scaleFactor, this.parameters.scaleFactor);
+        ctx.translate(-center.x, -center.y);
         ctx.strokeStyle = this.parameters.colorFillShape;
         ctx.lineWidth = this.parameters.thickness;
         ctx.beginPath();
@@ -79,6 +91,7 @@ export class Line extends Shape {
           this.parameters.coordList[1].y
         );
         ctx.stroke();
+        ctx.restore();
       }
     }
   }
