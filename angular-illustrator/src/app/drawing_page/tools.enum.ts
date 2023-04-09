@@ -23,7 +23,7 @@ export const toolsMap: { [key: string]: Tools } = {
   Line: Tools.Line,
   Box: Tools.Box,
   Circle: Tools.Circle,
-  Triangle: Tools.Polygon,
+  Polygon: Tools.Polygon,
   Eraser: Tools.Eraser,
   Delete: Tools.Delete,
 };

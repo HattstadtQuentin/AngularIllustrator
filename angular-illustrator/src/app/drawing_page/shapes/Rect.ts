@@ -8,18 +8,24 @@ export class Rect extends Shape {
 
   override intersect(coord: Coordonnees): boolean {
     const largeur =
-      this.parameters.coordList[1].x - this.parameters.coordList[0].x;
+      this.parameters.coordList[1].x -
+      this.parameters.coordList[0].x +
+      2 * this.parameters.thickness;
     const hauteur =
-      this.parameters.coordList[1].y - this.parameters.coordList[0].y;
+      this.parameters.coordList[1].y -
+      this.parameters.coordList[0].y +
+      2 * this.parameters.thickness;
     if (
-      coord.x < this.parameters.coordList[0].x ||
-      coord.x > this.parameters.coordList[0].x + largeur
+      coord.x < this.parameters.coordList[0].x - this.parameters.thickness ||
+      coord.x >
+        this.parameters.coordList[0].x - this.parameters.thickness + largeur
     ) {
       return false;
     }
     if (
-      coord.y < this.parameters.coordList[0].y ||
-      coord.y > this.parameters.coordList[0].y + hauteur
+      coord.y < this.parameters.coordList[0].y - this.parameters.thickness ||
+      coord.y >
+        this.parameters.coordList[0].y - this.parameters.thickness + hauteur
     ) {
       return false;
     }
