@@ -15,18 +15,18 @@
     <app-drawing-zone
       class="drawZoneContainer"
       [activeTool]="activeTool"
-      [backgroundColor]="drawZoneBackgroundColor"
       [colorFillShape]="drawFillColor"
       [colorStrokeShape]="drawStrokeColor"
+      [thickness]="drawThickness"
       [(shapeList)]="shapeList"
     ></app-drawing-zone>
 
     <app-option-bar
       class="optionBarContainer"
       (updateFileName)="updateFileName($event)"
-      (updateBackgroundColor)="updateDrawZoneBackgroundColor($event)"
       (updateFillColor)="updateFillColor($event)"
       (updateStrokeColor)="updateStrokeColor($event)"
+      (updateThickness)="updateThickness($event)"
       [shapeList]="shapeList"
       (updateShapeList)="updateShapeList($event)"
     ></app-option-bar>

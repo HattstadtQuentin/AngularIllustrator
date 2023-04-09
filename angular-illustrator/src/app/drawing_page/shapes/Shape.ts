@@ -28,8 +28,7 @@ export class Shape {
 
 //Class permettant de remplir plus facilement les parametres d'une forme
 export class ShapeParameters {
-  fill: boolean; //La forme à un remplissage : true/false
-  stroke: boolean; //La forme à des contours : true/false
+  thickness: number; //Epaisseur des contours
   colorFillShape: string; //Couleur de remplissage s'il y en a une
   colorStrokeShape: string;
   coordList: Coordonnees[];
@@ -37,14 +36,12 @@ export class ShapeParameters {
   uuid: string;
 
   constructor(
-    fill: boolean,
-    stroke: boolean,
+    thickness: number,
     colorFillShape: string,
     colorStrokeShape: string,
     coordList: Coordonnees[]
   ) {
-    this.fill = fill;
-    this.stroke = stroke;
+    this.thickness = thickness;
     this.colorFillShape = colorFillShape;
     this.colorStrokeShape = colorStrokeShape;
     this.coordList = coordList;

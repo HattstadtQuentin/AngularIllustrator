@@ -31,7 +31,6 @@ export class DrawingZoneComponent implements OnInit {
   @ViewChild('canvas') canvasRef: ElementRef;
   @ViewChild('canvasPrevi') canvasPreviRef: ElementRef;
   @Input() activeTool = Tools.Line;
-  @Input() backgroundColor = '#1A1F39';
 
   //--------------------------------------------------------------------------------------
   // DECLARATION DES ATTRIBUTS
@@ -46,9 +45,7 @@ export class DrawingZoneComponent implements OnInit {
   public cordList: { x: number; y: number }[]; //Liste des coordonnées de la forme en cours de dessin
   @Input() public colorFillShape: string; //Couleur de remplissage de la forme en cours de dessin
   @Input() public colorStrokeShape: string;
-  public fill: boolean; //Boolean : la forme en cours de dessin à un remplissage
-  public stroke: boolean; //Boolean : la forme en cours de dessin à des contours
-  @Input() public lineWidth: number; //Number : epaisseur du trait
+  @Input() public thickness: number; //Number : epaisseur du trait
 
   private _shapeList: Shape[];
 
@@ -62,6 +59,8 @@ export class DrawingZoneComponent implements OnInit {
   >();
   public actionList: ActionsList;
   public currentAction: Action | null;
+
+  public backgroundColor: string;
 
   public isDrawing: boolean; //Boolean : dessin en cours
   public controlKeyPressed: boolean; //Boolean : la touche control est appuyé ou non, utilisé lors du undo redo
@@ -84,13 +83,13 @@ export class DrawingZoneComponent implements OnInit {
     this.cordList = [];
     this.colorFillShape = '#FFA500';
     this.colorStrokeShape = '#000000';
-    this.fill = true;
-    this.stroke = true;
-    this.lineWidth = 1;
+    this.thickness = 1;
 
     this._shapeList = [];
     this.actionList = new ActionsList();
     this.currentAction = null;
+
+    this.backgroundColor = '#fff';
 
     this.isDrawing = false;
     this.controlKeyPressed = false;
@@ -243,10 +242,8 @@ export class DrawingZoneComponent implements OnInit {
   }
 
   public actionHandler(coord: Coordonnees): void {
-    console.log(this.lineWidth);
     const shapeParameters = new ShapeParameters(
-      this.fill,
-      this.stroke,
+      this.thickness,
       this.colorFillShape,
       this.colorStrokeShape,
       [coord]
@@ -268,6 +265,8 @@ export class DrawingZoneComponent implements OnInit {
         _shape = this.getShapeIntersected(coord);
         if (_shape !== null) {
           this.currentAction = new Fill(_shape, this.colorFillShape);
+        } else {
+          this.backgroundColor = this.colorFillShape;
         }
         break;
       case Tools.Pen:
@@ -313,25 +312,7 @@ export class DrawingZoneComponent implements OnInit {
     return _shape;
   }
 
-  //--------------------------------------------------------------------------------------
-  // METHODE ChangeCanvasColor : permet de changer la couleur de fond du canvas
-  //--------------------------------------------------------------------------------------
-  public ChangeCanvasColor(color: string) {
-    const canvas = this.canvasRef.nativeElement as HTMLCanvasElement;
-    const parent = canvas.parentElement as HTMLElement;
-    canvas.width = parent.offsetWidth;
-    canvas.height = parent.offsetHeight;
-
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-    }
-
-    this.colorCanvas = color;
-  }
-
-  public clearCanvas(canvas: HTMLCanvasElement) {
+  public clearCanvas(canvas: HTMLCanvasElement, isPreviCavas: boolean) {
     const parent = canvas.parentElement as HTMLElement;
     canvas.width = parent.offsetWidth;
     canvas.height = parent.offsetHeight;
@@ -339,6 +320,10 @@ export class DrawingZoneComponent implements OnInit {
     const ctx = canvas.getContext('2d');
     if (ctx) {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      if (!isPreviCavas) {
+        ctx.fillStyle = this.backgroundColor;
+        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+      }
     }
   }
 
@@ -347,8 +332,11 @@ export class DrawingZoneComponent implements OnInit {
   //						   liste de formes
   //--------------------------------------------------------------------------------------
   public drawAllShapes() {
-    this.clearCanvas(this.canvasRef.nativeElement as HTMLCanvasElement);
-    this.clearCanvas(this.canvasPreviRef.nativeElement as HTMLCanvasElement);
+    this.clearCanvas(this.canvasRef.nativeElement as HTMLCanvasElement, false);
+    this.clearCanvas(
+      this.canvasPreviRef.nativeElement as HTMLCanvasElement,
+      true
+    );
     this._shapeList.forEach((shape) => {
       shape.draw();
     });
