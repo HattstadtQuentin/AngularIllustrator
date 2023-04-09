@@ -1,3 +1,4 @@
+import { LayerList } from '../layers/LayerList';
 import { Coordonnees, Shape } from '../shapes/Shape';
 import { Action } from './Action';
 
@@ -26,13 +27,13 @@ export class Scale extends Action {
     this.shape.draw();
   }
 
-  override do(ShapeList: Shape[]): Shape[] {
+  override do(layerList: LayerList): LayerList {
     this.previsu(this.coordSelected);
-    return ShapeList;
+    return layerList;
   }
 
-  override undo(shapeList: Shape[]): Shape[] {
+  override undo(layerList: LayerList): LayerList {
     this.shape.parameters.scaleFactor = this.initialScaleFactor;
-    return shapeList;
+    return layerList;
   }
 }

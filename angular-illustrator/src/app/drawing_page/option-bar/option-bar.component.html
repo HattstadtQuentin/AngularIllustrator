@@ -57,6 +57,43 @@
         </div>
       </div>
       <hr size="1" />
+      <div class="layerContainer">
+        <ng-container
+          class="layerContainer"
+          *ngFor="let layer of layerList.layerList; let i = index"
+        >
+          <div
+            (click)="selectLayer(layer)"
+            [ngClass]="{
+              selectedLayer: layerList.selectedLayer.uuid === layer.uuid,
+              layerCard: true
+            }"
+          >
+            <span>Layer {{ i }}</span>
+            <img
+              (click)="toggleVisibility(layer)"
+              [ngClass]="{ off: !layer.isVisible }"
+              src="../../../assets/tools/eye-svgrepo-com.svg"
+              alt="Eye"
+            />
+            <div *ngIf="layerList.layerList.length > 1" class="deleteContainer">
+              <img
+                (click)="deleteLayer(layer)"
+                src="../../../assets/tools/delete-svgrepo-com.svg"
+                alt="Delete"
+                class="delete"
+              />
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="btn plusBtn" (click)="addLayer()">
+        <img
+          src="../../../assets/tools/plus-zone-svgrepo-com.svg"
+          alt="Plus Zone"
+          class="plusZone"
+        />
+      </div>
     </div>
 
     <div class="bottomContainer">

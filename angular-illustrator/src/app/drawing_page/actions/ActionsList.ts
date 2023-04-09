@@ -1,32 +1,34 @@
-import { Shape } from '../shapes/Shape';
+import { LayerList } from '../layers/LayerList';
 import { Action } from './Action';
 
 export class ActionsList {
   undoList: Action[];
   redoList: Action[];
+  dateUpdated: number;
 
   constructor() {
     this.undoList = [];
     this.redoList = [];
+    this.dateUpdated = Date.now();
   }
 
-  undo(shapeList: Shape[]): Shape[] {
+  undo(layerList: LayerList): LayerList {
     let action = this.undoList.pop();
     if (action !== undefined) {
       this.redoList.push(action);
-      return action.undo(shapeList);
+      return action.undo(layerList);
     }
-    return shapeList;
+    return layerList;
   }
 
-  redo(shapeList: Shape[]): Shape[] {
+  redo(layerList: LayerList): LayerList {
     let action = this.redoList.pop();
 
     if (action !== undefined) {
       this.undoList.push(action);
-      return action.do(shapeList);
+      return action.do(layerList);
     }
 
-    return shapeList;
+    return layerList;
   }
 }

@@ -1,3 +1,4 @@
+import { LayerList } from '../layers/LayerList';
 import { Shape } from '../shapes/Shape';
 import { Action } from './Action';
 
@@ -13,14 +14,14 @@ export class Fill extends Action {
     this.afterColor = afterColor;
   }
 
-  override do(shapeList: Shape[]): Shape[] {
+  override do(layerList: LayerList): LayerList {
     this.beforeColor = this.shape.parameters.colorFillShape;
     this.shape.parameters.colorFillShape = this.afterColor;
-    return shapeList;
+    return layerList;
   }
 
-  override undo(shapeList: Shape[]): Shape[] {
+  override undo(layerList: LayerList): LayerList {
     this.shape.parameters.colorFillShape = this.beforeColor;
-    return shapeList;
+    return layerList;
   }
 }

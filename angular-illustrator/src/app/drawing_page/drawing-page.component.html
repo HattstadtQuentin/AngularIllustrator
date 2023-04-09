@@ -8,27 +8,9 @@
     <div></div>
   </div>
   <div class="drawContainer">
-    <app-tool-bar
-      class="toolBarContainer"
-      (update)="updateActiveTool($event)"
-    ></app-tool-bar>
-    <app-drawing-zone
-      class="drawZoneContainer"
-      [activeTool]="activeTool"
-      [colorFillShape]="drawFillColor"
-      [colorStrokeShape]="drawStrokeColor"
-      [thickness]="drawThickness"
-      [(shapeList)]="shapeList"
-    ></app-drawing-zone>
+    <app-tool-bar class="toolBarContainer"></app-tool-bar>
+    <app-drawing-zone class="drawZoneContainer"></app-drawing-zone>
 
-    <app-option-bar
-      class="optionBarContainer"
-      (updateFileName)="updateFileName($event)"
-      (updateFillColor)="updateFillColor($event)"
-      (updateStrokeColor)="updateStrokeColor($event)"
-      (updateThickness)="updateThickness($event)"
-      [shapeList]="shapeList"
-      (updateShapeList)="updateShapeList($event)"
-    ></app-option-bar>
+    <app-option-bar class="optionBarContainer"></app-option-bar>
   </div>
 </div>
