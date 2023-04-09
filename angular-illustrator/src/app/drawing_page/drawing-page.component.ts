@@ -1,5 +1,9 @@
 import { Component, Input, Output } from '@angular/core';
-import { Shape } from './shapes/Shape';
+import { Subscription } from 'rxjs';
+import { ActionsList } from './actions/ActionsList';
+import { Layer } from './layers/Layer';
+import { LayerList } from './layers/LayerList';
+import { DrawService } from './services/DrawService';
 import { Tools } from './tools.enum';
 
 @Component({
@@ -8,38 +12,20 @@ import { Tools } from './tools.enum';
   styleUrls: ['./drawing-page.component.scss'],
 })
 export class DrawingPageComponent {
-  activeTool = Tools.Line;
-  @Output() fileName = 'Dessin';
-  drawZoneBackgroundColor = '#1A1F39';
-  drawFillColor = '#000000';
-  drawStrokeColor = '#000000';
-  shapeList: Shape[] = [];
+  fileName: string = 'Dessin';
+  fileNameSubscription: Subscription = new Subscription();
 
-  updateActiveTool(value: Tools) {
-    this.activeTool = value;
+  constructor(private drawService: DrawService) {}
+
+  ngOnInit() {
+    this.fileNameSubscription = this.drawService.fileName.subscribe(
+      (fileName: string) => {
+        this.fileName = fileName;
+      }
+    );
   }
 
-  updateFileName(value: string) {
-    if (value === '') {
-      this.fileName = 'Dessin';
-    } else {
-      this.fileName = value;
-    }
-  }
-
-  updateDrawZoneBackgroundColor(value: string) {
-    this.drawZoneBackgroundColor = value;
-  }
-
-  updateFillColor(value: string) {
-    this.drawFillColor = value;
-  }
-
-  updateStrokeColor(value: string) {
-    this.drawStrokeColor = value;
-  }
-
-  updateShapeList(value: Shape[]) {
-    this.shapeList = value;
+  ngOnDestroy() {
+    this.fileNameSubscription.unsubscribe();
   }
 }

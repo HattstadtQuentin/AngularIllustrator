@@ -1,15 +1,16 @@
-import { Coordonnees, Shape } from '../shapes/Shape';
+import { LayerList } from '../layers/LayerList';
+import { Coordonnees } from '../shapes/Shape';
 
 export class Action {
   constructor() {}
 
   previsu(coord: Coordonnees): void {}
 
-  do(shapeList: Shape[]): Shape[] {
-    return shapeList;
+  do(layerList: LayerList): LayerList {
+    return layerList;
   }
 
-  undo(shapeList: Shape[]): Shape[] {
-    return shapeList;
+  undo(layerList: LayerList): LayerList {
+    return layerList;
   }
 }

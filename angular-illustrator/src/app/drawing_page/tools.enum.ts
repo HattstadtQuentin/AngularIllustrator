@@ -1,12 +1,16 @@
 export enum Tools {
-  Select = 'Select',
   Selection = 'Selection',
-  Draw = 'Draw',
+  Move = 'Move',
+  Scale = 'Scale',
+  Rotate = 'Rotate',
+  Fill = 'Fill',
+  Pen = 'Pen',
   Line = 'Line',
   Box = 'Box',
   Circle = 'Circle',
-  Triangle = 'Triangle',
-  Eraser = 'Eraser'
+  Polygon = 'Polygon',
+  Eraser = 'Eraser',
+  Delete = 'Delete',
 }
 
 interface ToolsMap {
@@ -14,12 +18,16 @@ interface ToolsMap {
 }
 
 export const toolsMap: { [key: string]: Tools } = {
-  Select: Tools.Select,
   Selection: Tools.Selection,
-  Draw: Tools.Draw,
+  Move: Tools.Move,
+  Scale: Tools.Scale,
+  Rotate: Tools.Rotate,
+  Fill: Tools.Fill,
+  Pen: Tools.Pen,
   Line: Tools.Line,
   Box: Tools.Box,
   Circle: Tools.Circle,
-  Triangle: Tools.Triangle,
-  Eraser: Tools.Eraser
+  Polygon: Tools.Polygon,
+  Eraser: Tools.Eraser,
+  Delete: Tools.Delete,
 };

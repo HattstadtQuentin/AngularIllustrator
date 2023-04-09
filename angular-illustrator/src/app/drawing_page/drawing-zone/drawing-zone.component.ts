@@ -2,23 +2,32 @@ import {
   Component,
   OnInit,
   ElementRef,
-  ChangeDetectorRef,
   ViewChild,
   Input,
   EventEmitter,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import { Tools } from '../tools.enum';
-import { Triangle } from '../shapes/Triangle';
+import { Polygon } from '../shapes/Polygon';
 import { Circle } from '../shapes/Circle';
 import { Rect } from '../shapes/Rect';
 import { Line } from '../shapes/Line';
-import { Coordonnees, Shape } from '../shapes/Shape';
+import { Coordonnees, Shape, ShapeParameters } from '../shapes/Shape';
 import { ActionsList } from '../actions/ActionsList';
 import { Draw } from '../actions/Draw';
+import { Move } from '../actions/Move';
 import { Action } from '../actions/Action';
-
-import { HttpClient } from '@angular/common/http';
+import { Pen } from '../shapes/Pen';
+import { Fill } from '../actions/Fill';
+import { Delete } from '../actions/Delete';
+import { Eraser } from '../shapes/Eraser';
+import { Scale } from '../actions/Scale';
+import { Rotate } from '../actions/Rotate';
+import { Layer } from '../layers/Layer';
+import { LayerList } from '../layers/LayerList';
+import { DrawService } from '../services/DrawService';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-drawing-zone',
@@ -28,8 +37,6 @@ import { HttpClient } from '@angular/common/http';
 export class DrawingZoneComponent implements OnInit {
   @ViewChild('canvas') canvasRef: ElementRef;
   @ViewChild('canvasPrevi') canvasPreviRef: ElementRef;
-  @Input() activeTool = Tools.Line;
-  @Input() backgroundColor = '#1A1F39';
 
   //--------------------------------------------------------------------------------------
   // DECLARATION DES ATTRIBUTS
@@ -38,26 +45,13 @@ export class DrawingZoneComponent implements OnInit {
   public x: number; //Position x de la souris
   public y: number; //Position y de la souris
   public canvas?: HTMLCanvasElement;
-  public colorCanvas: string; //Couleur de fond du canvas
 
-  //Attributs de la shape en cours
-  public cordList: { x: number; y: number }[]; //Liste des coordonnées de la forme en cours de dessin
-  @Input() public colorFillShape: string; //Couleur de remplissage de la forme en cours de dessin
-  @Input() public colorStrokeShape: string;
-  public fill: boolean; //Boolean : la forme en cours de dessin à un remplissage
-  public stroke: boolean; //Boolean : la forme en cours de dessin à des contours
+  layerList: LayerList = new LayerList(new Layer(), '#FFFFFF');
+  layerListSubscription: Subscription = new Subscription();
 
-  private _shapeList: Shape[];
+  actionList: ActionsList = new ActionsList();
+  actionListSubscription: Subscription = new Subscription();
 
-  @Input()
-  set shapeList(value: Shape[]) {
-    this._shapeList = value;
-    this.drawAllShapes();
-  }
-  @Output() shapeListChange: EventEmitter<Shape[]> = new EventEmitter<
-    Shape[]
-  >();
-  public actionList: ActionsList;
   public currentAction: Action | null;
 
   public isDrawing: boolean; //Boolean : dessin en cours
@@ -68,28 +62,13 @@ export class DrawingZoneComponent implements OnInit {
   // CONSTRUCTEUR
   //--------------------------------------------------------------------------------------
   constructor(
-    private changeRef: ChangeDetectorRef,
     private elementRef: ElementRef,
-    private http: HttpClient
+    private drawService: DrawService
   ) {
     this.x = 0;
     this.y = 0;
-    this.cordList = [];
     this.canvasRef = new ElementRef(null);
     this.canvasPreviRef = new ElementRef(null);
-
-    this.x = 0;
-    this.y = 0;
-    this.colorCanvas = '#fff';
-
-    this.cordList = [];
-    this.colorFillShape = '#FFA500';
-    this.colorStrokeShape = '#000000';
-    this.fill = true;
-    this.stroke = true;
-
-    this._shapeList = [];
-    this.actionList = new ActionsList();
     this.currentAction = null;
 
     this.isDrawing = false;
@@ -102,9 +81,27 @@ export class DrawingZoneComponent implements OnInit {
   //--------------------------------------------------------------------------------------
   ngOnInit() {
     setTimeout(() => {
-      this.drawAllShapes();
-      window.addEventListener('resize', this.drawAllShapes.bind(this));
+      this.drawLayers();
+      window.addEventListener('resize', this.drawLayers.bind(this));
     });
+
+    this.layerListSubscription = this.drawService.layerList.subscribe(
+      (layerList: LayerList) => {
+        this.layerList = layerList;
+        this.drawLayers();
+      }
+    );
+    this.actionListSubscription = this.drawService.actionList.subscribe(
+      (actionList: ActionsList) => {
+        this.actionList = actionList;
+        this.drawLayers();
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    this.layerListSubscription.unsubscribe();
+    this.actionListSubscription.unsubscribe();
   }
 
   //--------------------------------------------------------------------------------------
@@ -132,15 +129,11 @@ export class DrawingZoneComponent implements OnInit {
   handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'z' || event.key === 'Z') {
       if (this.majKeyPressed && this.controlKeyPressed) {
-        console.log(this._shapeList);
-        this._shapeList = this.actionList.redo(this._shapeList);
-        console.log(this._shapeList);
-        this.drawAllShapes();
+        this.layerList = this.actionList.redo(this.layerList);
+        this.drawLayers();
       } else if (this.controlKeyPressed) {
-        console.log(this._shapeList);
-        this._shapeList = this.actionList.undo(this._shapeList);
-        console.log(this._shapeList);
-        this.drawAllShapes();
+        this.layerList = this.actionList.undo(this.layerList);
+        this.drawLayers();
       }
     }
 
@@ -195,13 +188,35 @@ export class DrawingZoneComponent implements OnInit {
         this.canvas.parentElement.parentElement
       ) {
         this.x =
-          e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
-        this.y =
-          e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
+          e.clientX - this.canvas.parentElement?.parentElement.offsetLeft;
+        this.y = e.clientY - this.canvas.parentElement?.parentElement.offsetTop;
       }
 
       if (this.currentAction !== null) {
         this.currentAction.previsu(new Coordonnees(this.x, this.y));
+        if (
+          this.currentAction instanceof Move ||
+          this.currentAction instanceof Scale ||
+          this.currentAction instanceof Rotate
+        ) {
+          this.drawLayers();
+        }
+        //Il est nécéssaire de redessiner toutes les formes lors de l'action gomme pour voir les modifications en temps réel.
+        if (
+          this.currentAction instanceof Draw &&
+          this.currentAction.shape instanceof Eraser
+        ) {
+          if (
+            !this.layerList.selectedLayer.shapeList.includes(
+              this.currentAction.shape
+            )
+          ) {
+            this.layerList.selectedLayer.shapeList.push(
+              this.currentAction.shape
+            );
+          }
+          this.drawLayers();
+        }
       }
     }
   }
@@ -211,16 +226,23 @@ export class DrawingZoneComponent implements OnInit {
   //					   		  choisie et va dessiner la forme
   //--------------------------------------------------------------------------------------
   public onMouseUp(e: MouseEvent): void {
-    this.isDrawing = false;
     if (this.currentAction !== null) {
-      this._shapeList = this.currentAction.do(this._shapeList);
-      this.actionList.undoList.push(this.currentAction);
-      this.currentAction = null;
+      this.layerList = this.currentAction.do(this.layerList);
+      if (
+        this.currentAction instanceof Draw &&
+        this.currentAction.shape instanceof Polygon &&
+        !this.currentAction.shape.isClosed
+      ) {
+        console.log('draw');
+      } else {
+        this.isDrawing = false;
+        this.actionList.undoList.push(this.currentAction);
+        this.drawService.setActionList(this.actionList);
+        this.drawService.setLayerList(this.layerList);
+        this.currentAction = null;
+      }
     }
-    this.drawAllShapes();
-
-    if (this.activeTool == Tools.Select)
-      this.ChangeCanvasColor(this.colorCanvas);
+    this.drawLayers();
   }
 
   //--------------------------------------------------------------------------------------
@@ -232,68 +254,81 @@ export class DrawingZoneComponent implements OnInit {
       this.canvas.parentElement &&
       this.canvas.parentElement.parentElement
     ) {
-      this.x =
-        e.clientX - this.canvas.parentElement?.parentElement.offsetLeft - 50;
-      this.y =
-        e.clientY - this.canvas.parentElement?.parentElement.offsetTop - 50;
+      this.x = e.clientX - this.canvas.parentElement?.parentElement.offsetLeft;
+      this.y = e.clientY - this.canvas.parentElement?.parentElement.offsetTop;
     }
   }
 
   public actionHandler(coord: Coordonnees): void {
-    switch (this.activeTool) {
-      case Tools.Select:
-        this.ChangeCanvasColor('green');
-        break;
+    const shapeParameters = new ShapeParameters(
+      this.drawService.thickness,
+      this.drawService.colorFillShape,
+      this.drawService.colorStrokeShape,
+      [coord]
+    );
+    const _shape = this.getShapeIntersected(coord);
+    switch (this.drawService.activeTool) {
       case Tools.Selection:
         break;
-      case Tools.Draw:
+      case Tools.Move:
+        if (_shape !== null) {
+          this.currentAction = new Move(
+            _shape,
+            new Coordonnees(this.x, this.y)
+          );
+        }
+        break;
+      case Tools.Scale:
+        if (_shape !== null) {
+          this.currentAction = new Scale(
+            _shape,
+            new Coordonnees(this.x, this.y)
+          );
+        }
+        break;
+      case Tools.Rotate:
+        if (_shape !== null) {
+          this.currentAction = new Rotate(
+            _shape,
+            new Coordonnees(this.x, this.y)
+          );
+        }
+        break;
+      case Tools.Fill:
+        if (_shape !== null) {
+          this.currentAction = new Fill(
+            _shape,
+            this.drawService.colorFillShape
+          );
+        } else {
+          this.layerList.backgroundColor = this.drawService.colorFillShape;
+          this.drawService.setLayerList(this.layerList);
+        }
+        break;
+      case Tools.Pen:
+        this.currentAction = new Draw(new Pen(shapeParameters));
         break;
       case Tools.Line:
-        this.currentAction = new Draw(
-          new Line(
-            this.fill,
-            this.stroke,
-            this.colorFillShape,
-            this.colorStrokeShape,
-            [coord]
-          )
-        );
+        this.currentAction = new Draw(new Line(shapeParameters));
         break;
       case Tools.Box:
-        this.currentAction = new Draw(
-          new Rect(
-            this.fill,
-            this.stroke,
-            this.colorFillShape,
-            this.colorStrokeShape,
-            [coord]
-          )
-        );
+        this.currentAction = new Draw(new Rect(shapeParameters));
         break;
       case Tools.Circle:
-        this.currentAction = new Draw(
-          new Circle(
-            this.fill,
-            this.stroke,
-            this.colorFillShape,
-            this.colorStrokeShape,
-            [coord]
-          )
-        );
+        this.currentAction = new Draw(new Circle(shapeParameters));
         break;
-      case Tools.Triangle:
-        this.currentAction = new Draw(
-          new Triangle(
-            this.fill,
-            this.stroke,
-            this.colorFillShape,
-            this.colorStrokeShape,
-            [coord]
-          )
-        );
+      case Tools.Polygon:
+        if (this.currentAction === null) {
+          this.currentAction = new Draw(new Polygon(shapeParameters));
+        }
         break;
       case Tools.Eraser:
+        this.currentAction = new Draw(new Eraser(shapeParameters));
         break;
+      case Tools.Delete:
+        if (_shape !== null) {
+          this.currentAction = new Delete(_shape);
+        }
     }
 
     if (this.currentAction !== null) {
@@ -301,32 +336,33 @@ export class DrawingZoneComponent implements OnInit {
     }
   }
 
-  //--------------------------------------------------------------------------------------
-  // METHODE ChangeCanvasColor : permet de changer la couleur de fond du canvas
-  //--------------------------------------------------------------------------------------
-  public ChangeCanvasColor(color: string) {
-    const canvas = this.canvasRef.nativeElement as HTMLCanvasElement;
-    const parent = canvas.parentElement as HTMLElement;
-    canvas.width = parent.offsetWidth;
-    canvas.height = parent.offsetHeight;
+  private getShapeIntersected(coord: Coordonnees): Shape | null {
+    let _shape = null;
+    //On reverse le tableau pour le parcourir dans l'ordre inverse afin d'avoir les elemtents plus haut en premier
+    this.layerList.selectedLayer.shapeList.reverse().forEach((shape) => {
+      if (shape.intersect(coord)) {
+        _shape = shape;
+        return;
+      }
+    });
 
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
-    }
-
-    this.colorCanvas = color;
+    return _shape;
   }
 
-  public clearCanvas(canvas: HTMLCanvasElement) {
-    const parent = canvas.parentElement as HTMLElement;
-    canvas.width = parent.offsetWidth;
-    canvas.height = parent.offsetHeight;
+  public clearCanvas(canvas: HTMLCanvasElement, isPreviCavas: boolean) {
+    if (canvas !== null) {
+      const parent = canvas.parentElement as HTMLElement;
+      canvas.width = parent.offsetWidth;
+      canvas.height = parent.offsetHeight;
 
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        if (!isPreviCavas) {
+          ctx.fillStyle = this.layerList.backgroundColor;
+          ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+      }
     }
   }
 
@@ -334,84 +370,32 @@ export class DrawingZoneComponent implements OnInit {
   // METHODE drawAllShapes : permet de dessiner sur le canvas toutes les formes de la
   //						   liste de formes
   //--------------------------------------------------------------------------------------
-  public drawAllShapes() {
-    this.clearCanvas(this.canvasRef.nativeElement as HTMLCanvasElement);
-    this.clearCanvas(this.canvasPreviRef.nativeElement as HTMLCanvasElement);
-    this._shapeList.forEach((shape) => {
-      shape.draw();
-    });
-  }
-
-  //--------------------------------------------------------------------------------------
-  // METHODE drawAllShapes : permet de dessiner sur le canvas toutes les formes de la
-  //						   liste de formes
-  //--------------------------------------------------------------------------------------
-  public drawAllShapesForImport(shapes: any): void {
-    let size = shapes.length;
-
-    for (let i = 0; i < size; i++) {
-      /*
-      TODO : rajouter un champ 'type' à l'objet shape
-        car la en faisant new SHAPE(...).draw ça dessin pas
-        vu qu'on connait pas le type de forme
-
-        IDEE : faire un switch(shapes[i]["type"])
-
-        et faire les cases avec new LINE(), new RECT(), etc.
-        (comme la function draw actuel un peu plus au dessus)
-      */
-
-      new Line(
-        shapes[i]['stroke'],
-        shapes[i]['fill'],
-        shapes[i]['colorFillShape'],
-        shapes[i]['colorStrokeShape'],
-        shapes[i]['coordList']
-      ).draw();
+  public drawLayers() {
+    if (
+      this.currentAction instanceof Draw &&
+      this.currentAction.shape instanceof Polygon
+    ) {
+    } else {
+      this.clearCanvas(
+        this.canvasRef.nativeElement as HTMLCanvasElement,
+        false
+      );
+      this.clearCanvas(
+        this.canvasPreviRef.nativeElement as HTMLCanvasElement,
+        true
+      );
+      //On trie la liste par id afin d'etre sur d'avoir l'ordre chronologique
+      this.layerList.layerList.sort((layer1, layer2) => {
+        return layer1.uuid - layer2.uuid;
+      });
+      this.layerList.layerList.forEach((layer) => {
+        if (layer.isVisible) {
+          layer.shapeList.sort((shape1, shape2) => {
+            return shape1.parameters.uuid - shape2.parameters.uuid;
+          });
+          layer.shapeList.forEach((shape) => shape.draw());
+        }
+      });
     }
-
-    this._shapeList = shapes;
   }
-
-  //--------------------------------------------------------------------------------------
-  // METHODE importJson : permet de selectionner un fichier json de l'utilisateur
-  //        afin d'importer un projet. Appeler lors du click sur le bouton
-  //        chooseFile se trouvant en dessous de la zone de dessin.
-  //--------------------------------------------------------------------------------------
-  public importJson(event: any): void {
-    const file: File = event.target.files[0];
-    const reader: FileReader = new FileReader();
-
-    reader.onload = (e: any) => {
-      const fileContent = JSON.parse(e.target.result);
-      console.log(fileContent);
-      this.drawAllShapesForImport(fileContent);
-    };
-
-    reader.readAsText(file);
-  }
-
-  //--------------------------------------------------------------------------------------
-  // METHODE importJson : permet d'exporter un projet en un fichier Json qui se
-  //        trouvera dans les téléchargement de l'utilisateur . Appeler lors du click
-  //        sur le bouton Exporter se trouvant en dessous de la zone de dessin.
-  //--------------------------------------------------------------------------------------
-  public exportJson() {
-    const jsonData = JSON.stringify(this._shapeList);
-    console.log(jsonData);
-
-    let blob = new Blob(['\ufeff' + jsonData], {
-      type: 'application/json;charset=utf-8;',
-    });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    document.body.appendChild(a);
-    a.setAttribute('style', 'display:none');
-    a.href = url;
-    a.download = 'data.json';
-    a.click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
-  }
-  //-------------------------------------------------------------------------------------
 }

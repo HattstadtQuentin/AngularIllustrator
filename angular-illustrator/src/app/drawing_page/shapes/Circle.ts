@@ -1,22 +1,36 @@
 import { Tools } from '../tools.enum';
-import { Coordonnees, Shape } from './Shape';
+import { Coordonnees, Shape, ShapeParameters } from './Shape';
 
 export class Circle extends Shape {
-  constructor(
-    fill: boolean,
-    stroke: boolean,
-    colorFillShape: string,
-    colorStrokeShape: string,
-    coordList: Coordonnees[]
-  ) {
-    super(
-      Tools.Circle,
-      fill,
-      stroke,
-      colorFillShape,
-      colorStrokeShape,
-      coordList
+  constructor(parameters: ShapeParameters) {
+    super(Tools.Circle, parameters);
+  }
+
+  override center(): Coordonnees {
+    return this.parameters.coordList[0];
+  }
+
+  override intersect(coord: Coordonnees): boolean {
+    if (this.parameters.coordList.length < 2) {
+      return false;
+    }
+
+    const largeur = Math.abs(
+      this.parameters.coordList[1].x - this.parameters.coordList[0].x
     );
+    const hauteur = Math.abs(
+      this.parameters.coordList[1].y - this.parameters.coordList[0].y
+    );
+    const rayon =
+      (Math.sqrt(largeur * largeur + hauteur * hauteur) +
+        this.parameters.thickness) *
+      this.parameters.scaleFactor;
+
+    const distance = Math.sqrt(
+      Math.pow(coord.x - this.parameters.coordList[0].x, 2) +
+        Math.pow(coord.y - this.parameters.coordList[0].y, 2)
+    );
+    return distance <= rayon;
   }
 
   override previsu(coord: Coordonnees): void {
@@ -39,59 +53,45 @@ export class Circle extends Shape {
     const ctx = canvas.getContext('2d');
 
     if (prevision && coord !== null) {
-      if (this.coordList.length == 2) {
-        this.coordList.pop();
+      if (this.parameters.coordList.length == 2) {
+        this.parameters.coordList.pop();
       }
-      this.coordList.push(coord);
+      this.parameters.coordList.push(coord);
     }
 
-    if (this.coordList.length == 2 || !prevision) {
-      let largeur = 0;
-      let hauteur = 0;
-      let rayon = 0;
+    if (this.parameters.coordList.length == 2 || !prevision) {
       if (ctx) {
-        largeur = Math.abs(this.coordList[1].x - this.coordList[0].x);
-        hauteur = Math.abs(this.coordList[1].y - this.coordList[0].y);
-        rayon = Math.sqrt(largeur * largeur + hauteur * hauteur);
+        ctx.save();
+        const center = this.center();
+        ctx.translate(center.x, center.y);
+        ctx.scale(this.parameters.scaleFactor, this.parameters.scaleFactor);
+        ctx.rotate((this.parameters.rotateAngle * Math.PI) / 180);
+        ctx.translate(-center.x, -center.y);
+        ctx.lineWidth = this.parameters.thickness;
+
+        const largeur = Math.abs(
+          this.parameters.coordList[1].x - this.parameters.coordList[0].x
+        );
+        const hauteur = Math.abs(
+          this.parameters.coordList[1].y - this.parameters.coordList[0].y
+        );
+        const rayon = Math.sqrt(largeur * largeur + hauteur * hauteur);
 
         ctx.beginPath();
 
-        if (this.fill && this.stroke) {
-          ctx.fillStyle = this.colorFillShape;
-          ctx.strokeStyle = this.colorStrokeShape;
-          ctx.arc(
-            this.coordList[0].x,
-            this.coordList[0].y,
-            rayon,
-            0,
-            Math.PI * 2,
-            true
-          );
-          ctx.fill();
-          ctx.stroke();
-        } else if (this.fill) {
-          ctx.fillStyle = this.colorFillShape;
-          ctx.arc(
-            this.coordList[0].x,
-            this.coordList[0].y,
-            rayon,
-            0,
-            Math.PI * 2,
-            true
-          );
-          ctx.fill();
-        } else if (this.stroke) {
-          ctx.strokeStyle = this.colorStrokeShape;
-          ctx.arc(
-            this.coordList[0].x,
-            this.coordList[0].y,
-            rayon,
-            0,
-            Math.PI * 2,
-            true
-          );
-          ctx.stroke();
-        }
+        ctx.fillStyle = this.parameters.colorFillShape;
+        ctx.strokeStyle = this.parameters.colorStrokeShape;
+        ctx.arc(
+          this.parameters.coordList[0].x,
+          this.parameters.coordList[0].y,
+          rayon,
+          0,
+          Math.PI * 2,
+          true
+        );
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
       }
     }
   }
