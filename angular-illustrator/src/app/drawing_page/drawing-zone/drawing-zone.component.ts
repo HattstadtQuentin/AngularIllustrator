@@ -21,6 +21,7 @@ import { Pen } from '../shapes/Pen';
 import { Fill } from '../actions/Fill';
 import { Delete } from '../actions/Delete';
 import { Eraser } from '../shapes/Eraser';
+import { Scale } from '../actions/Scale';
 
 @Component({
   selector: 'app-drawing-zone',
@@ -196,7 +197,10 @@ export class DrawingZoneComponent implements OnInit {
 
       if (this.currentAction !== null) {
         this.currentAction.previsu(new Coordonnees(this.x, this.y));
-        if (this.currentAction instanceof Move) {
+        if (
+          this.currentAction instanceof Move ||
+          this.currentAction instanceof Scale
+        ) {
           this.drawAllShapes();
         }
         //Il est nécéssaire de redessiner toutes les formes lors de l'action gomme pour voir les modifications en temps réel.
@@ -256,6 +260,15 @@ export class DrawingZoneComponent implements OnInit {
         _shape = this.getShapeIntersected(coord);
         if (_shape !== null) {
           this.currentAction = new Move(
+            _shape,
+            new Coordonnees(this.x, this.y)
+          );
+        }
+        break;
+      case Tools.Scale:
+        _shape = this.getShapeIntersected(coord);
+        if (_shape !== null) {
+          this.currentAction = new Scale(
             _shape,
             new Coordonnees(this.x, this.y)
           );

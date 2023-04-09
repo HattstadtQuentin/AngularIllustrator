@@ -9,6 +9,10 @@ export class Shape {
     this.parameters = parameters;
   }
 
+  center(): Coordonnees {
+    return new Coordonnees(0, 0);
+  }
+
   move(xOffset: number, yOffset: number) {
     this.parameters.coordList.forEach((coord) => {
       coord.x = Math.floor(coord.x - xOffset);
@@ -32,6 +36,7 @@ export class ShapeParameters {
   colorStrokeShape: string;
   coordList: Coordonnees[];
   isSelected: boolean;
+  scaleFactor: number;
   uuid: number;
 
   constructor(
@@ -45,6 +50,7 @@ export class ShapeParameters {
     this.colorStrokeShape = colorStrokeShape;
     this.coordList = coordList;
     this.isSelected = false;
+    this.scaleFactor = 1;
     this.uuid = Date.now();
   }
 }
