@@ -10,18 +10,33 @@ export class Line extends Shape {
     if (this.parameters.coordList.length < 2) {
       return false;
     }
+    // Calculate the distance between the point and the line
+    const distance =
+      Math.abs(
+        (this.parameters.coordList[1].y - this.parameters.coordList[0].y) *
+          coord.x -
+          (this.parameters.coordList[1].x - this.parameters.coordList[0].x) *
+            coord.y +
+          this.parameters.coordList[1].x * this.parameters.coordList[0].y -
+          this.parameters.coordList[1].y * this.parameters.coordList[0].x
+      ) /
+      Math.sqrt(
+        Math.pow(
+          this.parameters.coordList[1].y - this.parameters.coordList[0].y,
+          2
+        ) +
+          Math.pow(
+            this.parameters.coordList[1].x - this.parameters.coordList[0].x,
+            2
+          )
+      );
 
-    const slope =
-      (this.parameters.coordList[1].y - this.parameters.coordList[0].y) /
-      (this.parameters.coordList[1].x - this.parameters.coordList[0].x);
-    const yIntercept =
-      this.parameters.coordList[0].y - slope * this.parameters.coordList[0].x;
+    // Compare the distance to half the thickness of the line
+    if (distance <= this.parameters.thickness / 2) {
+      return true;
+    }
 
-    // Calculate the y-coordinate of the point on the line
-    const y = slope * coord.x + yIntercept;
-
-    // Check if the y-coordinate of the point is equal to the y-coordinate of the point on the line
-    return Math.abs(y - coord.y) < 2;
+    return false;
   }
 
   override previsu(coord: Coordonnees): void {
