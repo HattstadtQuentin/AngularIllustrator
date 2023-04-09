@@ -37,20 +37,24 @@ export class ShapeParameters {
   coordList: Coordonnees[];
   isSelected: boolean;
   scaleFactor: number;
+  rotateAngle: number;
   uuid: number;
 
   constructor(
     thickness: number,
     colorFillShape: string,
     colorStrokeShape: string,
-    coordList: Coordonnees[]
+    coordList: Coordonnees[],
+    scaleFactor: number = 1,
+    rotateAngle: number = 0
   ) {
     this.thickness = thickness;
     this.colorFillShape = colorFillShape;
     this.colorStrokeShape = colorStrokeShape;
     this.coordList = coordList;
     this.isSelected = false;
-    this.scaleFactor = 1;
+    this.scaleFactor = scaleFactor;
+    this.rotateAngle = rotateAngle;
     this.uuid = Date.now();
   }
 }

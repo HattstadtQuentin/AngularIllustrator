@@ -24,6 +24,7 @@ export class Move extends Action {
     }
     const offsetX = this.coordSelected.x - coord.x;
     const offsetY = this.coordSelected.y - coord.y;
+    console.log('MOVEDDD');
     this.shape.move(offsetX, offsetY);
     this.coordSelected = new Coordonnees(coord.x, coord.y);
     this.shape.draw();

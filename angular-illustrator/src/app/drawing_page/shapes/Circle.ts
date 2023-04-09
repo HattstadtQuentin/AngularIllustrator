@@ -3,7 +3,7 @@ import { Coordonnees, Shape, ShapeParameters } from './Shape';
 
 export class Circle extends Shape {
   constructor(parameters: ShapeParameters) {
-    super(Tools.Polygon, parameters);
+    super(Tools.Circle, parameters);
   }
 
   override center(): Coordonnees {
@@ -22,8 +22,9 @@ export class Circle extends Shape {
       this.parameters.coordList[1].y - this.parameters.coordList[0].y
     );
     const rayon =
-      Math.sqrt(largeur * largeur + hauteur * hauteur) +
-      this.parameters.thickness;
+      (Math.sqrt(largeur * largeur + hauteur * hauteur) +
+        this.parameters.thickness) *
+      this.parameters.scaleFactor;
 
     const distance = Math.sqrt(
       Math.pow(coord.x - this.parameters.coordList[0].x, 2) +
@@ -64,6 +65,7 @@ export class Circle extends Shape {
         const center = this.center();
         ctx.translate(center.x, center.y);
         ctx.scale(this.parameters.scaleFactor, this.parameters.scaleFactor);
+        ctx.rotate((this.parameters.rotateAngle * Math.PI) / 180);
         ctx.translate(-center.x, -center.y);
         ctx.lineWidth = this.parameters.thickness;
 
