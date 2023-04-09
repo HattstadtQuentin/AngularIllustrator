@@ -1,3 +1,4 @@
+import { LayerList } from '../layers/LayerList';
 import { Coordonnees, Shape } from '../shapes/Shape';
 import { Action } from './Action';
 
@@ -24,20 +25,19 @@ export class Move extends Action {
     }
     const offsetX = this.coordSelected.x - coord.x;
     const offsetY = this.coordSelected.y - coord.y;
-    console.log('MOVEDDD');
     this.shape.move(offsetX, offsetY);
     this.coordSelected = new Coordonnees(coord.x, coord.y);
     this.shape.draw();
   }
 
-  override do(ShapeList: Shape[]): Shape[] {
+  override do(layerList: LayerList): LayerList {
     const arrivalCoord = this.coordSelected;
 
     this.previsu(arrivalCoord);
-    return ShapeList;
+    return layerList;
   }
 
-  override undo(shapeList: Shape[]): Shape[] {
+  override undo(layerList: LayerList): LayerList {
     if (this.beforeCoord !== null) {
       const offsetX = this.shape.parameters.coordList[0].x - this.beforeCoord.x;
       const offsetY = this.shape.parameters.coordList[0].y - this.beforeCoord.y;
@@ -48,6 +48,6 @@ export class Move extends Action {
         this.coordSelected = this.afterCoord;
       }
     }
-    return shapeList;
+    return layerList;
   }
 }

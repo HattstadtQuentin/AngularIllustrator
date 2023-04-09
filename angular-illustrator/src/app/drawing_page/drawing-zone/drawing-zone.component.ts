@@ -6,6 +6,7 @@ import {
   Input,
   EventEmitter,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import { Tools } from '../tools.enum';
 import { Polygon } from '../shapes/Polygon';
@@ -23,6 +24,10 @@ import { Delete } from '../actions/Delete';
 import { Eraser } from '../shapes/Eraser';
 import { Scale } from '../actions/Scale';
 import { Rotate } from '../actions/Rotate';
+import { Layer } from '../layers/Layer';
+import { LayerList } from '../layers/LayerList';
+import { DrawService } from '../services/DrawService';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-drawing-zone',
@@ -32,7 +37,6 @@ import { Rotate } from '../actions/Rotate';
 export class DrawingZoneComponent implements OnInit {
   @ViewChild('canvas') canvasRef: ElementRef;
   @ViewChild('canvasPrevi') canvasPreviRef: ElementRef;
-  @Input() activeTool = Tools.Line;
 
   //--------------------------------------------------------------------------------------
   // DECLARATION DES ATTRIBUTS
@@ -41,28 +45,14 @@ export class DrawingZoneComponent implements OnInit {
   public x: number; //Position x de la souris
   public y: number; //Position y de la souris
   public canvas?: HTMLCanvasElement;
-  public colorCanvas: string; //Couleur de fond du canvas
 
-  //Attributs de la shape en cours
-  public cordList: { x: number; y: number }[]; //Liste des coordonnées de la forme en cours de dessin
-  @Input() public colorFillShape: string; //Couleur de remplissage de la forme en cours de dessin
-  @Input() public colorStrokeShape: string;
-  @Input() public thickness: number; //Number : epaisseur du trait
+  layerList: LayerList = new LayerList(new Layer(), '#FFFFFF');
+  layerListSubscription: Subscription = new Subscription();
 
-  private _shapeList: Shape[];
+  actionList: ActionsList = new ActionsList();
+  actionListSubscription: Subscription = new Subscription();
 
-  @Input()
-  set shapeList(value: Shape[]) {
-    this._shapeList = value;
-    this.drawAllShapes();
-  }
-  @Output() shapeListChange: EventEmitter<Shape[]> = new EventEmitter<
-    Shape[]
-  >();
-  public actionList: ActionsList;
   public currentAction: Action | null;
-
-  public backgroundColor: string;
 
   public isDrawing: boolean; //Boolean : dessin en cours
   public controlKeyPressed: boolean; //Boolean : la touche control est appuyé ou non, utilisé lors du undo redo
@@ -71,27 +61,15 @@ export class DrawingZoneComponent implements OnInit {
   //--------------------------------------------------------------------------------------
   // CONSTRUCTEUR
   //--------------------------------------------------------------------------------------
-  constructor(private elementRef: ElementRef) {
+  constructor(
+    private elementRef: ElementRef,
+    private drawService: DrawService
+  ) {
     this.x = 0;
     this.y = 0;
-    this.cordList = [];
     this.canvasRef = new ElementRef(null);
     this.canvasPreviRef = new ElementRef(null);
-
-    this.x = 0;
-    this.y = 0;
-    this.colorCanvas = '#fff';
-
-    this.cordList = [];
-    this.colorFillShape = '#FFA500';
-    this.colorStrokeShape = '#000000';
-    this.thickness = 1;
-
-    this._shapeList = [];
-    this.actionList = new ActionsList();
     this.currentAction = null;
-
-    this.backgroundColor = '#fff';
 
     this.isDrawing = false;
     this.controlKeyPressed = false;
@@ -103,9 +81,27 @@ export class DrawingZoneComponent implements OnInit {
   //--------------------------------------------------------------------------------------
   ngOnInit() {
     setTimeout(() => {
-      this.drawAllShapes();
-      window.addEventListener('resize', this.drawAllShapes.bind(this));
+      this.drawLayers();
+      window.addEventListener('resize', this.drawLayers.bind(this));
     });
+
+    this.layerListSubscription = this.drawService.layerList.subscribe(
+      (layerList: LayerList) => {
+        this.layerList = layerList;
+        this.drawLayers();
+      }
+    );
+    this.actionListSubscription = this.drawService.actionList.subscribe(
+      (actionList: ActionsList) => {
+        this.actionList = actionList;
+        this.drawLayers();
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    this.layerListSubscription.unsubscribe();
+    this.actionListSubscription.unsubscribe();
   }
 
   //--------------------------------------------------------------------------------------
@@ -133,11 +129,11 @@ export class DrawingZoneComponent implements OnInit {
   handleKeyDown(event: KeyboardEvent) {
     if (event.key === 'z' || event.key === 'Z') {
       if (this.majKeyPressed && this.controlKeyPressed) {
-        this._shapeList = this.actionList.redo(this._shapeList);
-        this.drawAllShapes();
+        this.layerList = this.actionList.redo(this.layerList);
+        this.drawLayers();
       } else if (this.controlKeyPressed) {
-        this._shapeList = this.actionList.undo(this._shapeList);
-        this.drawAllShapes();
+        this.layerList = this.actionList.undo(this.layerList);
+        this.drawLayers();
       }
     }
 
@@ -203,17 +199,23 @@ export class DrawingZoneComponent implements OnInit {
           this.currentAction instanceof Scale ||
           this.currentAction instanceof Rotate
         ) {
-          this.drawAllShapes();
+          this.drawLayers();
         }
         //Il est nécéssaire de redessiner toutes les formes lors de l'action gomme pour voir les modifications en temps réel.
         if (
           this.currentAction instanceof Draw &&
           this.currentAction.shape instanceof Eraser
         ) {
-          if (!this._shapeList.includes(this.currentAction.shape)) {
-            this._shapeList.push(this.currentAction.shape);
+          if (
+            !this.layerList.selectedLayer.shapeList.includes(
+              this.currentAction.shape
+            )
+          ) {
+            this.layerList.selectedLayer.shapeList.push(
+              this.currentAction.shape
+            );
           }
-          this.drawAllShapes();
+          this.drawLayers();
         }
       }
     }
@@ -226,11 +228,13 @@ export class DrawingZoneComponent implements OnInit {
   public onMouseUp(e: MouseEvent): void {
     this.isDrawing = false;
     if (this.currentAction !== null) {
-      this._shapeList = this.currentAction.do(this._shapeList);
+      this.layerList = this.currentAction.do(this.layerList);
       this.actionList.undoList.push(this.currentAction);
       this.currentAction = null;
+      this.drawService.setActionList(this.actionList);
+      this.drawService.setLayerList(this.layerList);
     }
-    this.drawAllShapes();
+    this.drawLayers();
   }
 
   //--------------------------------------------------------------------------------------
@@ -249,18 +253,17 @@ export class DrawingZoneComponent implements OnInit {
 
   public actionHandler(coord: Coordonnees): void {
     const shapeParameters = new ShapeParameters(
-      this.thickness,
-      this.colorFillShape,
-      this.colorStrokeShape,
+      this.drawService.thickness,
+      this.drawService.colorFillShape,
+      this.drawService.colorStrokeShape,
       [coord]
     );
     const _shape = this.getShapeIntersected(coord);
-    switch (this.activeTool) {
+    switch (this.drawService.activeTool) {
       case Tools.Selection:
         break;
       case Tools.Move:
         if (_shape !== null) {
-          console.log(_shape);
           this.currentAction = new Move(
             _shape,
             new Coordonnees(this.x, this.y)
@@ -285,9 +288,13 @@ export class DrawingZoneComponent implements OnInit {
         break;
       case Tools.Fill:
         if (_shape !== null) {
-          this.currentAction = new Fill(_shape, this.colorFillShape);
+          this.currentAction = new Fill(
+            _shape,
+            this.drawService.colorFillShape
+          );
         } else {
-          this.backgroundColor = this.colorFillShape;
+          this.layerList.backgroundColor = this.drawService.colorFillShape;
+          this.drawService.setLayerList(this.layerList);
         }
         break;
       case Tools.Pen:
@@ -322,10 +329,9 @@ export class DrawingZoneComponent implements OnInit {
   private getShapeIntersected(coord: Coordonnees): Shape | null {
     let _shape = null;
     //On reverse le tableau pour le parcourir dans l'ordre inverse afin d'avoir les elemtents plus haut en premier
-    this._shapeList.reverse().forEach((shape) => {
+    this.layerList.selectedLayer.shapeList.reverse().forEach((shape) => {
       if (shape.intersect(coord)) {
         _shape = shape;
-        console.log('intersection trouvée');
         return;
       }
     });
@@ -343,7 +349,7 @@ export class DrawingZoneComponent implements OnInit {
       if (ctx) {
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         if (!isPreviCavas) {
-          ctx.fillStyle = this.backgroundColor;
+          ctx.fillStyle = this.layerList.backgroundColor;
           ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
         }
       }
@@ -354,18 +360,23 @@ export class DrawingZoneComponent implements OnInit {
   // METHODE drawAllShapes : permet de dessiner sur le canvas toutes les formes de la
   //						   liste de formes
   //--------------------------------------------------------------------------------------
-  public drawAllShapes() {
+  public drawLayers() {
     this.clearCanvas(this.canvasRef.nativeElement as HTMLCanvasElement, false);
     this.clearCanvas(
       this.canvasPreviRef.nativeElement as HTMLCanvasElement,
       true
     );
     //On trie la liste par id afin d'etre sur d'avoir l'ordre chronologique
-    this._shapeList.sort((shape1, shape2) => {
-      return shape1.parameters.uuid - shape2.parameters.uuid;
+    this.layerList.layerList.sort((layer1, layer2) => {
+      return layer1.uuid - layer2.uuid;
     });
-    this._shapeList.forEach((shape) => {
-      shape.draw();
+    this.layerList.layerList.forEach((layer) => {
+      if (layer.isVisible) {
+        layer.shapeList.sort((shape1, shape2) => {
+          return shape1.parameters.uuid - shape2.parameters.uuid;
+        });
+        layer.shapeList.forEach((shape) => shape.draw());
+      }
     });
   }
 }

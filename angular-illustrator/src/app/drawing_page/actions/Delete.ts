@@ -1,3 +1,4 @@
+import { LayerList } from '../layers/LayerList';
 import { Shape } from '../shapes/Shape';
 import { Action } from './Action';
 
@@ -9,15 +10,16 @@ export class Delete extends Action {
     this.shape = shape;
   }
 
-  override do(shapeList: Shape[]): Shape[] {
-    const filteredArr = shapeList.filter(
+  override do(layerList: LayerList): LayerList {
+    const filteredArr = layerList.selectedLayer.shapeList.filter(
       (item) => item.parameters.uuid !== this.shape.parameters.uuid
     );
-    return filteredArr;
+    layerList.selectedLayer.shapeList = filteredArr;
+    return layerList;
   }
 
-  override undo(shapeList: Shape[]): Shape[] {
-    shapeList.push(this.shape);
-    return shapeList;
+  override undo(layerList: LayerList): LayerList {
+    layerList.selectedLayer.shapeList.push(this.shape);
+    return layerList;
   }
 }

@@ -1,3 +1,4 @@
+import { LayerList } from '../layers/LayerList';
 import { Coordonnees, Shape } from '../shapes/Shape';
 import { Action } from './Action';
 
@@ -13,17 +14,18 @@ export class Draw extends Action {
     this.shape.previsu(coord);
   }
 
-  override do(shapeList: Shape[]): Shape[] {
+  override do(layerList: LayerList): LayerList {
     this.shape.draw();
-    shapeList.push(this.shape);
-    return shapeList;
+    layerList.selectedLayer.shapeList.push(this.shape);
+    return layerList;
   }
 
-  override undo(shapeList: Shape[]): Shape[] {
-    const filteredArr = shapeList.filter(
+  override undo(layerList: LayerList): LayerList {
+    const filteredArr = layerList.selectedLayer.shapeList.filter(
       (item) => item.parameters.uuid !== this.shape.parameters.uuid
     );
 
-    return filteredArr;
+    layerList.selectedLayer.shapeList = filteredArr;
+    return layerList;
   }
 }
