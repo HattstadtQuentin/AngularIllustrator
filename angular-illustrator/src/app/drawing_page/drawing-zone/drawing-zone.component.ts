@@ -313,16 +313,18 @@ export class DrawingZoneComponent implements OnInit {
   }
 
   public clearCanvas(canvas: HTMLCanvasElement, isPreviCavas: boolean) {
-    const parent = canvas.parentElement as HTMLElement;
-    canvas.width = parent.offsetWidth;
-    canvas.height = parent.offsetHeight;
+    if (canvas !== null) {
+      const parent = canvas.parentElement as HTMLElement;
+      canvas.width = parent.offsetWidth;
+      canvas.height = parent.offsetHeight;
 
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      if (!isPreviCavas) {
-        ctx.fillStyle = this.backgroundColor;
-        ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        if (!isPreviCavas) {
+          ctx.fillStyle = this.backgroundColor;
+          ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+        }
       }
     }
   }
@@ -337,6 +339,10 @@ export class DrawingZoneComponent implements OnInit {
       this.canvasPreviRef.nativeElement as HTMLCanvasElement,
       true
     );
+    //On trie la liste par id afin d'etre sur d'avoir l'ordre chronologique
+    this._shapeList.sort((shape1, shape2) => {
+      return shape1.parameters.uuid - shape2.parameters.uuid;
+    });
     this._shapeList.forEach((shape) => {
       shape.draw();
     });

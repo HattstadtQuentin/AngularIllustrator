@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { Tools } from '../tools.enum';
 
 export class Shape {
@@ -33,7 +32,7 @@ export class ShapeParameters {
   colorStrokeShape: string;
   coordList: Coordonnees[];
   isSelected: boolean;
-  uuid: string;
+  uuid: number;
 
   constructor(
     thickness: number,
@@ -46,7 +45,7 @@ export class ShapeParameters {
     this.colorStrokeShape = colorStrokeShape;
     this.coordList = coordList;
     this.isSelected = false;
-    this.uuid = uuidv4();
+    this.uuid = Date.now();
   }
 }
 
