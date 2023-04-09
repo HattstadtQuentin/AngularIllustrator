@@ -17,7 +17,9 @@ export class Circle extends Shape {
     const hauteur = Math.abs(
       this.parameters.coordList[1].y - this.parameters.coordList[0].y
     );
-    const rayon = Math.sqrt(largeur * largeur + hauteur * hauteur);
+    const rayon =
+      Math.sqrt(largeur * largeur + hauteur * hauteur) +
+      this.parameters.thickness;
 
     const distance = Math.sqrt(
       Math.pow(coord.x - this.parameters.coordList[0].x, 2) +

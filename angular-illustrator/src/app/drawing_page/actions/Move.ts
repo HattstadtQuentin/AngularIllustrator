@@ -31,7 +31,7 @@ export class Move extends Action {
 
   override do(ShapeList: Shape[]): Shape[] {
     const arrivalCoord = this.coordSelected;
-    this.coordSelected = this.shape.parameters.coordList[0];
+
     this.previsu(arrivalCoord);
     return ShapeList;
   }
@@ -42,6 +42,10 @@ export class Move extends Action {
       const offsetY = this.shape.parameters.coordList[0].y - this.beforeCoord.y;
       this.shape.move(offsetX, offsetY);
       this.shape.draw();
+      this.beforeCoord = null;
+      if (this.afterCoord !== null) {
+        this.coordSelected = this.afterCoord;
+      }
     }
     return shapeList;
   }
