@@ -61,38 +61,21 @@ export class Rect extends Shape {
         hauteur =
           this.parameters.coordList[1].y - this.parameters.coordList[0].y;
 
-        if (this.parameters.fill && this.parameters.stroke) {
-          ctx.fillStyle = this.parameters.colorFillShape;
-          ctx.strokeStyle = this.parameters.colorStrokeShape;
-          ctx.fillRect(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y,
-            largeur,
-            hauteur
-          );
-          ctx.strokeRect(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y,
-            largeur,
-            hauteur
-          );
-        } else if (this.parameters.fill) {
-          ctx.fillStyle = this.parameters.colorFillShape;
-          ctx.fillRect(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y,
-            largeur,
-            hauteur
-          );
-        } else if (this.parameters.stroke) {
-          ctx.strokeStyle = this.parameters.colorStrokeShape;
-          ctx.strokeRect(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y,
-            largeur,
-            hauteur
-          );
-        }
+        ctx.fillStyle = this.parameters.colorFillShape;
+        ctx.strokeStyle = this.parameters.colorStrokeShape;
+        ctx.lineWidth = this.parameters.thickness;
+        ctx.fillRect(
+          this.parameters.coordList[0].x,
+          this.parameters.coordList[0].y,
+          largeur,
+          hauteur
+        );
+        ctx.strokeRect(
+          this.parameters.coordList[0].x,
+          this.parameters.coordList[0].y,
+          largeur,
+          hauteur
+        );
       }
     }
   }

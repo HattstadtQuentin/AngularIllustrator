@@ -9,15 +9,13 @@ import { Eraser } from './Eraser';
 
 export function ShapeFactory(
   type: Tools,
-  fill: boolean,
-  stroke: boolean,
+  thickness: number,
   colorFillShape: string,
   colorStrokeShape: string,
   coordList: Coordonnees[]
 ): Shape | null {
   const parameters = new ShapeParameters(
-    fill,
-    stroke,
+    thickness,
     colorFillShape,
     colorStrokeShape,
     coordList

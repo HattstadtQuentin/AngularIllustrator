@@ -13,6 +13,7 @@ export class DrawingPageComponent {
   drawZoneBackgroundColor = '#1A1F39';
   drawFillColor = '#000000';
   drawStrokeColor = '#000000';
+  drawThickness = 1;
   shapeList: Shape[] = [];
 
   updateActiveTool(value: Tools) {
@@ -41,5 +42,9 @@ export class DrawingPageComponent {
 
   updateShapeList(value: Shape[]) {
     this.shapeList = value;
+  }
+
+  updateThickness(value: number) {
+    this.drawThickness = value;
   }
 }

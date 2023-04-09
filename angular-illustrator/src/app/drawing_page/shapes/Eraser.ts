@@ -36,6 +36,7 @@ export class Eraser extends Shape {
     if (this.parameters.coordList.length > 1 || !prevision) {
       if (ctx) {
         ctx.strokeStyle = this.parameters.colorFillShape;
+        ctx.lineWidth = this.parameters.thickness;
         ctx.globalCompositeOperation = 'destination-out';
 
         this.parameters.coordList.forEach((coordElem, index) => {

@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { Options } from '@angular-slider/ngx-slider';
-import { PaperSizes } from '../paperSizes.enum';
 import { FormControl } from '@angular/forms';
 import { Shape } from '../shapes/Shape';
 import { ShapeFactory } from '../shapes/ShapeFactory';
@@ -19,16 +18,11 @@ import { ShapeFactory } from '../shapes/ShapeFactory';
 })
 export class OptionBarComponent {
   @Output() fileName = '';
-  color: string = '#1A1F39';
   fillColor: string = '#000000';
   strokeColor: string = '#000000';
-  options = Object.values(PaperSizes).map((size) => {
-    return `${size.title}(${size.description})`;
-  });
-  selectedOption = PaperSizes.A4.title + '(' + PaperSizes.A4.description + ')';
-  @Output() updateBackgroundColor = new EventEmitter<string>();
   @Output() updateFillColor = new EventEmitter<string>();
   @Output() updateStrokeColor = new EventEmitter<string>();
+  @Output() updateThickness = new EventEmitter<number>();
   @Output() updateFileName = new EventEmitter<string>();
 
   @Input() public shapeList: Shape[];
@@ -43,32 +37,16 @@ export class OptionBarComponent {
     this.drawShapeList = function (): void {};
   }
 
-  public onEventLog(event: string, data: any): void {
-    if (event == 'colorPickerClose' && typeof data === 'string') {
-      this.updateBackgroundColor.emit(data);
-    }
+  public onEventLogFill(data: any): void {
+    this.updateFillColor.emit(data.color);
   }
 
-  public onEventLogFill(event: string, data: any): void {
-    if (event == 'colorPickerClose' && typeof data === 'string') {
-      this.updateFillColor.emit(data);
-    }
-  }
-
-  public onEventLogStroke(event: string, data: any): void {
-    if (event == 'colorPickerClose' && typeof data === 'string') {
-      this.updateStrokeColor.emit(data);
-    }
+  public onEventLogStroke(data: any): void {
+    this.updateStrokeColor.emit(data.color);
   }
 
   public sendFileName() {
     this.updateFileName.emit(this.fileName);
-  }
-
-  updatePaperSelection(event: Event) {
-    if (event.target instanceof HTMLSelectElement) {
-      this.selectedOption = event.target.value;
-    }
   }
 
   showIsCopied() {
@@ -98,8 +76,7 @@ export class OptionBarComponent {
     fileContent.forEach((element) => {
       let shape: Shape | null = ShapeFactory(
         element.type,
-        element.parameters.fill,
-        element.parameters.stroke,
+        element.parameters.thickness,
         element.parameters.colorFillShape,
         element.parameters.colorStrokeShape,
         element.parameters.coordList
@@ -139,10 +116,10 @@ export class OptionBarComponent {
   }
 
   optionsSlider: Options = {
-    floor: 0,
+    floor: 1,
     ceil: 50,
   };
-  thickness: number = 25;
+  thickness: number = 1;
 
   formControlThickness = new FormControl();
   thicknessInputValid = true;
@@ -160,5 +137,6 @@ export class OptionBarComponent {
   onValueChangeThickness(value: number) {
     this.thickness = value;
     this.thicknessInputValid = true;
+    this.updateThickness.emit(this.thickness);
   }
 }

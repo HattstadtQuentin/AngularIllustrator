@@ -57,6 +57,8 @@ export class Circle extends Shape {
       let hauteur = 0;
       let rayon = 0;
       if (ctx) {
+        ctx.lineWidth = this.parameters.thickness;
+
         largeur = Math.abs(
           this.parameters.coordList[1].x - this.parameters.coordList[0].x
         );
@@ -67,42 +69,18 @@ export class Circle extends Shape {
 
         ctx.beginPath();
 
-        if (this.parameters.fill && this.parameters.stroke) {
-          ctx.fillStyle = this.parameters.colorFillShape;
-          ctx.strokeStyle = this.parameters.colorStrokeShape;
-          ctx.arc(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y,
-            rayon,
-            0,
-            Math.PI * 2,
-            true
-          );
-          ctx.fill();
-          ctx.stroke();
-        } else if (this.parameters.fill) {
-          ctx.fillStyle = this.parameters.colorFillShape;
-          ctx.arc(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y,
-            rayon,
-            0,
-            Math.PI * 2,
-            true
-          );
-          ctx.fill();
-        } else if (this.parameters.stroke) {
-          ctx.strokeStyle = this.parameters.colorStrokeShape;
-          ctx.arc(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y,
-            rayon,
-            0,
-            Math.PI * 2,
-            true
-          );
-          ctx.stroke();
-        }
+        ctx.fillStyle = this.parameters.colorFillShape;
+        ctx.strokeStyle = this.parameters.colorStrokeShape;
+        ctx.arc(
+          this.parameters.coordList[0].x,
+          this.parameters.coordList[0].y,
+          rayon,
+          0,
+          Math.PI * 2,
+          true
+        );
+        ctx.fill();
+        ctx.stroke();
       }
     }
   }

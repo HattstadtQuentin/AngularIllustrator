@@ -33,62 +33,27 @@ export class Polygon extends Shape {
       if (ctx) {
         ctx.beginPath();
 
-        if (this.parameters.fill && this.parameters.stroke) {
-          ctx.fillStyle = this.parameters.colorFillShape;
-          ctx.strokeStyle = this.parameters.colorStrokeShape;
-          ctx.moveTo(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y
-          );
-          ctx.lineTo(
-            this.parameters.coordList[1].x,
-            this.parameters.coordList[1].y
-          );
-          ctx.lineTo(
-            this.parameters.coordList[2].x,
-            this.parameters.coordList[2].y
-          );
-          ctx.lineTo(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y
-          );
-          ctx.fill();
-          ctx.stroke();
-        } else if (this.parameters.fill) {
-          ctx.fillStyle = this.parameters.colorFillShape;
-          ctx.moveTo(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y
-          );
-          ctx.lineTo(
-            this.parameters.coordList[1].x,
-            this.parameters.coordList[1].y
-          );
-          ctx.lineTo(
-            this.parameters.coordList[2].x,
-            this.parameters.coordList[2].y
-          );
-          ctx.fill();
-        } else if (this.parameters.stroke) {
-          ctx.strokeStyle = this.parameters.colorStrokeShape;
-          ctx.moveTo(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y
-          );
-          ctx.lineTo(
-            this.parameters.coordList[1].x,
-            this.parameters.coordList[1].y
-          );
-          ctx.lineTo(
-            this.parameters.coordList[2].x,
-            this.parameters.coordList[2].y
-          );
-          ctx.lineTo(
-            this.parameters.coordList[0].x,
-            this.parameters.coordList[0].y
-          );
-          ctx.stroke();
-        }
+        ctx.fillStyle = this.parameters.colorFillShape;
+        ctx.strokeStyle = this.parameters.colorStrokeShape;
+        ctx.lineWidth = this.parameters.thickness;
+        ctx.moveTo(
+          this.parameters.coordList[0].x,
+          this.parameters.coordList[0].y
+        );
+        ctx.lineTo(
+          this.parameters.coordList[1].x,
+          this.parameters.coordList[1].y
+        );
+        ctx.lineTo(
+          this.parameters.coordList[2].x,
+          this.parameters.coordList[2].y
+        );
+        ctx.lineTo(
+          this.parameters.coordList[0].x,
+          this.parameters.coordList[0].y
+        );
+        ctx.fill();
+        ctx.stroke();
       }
     }
   }

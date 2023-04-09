@@ -3,7 +3,7 @@ import { Coordonnees, Shape, ShapeParameters } from './Shape';
 
 export class Line extends Shape {
   constructor(parameters: ShapeParameters) {
-    super(Tools.Polygon, parameters);
+    super(Tools.Line, parameters);
   }
 
   override intersect(coord: Coordonnees): boolean {
@@ -53,6 +53,8 @@ export class Line extends Shape {
     if (this.parameters.coordList.length == 2 || !prevision) {
       if (ctx) {
         ctx.strokeStyle = this.parameters.colorFillShape;
+        ctx.lineWidth = this.parameters.thickness;
+        ctx.beginPath();
         ctx.moveTo(
           this.parameters.coordList[0].x,
           this.parameters.coordList[0].y

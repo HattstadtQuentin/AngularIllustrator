@@ -36,6 +36,7 @@ export class Pen extends Shape {
     if (this.parameters.coordList.length > 1 || !prevision) {
       if (ctx) {
         ctx.strokeStyle = this.parameters.colorFillShape;
+        ctx.lineWidth = this.parameters.thickness;
 
         this.parameters.coordList.forEach((coordElem, index) => {
           if (index === 0) {

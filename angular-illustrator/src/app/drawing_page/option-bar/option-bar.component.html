@@ -14,35 +14,13 @@
         />
       </div>
       <hr size="1" />
-      <div class="backgroundSelectorContainer">
-        <div class="title">Couleur d'arrière plan</div>
-        <div class="inputColor">
-          <input
-            [style.background]="color"
-            [(colorPicker)]="color"
-            (colorPickerOpen)="onEventLog('colorPickerOpen', $event)"
-            (colorPickerClose)="onEventLog('colorPickerClose', $event)"
-            (cpInputChange)="onEventLog('cpInputChange', $event)"
-            (cpSliderDragStart)="onEventLog('cpSliderDragStart', $event)"
-            (cpSliderDragEnd)="onEventLog('cpSliderDragEnd', $event)"
-          />
-          <div ngxClipboard [cbContent]="color" (click)="showIsCopied()">
-            {{ color }}
-          </div>
-        </div>
-      </div>
-      <hr size="1" />
       <div class="formSelectorContainer">
         <div class="title">Couleur de remplissage</div>
         <div class="inputColor">
           <input
             [style.background]="fillColor"
             [(colorPicker)]="fillColor"
-            (colorPickerOpen)="onEventLogFill('colorPickerOpen', $event)"
-            (colorPickerClose)="onEventLogFill('colorPickerClose', $event)"
-            (cpInputChange)="onEventLogFill('cpInputChange', $event)"
-            (cpSliderDragStart)="onEventLogFill('cpSliderDragStart', $event)"
-            (cpSliderDragEnd)="onEventLogFill('cpSliderDragEnd', $event)"
+            (cpSliderDragEnd)="onEventLogFill($event)"
           />
           <div ngxClipboard [cbContent]="fillColor" (click)="showIsCopied()">
             {{ fillColor }}
@@ -55,11 +33,7 @@
           <input
             [style.background]="strokeColor"
             [(colorPicker)]="strokeColor"
-            (colorPickerOpen)="onEventLogStroke('colorPickerOpen', $event)"
-            (colorPickerClose)="onEventLogStroke('colorPickerClose', $event)"
-            (cpInputChange)="onEventLogStroke('cpInputChange', $event)"
-            (cpSliderDragStart)="onEventLogStroke('cpSliderDragStart', $event)"
-            (cpSliderDragEnd)="onEventLogStroke('cpSliderDragEnd', $event)"
+            (cpSliderDragEnd)="onEventLogStroke($event)"
           />
           <div ngxClipboard [cbContent]="strokeColor" (click)="showIsCopied()">
             {{ strokeColor }}
