@@ -1,0 +1,363 @@
+@import "../../../styles/global.scss";
+
+:host {
+  .optionBar {
+    height: 100%;
+    width: 100%;
+    padding: 10% 2%;
+    font-family: $poppins;
+
+    @include themed() {
+      background: t($second-color);
+    }
+
+    .selectOption {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      font-size: 1rem;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      height: 5%;
+
+      @include themed() {
+        color: t($second-text-color);
+      }
+
+      div {
+        width: 40%;
+        padding-bottom: 4%;
+        @include themed() {
+          border-bottom: 2px solid t($second-text-color);
+        }
+      }
+
+      .active {
+        @include themed() {
+          border-bottom: 2px solid t($contrast-color);
+          color: t($contrast-color);
+        }
+      }
+    }
+
+    .pageContainer {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.9rem;
+      width: 90%;
+      height: 90%;
+      padding: 0% 2%;
+
+      hr {
+        @include themed() {
+          border: 2px solid t($base-color);
+        }
+        width: 80%;
+        border-radius: 25px;
+      }
+
+      @include themed() {
+        color: t($third-text-color);
+      }
+
+      .topContainer {
+        height: 70%;
+
+        .fileNameContainer {
+          padding: 2% 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 6%;
+
+          input {
+            border: none;
+            outline: none;
+            border-radius: 25px;
+            text-align: center;
+            width: 70%;
+            font-size: 0.9rem;
+            padding: 2% 5%;
+            user-select: none;
+            @include themed() {
+              border: 2px solid t($third-color);
+              color: t($third-text-color);
+
+              background: t($second-color);
+            }
+          }
+        }
+
+        .backgroundSelectorContainer {
+          padding: 5% 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          height: 15%;
+
+          .inputColor {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 50%;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+
+            input {
+              width: 30%;
+              border-radius: 10px;
+              border: none;
+              outline: none;
+              height: 100%;
+              cursor: pointer;
+              user-select: none;
+            }
+          }
+        }
+
+        .formSelectorContainer {
+          padding: 5% 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          height: 15%;
+
+          .inputColor {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 50%;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+
+            input {
+              width: 30%;
+              border-radius: 10px;
+              border: none;
+              outline: none;
+              height: 100%;
+              cursor: pointer;
+              user-select: none;
+            }
+          }
+        }
+
+        .thicknessContainer {
+          padding: 5% 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+          height: 10%;
+
+          .custom-slider {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            align-items: center;
+
+            input::-webkit-outer-spin-button,
+            input::-webkit-inner-spin-button {
+              -webkit-appearance: none;
+              margin: 0;
+            }
+
+            /* Firefox */
+            input[type="number"] {
+              -moz-appearance: textfield;
+            }
+
+            .inputThickness {
+              margin-left: 5%;
+              width: 20%;
+              height: 50%;
+              text-align: center;
+              padding: 2% 2% 2% 2%;
+              @include themed() {
+                background: t($third-color);
+                color: t($base-text-color);
+              }
+              font-size: 0.9rem;
+              border: none;
+              outline: none;
+              border-radius: 10px;
+            }
+
+            .invalid {
+              background-color: $false-red !important;
+            }
+          }
+        }
+
+        .layerContainer {
+          overflow-x: visible;
+          display: flex;
+          flex-direction: column-reverse;
+          height: 25%;
+          overflow-y: scroll;
+
+          .layerCard {
+            height: 15%;
+            border-radius: 25px;
+            width: 85%;
+            margin-bottom: 5px;
+            padding: 2% 4%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            @include themed() {
+              background: t($third-color);
+              color: t($third-text-color);
+            }
+
+            span {
+              display: flex;
+              flex-direction: row;
+              width: 50%;
+            }
+
+            img {
+              height: 100%;
+              filter: invert(180%) sepia(43%) saturate(2200%) hue-rotate(19deg)
+                brightness(82%) contrast(86%);
+            }
+
+            .off {
+              filter: invert(10%) sepia(73%) saturate(2200%) hue-rotate(19deg)
+                brightness(200%) contrast(86%);
+            }
+
+            .deleteContainer {
+              height: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              .delete {
+                width: 100%;
+                filter: invert(66%) sepia(4%) saturate(2432%) hue-rotate(189deg)
+                  brightness(82%) contrast(86%);
+
+                &:hover {
+                  filter: invert(10%) sepia(73%) saturate(2200%)
+                    hue-rotate(19deg) brightness(200%) contrast(86%);
+                }
+              }
+            }
+          }
+          .selectedLayer {
+            @include themed() {
+              border: 2px solid t($third-text-color);
+            }
+          }
+        }
+        .plusBtn {
+          margin-top: 5px;
+          height: 5%;
+          display: flex;
+          flex-direction: column;
+          align-self: flex-end;
+          align-items: center;
+          .plusZone {
+            height: 100%;
+            filter: invert(66%) sepia(4%) saturate(2432%) hue-rotate(189deg)
+              brightness(82%) contrast(86%);
+
+            &:hover {
+              filter: invert(180%) sepia(43%) saturate(2200%) hue-rotate(19deg)
+                brightness(82%) contrast(86%);
+            }
+          }
+        }
+      }
+
+      .bottomContainer {
+        margin-top: 10px;
+        height: 10%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        gap: 5px;
+
+        .btn {
+          border-radius: 25px;
+          text-align: center;
+          width: 70%;
+          font-size: 0.9rem;
+          padding: 2% 5%;
+          cursor: pointer;
+          user-select: none;
+          @include themed() {
+            border: 2px solid t($third-color);
+            color: t($third-text-color);
+          }
+        }
+
+        .btn:hover {
+          @include themed() {
+            background: t($base-color);
+            color: t($fourth-color);
+          }
+        }
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .custom-slider .ngx-slider {
+    width: 70%;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-bar {
+    @include themed() {
+      border: 2px solid t($base-text-color);
+    }
+    height: 2px;
+  }
+  .custom-slider .ngx-slider .ngx-slider-selection {
+    @include themed() {
+      border: 2px solid t($base-text-color);
+    }
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-pointer {
+    width: 8px;
+    height: 16px;
+    top: auto; /* to remove the default positioning */
+    bottom: 0;
+    background-color: #333;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-pointer:after {
+    display: none;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-bubble {
+    bottom: 14px;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-limit {
+    font-weight: bold;
+    color: orange;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-tick {
+    width: 1px;
+    height: 10px;
+    margin-left: 4px;
+    border-radius: 0;
+    background: #ffe4d1;
+    top: -1px;
+  }
+
+  .custom-slider .ngx-slider .ngx-slider-tick.ngx-slider-selected {
+    background: orange;
+  }
+}

@@ -1,0 +1,114 @@
+<div class="optionBar">
+  <div class="selectOption">
+    <div class="active">Fichier</div>
+  </div>
+  <div class="active pageContainer">
+    <div class="topContainer">
+      <div class="fileNameContainer">
+        <input
+          [(ngModel)]="fileName"
+          (ngModelChange)="sendFileName()"
+          type="text"
+          class="fileName"
+          placeholder="Nom du fichier"
+        />
+      </div>
+      <hr size="1" />
+      <div class="formSelectorContainer">
+        <div class="title">Couleur de remplissage</div>
+        <div class="inputColor">
+          <input
+            [style.background]="fillColor"
+            [(colorPicker)]="fillColor"
+            (cpSliderDragEnd)="onEventLogFill($event)"
+          />
+          <div ngxClipboard [cbContent]="fillColor" (click)="showIsCopied()">
+            {{ fillColor }}
+          </div>
+        </div>
+      </div>
+      <div class="formSelectorContainer">
+        <div class="title">Couleur de contour</div>
+        <div class="inputColor">
+          <input
+            [style.background]="strokeColor"
+            [(colorPicker)]="strokeColor"
+            (cpSliderDragEnd)="onEventLogStroke($event)"
+          />
+          <div ngxClipboard [cbContent]="strokeColor" (click)="showIsCopied()">
+            {{ strokeColor }}
+          </div>
+        </div>
+      </div>
+      <div class="thicknessContainer">
+        <div class="title">Epaisseur du trait</div>
+        <div class="custom-slider">
+          <ngx-slider
+            [(value)]="thickness"
+            [options]="optionsSlider"
+            (valueChange)="onValueChangeThickness($event)"
+          ></ngx-slider>
+          <input
+            type="number"
+            [formControl]="formControlThickness"
+            [ngClass]="{ invalid: !thicknessInputValid, inputThickness: true }"
+            [value]="thickness"
+          />
+        </div>
+      </div>
+      <hr size="1" />
+      <div class="layerContainer">
+        <ng-container
+          class="layerContainer"
+          *ngFor="let layer of layerList.layerList; let i = index"
+        >
+          <div
+            (click)="selectLayer(layer)"
+            [ngClass]="{
+              selectedLayer: layerList.selectedLayer.uuid === layer.uuid,
+              layerCard: true
+            }"
+          >
+            <span>Layer {{ i }}</span>
+            <img
+              (click)="toggleVisibility(layer)"
+              [ngClass]="{ off: !layer.isVisible }"
+              src="../../../assets/tools/eye-svgrepo-com.svg"
+              alt="Eye"
+            />
+            <div *ngIf="layerList.layerList.length > 1" class="deleteContainer">
+              <img
+                (click)="deleteLayer(layer)"
+                src="../../../assets/tools/delete-svgrepo-com.svg"
+                alt="Delete"
+                class="delete"
+              />
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="btn plusBtn" (click)="addLayer()">
+        <img
+          src="../../../assets/tools/plus-zone-svgrepo-com.svg"
+          alt="Plus Zone"
+          class="plusZone"
+        />
+      </div>
+    </div>
+
+    <div class="bottomContainer">
+      <input
+        class="btn"
+        id="files"
+        type="file"
+        (change)="import($event)"
+        style="display: none"
+      />
+      <label class="btn" for="files">Importer un dessin</label>
+
+      <div class="btn" id="export" (click)="export()">
+        Exporter votre dessin
+      </div>
+    </div>
+  </div>
+</div>
